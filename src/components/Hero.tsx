@@ -13,13 +13,13 @@ export const Hero = () => {
           transition={{ duration: 0.6 }}
           className="space-y-4"
         >
-          <h1 className="text-4xl md:text-6xl font-bold leading-tight text-white">
-            Изучайте программирование с{" "}
-            <span className="bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
+          <h1 className="text-4xl md:text-6xl font-bold leading-tight text-[#E5DEFF]">
+            Изучайте курсы с{" "}
+            <span className="bg-gradient-to-r from-[#D6BCFA] to-[#F1F1F1] bg-clip-text text-transparent">
               Персональным ИИ-учителем
             </span>
           </h1>
-          <p className="text-xl md:text-2xl text-gray-100 max-w-2xl mx-auto font-light">
+          <p className="text-xl md:text-2xl text-[#F1F1F1] max-w-2xl mx-auto font-light">
             Погрузитесь в мир технологий с персональным наставником, который адаптируется под ваш темп обучения
           </p>
         </motion.div>
@@ -43,7 +43,7 @@ export const Hero = () => {
             <Button 
               size="lg" 
               variant="outline" 
-              className="text-white border-white hover:bg-white/10"
+              className="bg-[#9b87f5] text-white hover:bg-[#8B5CF6] border-none"
             >
               Узнать больше
               <Code className="ml-2" />
