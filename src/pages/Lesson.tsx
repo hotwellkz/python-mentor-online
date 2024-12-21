@@ -12,7 +12,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { courseBlocks } from "@/data/courseData";
 import { useEffect, useState } from "react";
 import { modules } from "@/components/course/DevOpsCourseProgram";
-import { getDevOpsQuestions } from "@/utils/devopsQuestions";
+import { getDevOpsQuestions } from "@/utils/testQuestions";
 
 const Lesson = () => {
   const { lessonId } = useParams();
