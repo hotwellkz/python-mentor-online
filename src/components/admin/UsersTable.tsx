@@ -67,20 +67,11 @@ export const UsersTable = () => {
 
   const deleteUser = async (userId: string) => {
     try {
-      // Сначала удаляем пользователя из auth.users через Edge Function
-      const response = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/delete-user`, {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ userId }),
+      const { data, error } = await supabase.functions.invoke('delete-user', {
+        body: { userId }
       });
 
-      if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error.error || 'Ошибка при удалении пользователя');
-      }
+      if (error) throw error;
 
       // Профиль пользователя будет удален автоматически благодаря каскадному удалению
       
