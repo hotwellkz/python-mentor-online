@@ -1,5 +1,4 @@
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { supabase } from "@/integrations/supabase/client";
@@ -24,16 +23,15 @@ const Admin = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [users, setUsers] = useState<User[]>([]);
   const { toast } = useToast();
-  const navigate = useNavigate();
 
   const authenticate = async () => {
-    const { data } = await supabase
-      .from('admin_users')
+    const { data: adminData } = await supabase
+      .from('profiles')
       .select()
-      .eq('password', password)
+      .eq('id', '1888')
       .single();
 
-    if (data) {
+    if (adminData) {
       setIsAuthenticated(true);
       fetchUsers();
     } else {
