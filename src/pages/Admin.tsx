@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { supabase } from "@/integrations/supabase/client";
@@ -26,9 +26,9 @@ const Admin = () => {
 
   const authenticate = async () => {
     const { data: adminData } = await supabase
-      .from('profiles')
+      .from('admin_users')
       .select()
-      .eq('id', '1888')
+      .eq('password', password)
       .single();
 
     if (adminData) {
