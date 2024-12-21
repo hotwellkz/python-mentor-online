@@ -1,9 +1,25 @@
 import { Helmet } from "react-helmet";
 import { Button } from "@/components/ui/button";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { ArrowRight, BarChart2, Brain, ChartBar, LineChart, Users } from "lucide-react";
+import { useEffect } from "react";
+import { supabase } from "@/integrations/supabase/client";
 
 const BusinessAnalyst = () => {
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const { data: authListener } = supabase.auth.onAuthStateChange((event, session) => {
+      if (event === 'SIGNED_IN') {
+        navigate('/business-analyst-program');
+      }
+    });
+
+    return () => {
+      authListener?.subscription.unsubscribe();
+    };
+  }, [navigate]);
+
   return (
     <>
       <Helmet>
@@ -32,7 +48,7 @@ const BusinessAnalyst = () => {
                   Освойте профессию бизнес-аналитика за 8 месяцев с поддержкой ИИ 24/7
                 </p>
                 <div className="flex flex-wrap gap-4">
-                  <Link to="/program">
+                  <Link to="/business-analyst-program">
                     <Button size="lg" className="bg-primary hover:bg-primary/90">
                       Начать бесплатно
                       <ArrowRight className="ml-2 h-5 w-5" />
