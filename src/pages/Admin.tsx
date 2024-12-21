@@ -25,29 +25,37 @@ const Admin = () => {
   const { toast } = useToast();
 
   const authenticate = async () => {
-    const { data: adminData, error } = await supabase
-      .from('admin_users')
-      .select()
-      .eq('password', password)
-      .maybeSingle();
+    try {
+      const { data: adminData, error } = await supabase
+        .from('admin_users')
+        .select()
+        .eq('password', password)
+        .maybeSingle();
 
-    if (error) {
+      if (error) {
+        toast({
+          variant: "destructive",
+          title: "Ошибка",
+          description: error.message,
+        });
+        return;
+      }
+
+      if (adminData) {
+        setIsAuthenticated(true);
+        fetchUsers();
+      } else {
+        toast({
+          variant: "destructive",
+          title: "Ошибка",
+          description: "Неверный пароль",
+        });
+      }
+    } catch (error: any) {
       toast({
         variant: "destructive",
         title: "Ошибка",
         description: error.message,
-      });
-      return;
-    }
-
-    if (adminData) {
-      setIsAuthenticated(true);
-      fetchUsers();
-    } else {
-      toast({
-        variant: "destructive",
-        title: "Ошибка",
-        description: "Неверный пароль",
       });
     }
   };
@@ -111,16 +119,23 @@ const Admin = () => {
   if (!isAuthenticated) {
     return (
       <div className="container mx-auto px-4 py-8">
-        <div className="max-w-md mx-auto space-y-4 bg-background p-6 rounded-lg shadow-lg border">
-          <h1 className="text-2xl font-bold text-foreground">Панель администратора</h1>
+        <div className="max-w-md mx-auto space-y-4 bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700">
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Панель администратора</h1>
           <Input
             type="password"
             placeholder="Введите пароль"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            className="bg-background text-foreground"
+            className="bg-white dark:bg-gray-900 text-gray-900 dark:text-white"
+            onKeyDown={(e) => {
+              if (e.key === 'Enter') {
+                authenticate();
+              }
+            }}
           />
-          <Button onClick={authenticate} className="w-full">Войти</Button>
+          <Button onClick={authenticate} className="w-full">
+            Войти
+          </Button>
         </div>
       </div>
     );
@@ -129,7 +144,7 @@ const Admin = () => {
   return (
     <div className="container mx-auto px-4 py-8">
       <h1 className="text-2xl font-bold mb-6">Управление пользователями</h1>
-      <div className="overflow-x-auto bg-background rounded-lg shadow">
+      <div className="overflow-x-auto bg-white dark:bg-gray-800 rounded-lg shadow">
         <Table>
           <TableHeader>
             <TableRow>
@@ -147,7 +162,7 @@ const Admin = () => {
                     type="number"
                     value={user.tokens}
                     onChange={(e) => updateTokens(user.id, parseInt(e.target.value))}
-                    className="w-24 bg-background"
+                    className="w-24 bg-white dark:bg-gray-900"
                   />
                 </TableCell>
                 <TableCell>
