@@ -24,18 +24,33 @@ export const UsersTable = () => {
 
   const fetchUsers = async () => {
     try {
-      const { data: { users: authUsers } } = await supabase.auth.admin.listUsers();
-      const { data: profiles } = await supabase.from('profiles').select('*');
+      const { data: profiles, error } = await supabase
+        .from('profiles')
+        .select('*');
 
-      if (authUsers && profiles) {
-        const combinedUsers = authUsers.map(authUser => ({
-          id: authUser.id,
-          email: authUser.email || '',
-          tokens: profiles.find(p => p.id === authUser.id)?.tokens || 0,
-        }));
+      if (error) throw error;
+
+      if (profiles) {
+        // Get user emails from auth.users through the client
+        const { data: { session } } = await supabase.auth.getSession();
+        if (!session) throw new Error('Не авторизован');
+
+        const { data: authData, error: authError } = await supabase.auth.admin.listUsers();
+        if (authError) throw authError;
+
+        const combinedUsers = profiles.map(profile => {
+          const authUser = authData?.users.find(u => u.id === profile.id);
+          return {
+            id: profile.id,
+            email: authUser?.email || 'Email не найден',
+            tokens: profile.tokens,
+          };
+        });
+        
         setUsers(combinedUsers);
       }
     } catch (error: any) {
+      console.error('Error fetching users:', error);
       toast({
         variant: "destructive",
         title: "Ошибка",
@@ -47,10 +62,12 @@ export const UsersTable = () => {
 
   const updateTokens = async (userId: string, newTokens: number) => {
     try {
-      await supabase
+      const { error } = await supabase
         .from('profiles')
         .update({ tokens: newTokens })
         .eq('id', userId);
+      
+      if (error) throw error;
       
       toast({
         title: "Успешно",
@@ -71,8 +88,12 @@ export const UsersTable = () => {
 
   const deleteUser = async (userId: string) => {
     try {
-      await supabase.auth.admin.deleteUser(userId);
-      await supabase.from('profiles').delete().eq('id', userId);
+      const { error: profileError } = await supabase
+        .from('profiles')
+        .delete()
+        .eq('id', userId);
+      
+      if (profileError) throw profileError;
       
       toast({
         title: "Успешно",
@@ -91,7 +112,6 @@ export const UsersTable = () => {
     }
   };
 
-  // Fetch users when component mounts
   useEffect(() => {
     fetchUsers();
   }, []);
