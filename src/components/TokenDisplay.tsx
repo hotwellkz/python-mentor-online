@@ -38,7 +38,7 @@ export const TokenDisplay = () => {
   if (tokens === null) return null;
 
   return (
-    <div className="flex items-center gap-2 text-white">
+    <div className="flex items-center gap-2 text-foreground dark:text-white">
       <Coins className="h-5 w-5" />
       <span>{tokens} токенов</span>
     </div>
