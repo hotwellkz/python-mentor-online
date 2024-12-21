@@ -11,6 +11,15 @@ interface UserMenuProps {
 export const UserMenu = ({ userEmail, onLogout }: UserMenuProps) => {
   return (
     <div className="flex items-center gap-4">
+      {userEmail && (
+        <Link
+          to="/settings"
+          className="text-white hover:text-primary transition-colors"
+          title="Настройки аккаунта"
+        >
+          <Settings className="h-5 w-5" />
+        </Link>
+      )}
       <Link
         to="/admin"
         className="text-white hover:text-primary transition-colors"

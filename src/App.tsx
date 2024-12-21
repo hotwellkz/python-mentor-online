@@ -18,6 +18,7 @@ import Profile from "./pages/Profile";
 import Faq from "./pages/Faq";
 import BusinessAnalyst from "./pages/BusinessAnalyst";
 import BusinessAnalystProgram from "./pages/BusinessAnalystProgram";
+import Settings from "./pages/Settings";
 
 const queryClient = new QueryClient();
 
@@ -42,6 +43,7 @@ const App = () => (
             <Route path="/terms" element={<Terms />} />
             <Route path="/admin" element={<Admin />} />
             <Route path="/profile" element={<Profile />} />
+            <Route path="/settings" element={<Settings />} />
             <Route path="/faq" element={<Faq />} />
           </Route>
         </Routes>
