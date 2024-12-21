@@ -105,7 +105,7 @@ export const Auth = () => {
           to="/"
           className="mb-8 text-2xl font-bold hover:text-primary transition-colors"
         >
-          Python с ИИ-учителем
+          Главная страница
         </Link>
         <div className="w-full max-w-md space-y-8">
           <div className="text-center">
