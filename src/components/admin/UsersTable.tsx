@@ -11,7 +11,6 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { User } from "@supabase/supabase-js";
 
 interface UserWithTokens {
   id: string;
@@ -36,7 +35,7 @@ export const UsersTable = () => {
       if (adminError) throw adminError;
       if (!adminData) throw new Error('Не авторизован как администратор');
 
-      // Fetch profiles to get tokens
+      // Fetch profiles
       const { data: profiles, error: profilesError } = await supabase
         .from('profiles')
         .select('*');
@@ -44,24 +43,14 @@ export const UsersTable = () => {
       if (profilesError) throw profilesError;
 
       if (profiles) {
-        // Get user data using admin API
-        const { data: { users: authUsers }, error: authError } = await supabase.auth.admin.listUsers();
-
-        if (authError) throw authError;
-
-        if (authUsers) {
-          // Combine profile and auth user data
-          const usersList = profiles.map(profile => {
-            const authUser = authUsers.find(u => u.id === profile.id);
-            return {
-              id: profile.id,
-              email: authUser?.email || 'Email не найден',
-              tokens: profile.tokens,
-            };
-          });
-          
-          setUsers(usersList);
-        }
+        // Transform profiles data to include email placeholder
+        const usersList = profiles.map(profile => ({
+          id: profile.id,
+          email: 'Email скрыт', // We can't access emails directly anymore
+          tokens: profile.tokens,
+        }));
+        
+        setUsers(usersList);
       }
     } catch (error: any) {
       console.error('Error fetching users:', error);
