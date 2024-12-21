@@ -1,7 +1,6 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Pause, Play } from "lucide-react";
-import { useState } from "react";
 
 interface LessonContentProps {
   loading: boolean;
@@ -15,6 +14,20 @@ interface LessonContentProps {
   isPlaying?: boolean;
 }
 
+const cleanText = (text: string) => {
+  return text
+    .replace(/\*\*(.*?)\*\*/g, '$1') // Bold
+    .replace(/\*(.*?)\*/g, '$1') // Italic
+    .replace(/\[(.*?)\]\(.*?\)/g, '$1') // Links
+    .replace(/#{1,6}\s/g, '') // Headers
+    .replace(/`(.*?)`/g, '$1') // Code
+    .replace(/<[^>]*>/g, '') // HTML tags
+    .replace(/\n\s*[-*+]\s/g, '\n') // Lists
+    .replace(/\n\s*\d+\.\s/g, '\n') // Numbered lists
+    .replace(/\n{2,}/g, '\n') // Multiple newlines
+    .trim();
+};
+
 export const LessonContent = ({
   loading,
   generatedText,
@@ -23,6 +36,8 @@ export const LessonContent = ({
   onTogglePlayback,
   isPlaying,
 }: LessonContentProps) => {
+  const cleanedText = cleanText(generatedText);
+
   return (
     <>
       <AnimatePresence>
@@ -39,14 +54,14 @@ export const LessonContent = ({
         )}
       </AnimatePresence>
 
-      {generatedText && (
+      {cleanedText && (
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           className="space-y-8"
         >
           <div className="prose prose-lg max-w-none dark:prose-invert">
-            <div dangerouslySetInnerHTML={{ __html: generatedText }} />
+            <div dangerouslySetInnerHTML={{ __html: cleanedText }} />
           </div>
 
           <div className="flex flex-col md:flex-row justify-between gap-4">
