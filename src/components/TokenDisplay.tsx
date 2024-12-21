@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Coins } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
+import type { Database } from "@/integrations/supabase/types";
 
 export const TokenDisplay = () => {
   const [tokens, setTokens] = useState<number | null>(null);
