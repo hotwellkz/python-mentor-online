@@ -24,6 +24,30 @@ export type Database = {
         }
         Relationships: []
       }
+      business_analyst_progress: {
+        Row: {
+          completed_at: string
+          created_at: string
+          id: string
+          lesson_id: string
+          user_id: string | null
+        }
+        Insert: {
+          completed_at?: string
+          created_at?: string
+          id?: string
+          lesson_id: string
+          user_id?: string | null
+        }
+        Update: {
+          completed_at?: string
+          created_at?: string
+          id?: string
+          lesson_id?: string
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       completed_lessons: {
         Row: {
           completed_at: string

@@ -6,12 +6,17 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
-import { courseBlocks } from "@/data/courseData";
+import { courseBlocks, businessAnalystBlocks } from "@/data/courseData";
 import { supabase } from "@/integrations/supabase/client";
 import { Check } from "lucide-react";
 
-export const CourseProgram = () => {
+interface CourseProgramProps {
+  courseType?: 'python' | 'business-analyst';
+}
+
+export const CourseProgram = ({ courseType = 'python' }: CourseProgramProps) => {
   const [completedLessons, setCompletedLessons] = useState<string[]>([]);
+  const blocks = courseType === 'business-analyst' ? businessAnalystBlocks : courseBlocks;
 
   useEffect(() => {
     fetchCompletedLessons();
@@ -27,7 +32,7 @@ export const CourseProgram = () => {
     return () => {
       authListener?.subscription.unsubscribe();
     };
-  }, []);
+  }, [courseType]);
 
   const fetchCompletedLessons = async () => {
     const { data: { user } } = await supabase.auth.getUser();
@@ -36,8 +41,9 @@ export const CourseProgram = () => {
       return;
     }
 
+    const table = courseType === 'business-analyst' ? 'business_analyst_progress' : 'completed_lessons';
     const { data } = await supabase
-      .from('completed_lessons')
+      .from(table)
       .select('lesson_id')
       .eq('user_id', user.id);
 
@@ -49,7 +55,7 @@ export const CourseProgram = () => {
   return (
     <div className="mb-12">
       <Accordion type="single" collapsible className="w-full">
-        {courseBlocks.map((block, blockIndex) => (
+        {blocks.map((block, blockIndex) => (
           <AccordionItem key={blockIndex} value={`block-${blockIndex}`}>
             <AccordionTrigger className="text-lg font-semibold">
               {block.title}
@@ -57,7 +63,9 @@ export const CourseProgram = () => {
             <AccordionContent>
               <div className="space-y-4 pl-4">
                 {block.lessons.map((lesson, lessonIndex) => {
-                  const lessonId = `${blockIndex + 1}-${lessonIndex + 1}`;
+                  const lessonId = courseType === 'business-analyst' 
+                    ? `ba-${blockIndex + 1}-${lessonIndex + 1}`
+                    : `${blockIndex + 1}-${lessonIndex + 1}`;
                   const isCompleted = completedLessons.includes(lessonId);
 
                   return (

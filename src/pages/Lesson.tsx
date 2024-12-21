@@ -9,7 +9,7 @@ import { useLesson } from "@/hooks/useLesson";
 import { useSpeech } from "@/hooks/useSpeech";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
-import { courseBlocks } from "@/data/courseData";
+import { courseBlocks, businessAnalystBlocks } from "@/data/courseData";
 import { useEffect, useState } from "react";
 import { modules } from "@/components/course/DevOpsCourseProgram";
 import { getDevOpsQuestions } from '@/utils/devopsQuestions';
@@ -28,8 +28,9 @@ const Lesson = () => {
     setIsEmailVerified(user?.email_confirmed_at !== null);
   };
 
-  // Определяем, является ли это уроком DevOps
+  // Определяем тип урока
   const isDevOpsLesson = lessonId?.startsWith('devops-');
+  const isBusinessAnalystLesson = lessonId?.startsWith('ba-');
 
   // Находим текущий урок в зависимости от типа
   let currentLesson;
@@ -41,11 +42,16 @@ const Lesson = () => {
     if (currentModule) {
       currentLesson = {
         title: currentModule.topics[topicIndex - 1],
-        topics: [currentModule.title], // Используем название модуля как тему
+        topics: [currentModule.title],
       };
       const questions = getDevOpsQuestions(moduleIndex, topicIndex);
       topQuestions = questions.map(q => q.question);
     }
+  } else if (isBusinessAnalystLesson) {
+    const [, blockIndex, lessonIndex] = (lessonId || "").split("-").map(Number);
+    const currentBlock = businessAnalystBlocks[blockIndex - 1];
+    currentLesson = currentBlock?.lessons[lessonIndex - 1];
+    topQuestions = currentLesson?.topics || [];
   } else {
     const [blockIndex, lessonIndex] = (lessonId || "").split("-").map(Number);
     const currentBlock = courseBlocks[blockIndex - 1];
@@ -127,14 +133,14 @@ const Lesson = () => {
   return (
     <>
       <Helmet>
-        <title>{currentLesson.title} | {isDevOpsLesson ? 'DevOps' : 'Python'} с ИИ-учителем</title>
+        <title>{currentLesson.title} | {isBusinessAnalystLesson ? 'Бизнес-аналитик' : isDevOpsLesson ? 'DevOps' : 'Python'} с ИИ-учителем</title>
         <meta
           name="description"
           content={`${currentLesson.title}. ${currentLesson.topics.join(". ")}. Интерактивное обучение с ИИ-учителем.`}
         />
         <meta 
           name="keywords" 
-          content={`${currentLesson.topics.join(", ")}, ${isDevOpsLesson ? 'devops обучение, devops курс' : 'python обучение, python курс'}`} 
+          content={`${currentLesson.topics.join(", ")}, ${isBusinessAnalystLesson ? 'бизнес-аналитик обучение, бизнес-аналитик курс' : isDevOpsLesson ? 'devops обучение, devops курс' : 'python обучение, python курс'}`} 
         />
         <meta name="robots" content="index, follow" />
         <link rel="canonical" href={window.location.href} />
