@@ -19,6 +19,15 @@ const Lesson = () => {
   const [showTest, setShowTest] = useState(false);
   const [synthesis, setSynthesis] = useState<SpeechSynthesis | null>(null);
   const [utterance, setUtterance] = useState<SpeechSynthesisUtterance | null>(null);
+  const [userPrompt, setUserPrompt] = useState("");
+
+  const topQuestions = [
+    "Какие основные обязанности бизнес-аналитика?",
+    "Какие инструменты использует бизнес-аналитик?",
+    "Как стать бизнес-аналитиком?",
+    "Какие soft skills нужны бизнес-аналитику?",
+    "Сколько зарабатывает бизнес-аналитик?",
+  ];
 
   useEffect(() => {
     setSynthesis(window.speechSynthesis);
@@ -52,19 +61,12 @@ const Lesson = () => {
       }
 
       setLoading(true);
-      const response = await fetch("/functions/v1/generate-lesson", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${(await supabase.auth.getSession()).data.session?.access_token}`,
-        },
-        body: JSON.stringify({ lessonId }),
+      const response = await supabase.functions.invoke('generate-lesson', {
+        body: { lessonId },
       });
 
-      if (!response.ok) throw new Error("Ошибка при генерации урока");
-
-      const data = await response.json();
-      setGeneratedText(data.text);
+      if (response.error) throw new Error(response.error.message);
+      setGeneratedText(response.data.text);
 
       await supabase
         .from("profiles")
@@ -189,16 +191,9 @@ const Lesson = () => {
     }
   };
 
-  const topQuestions = [
-    "Какие основные обязанности бизнес-аналитика?",
-    "Какие инструменты использует бизнес-аналитик?",
-    "Как стать бизнес-аналитиком?",
-    "Какие soft skills нужны бизнес-аналитику?",
-    "Сколько зарабатывает бизнес-аналитик?",
-  ];
-
   const handleAskQuestion = async (question: string) => {
     // Implement question handling logic here
+    console.log("Question asked:", question);
   };
 
   return (
@@ -224,8 +219,11 @@ const Lesson = () => {
           <LessonContent
             loading={loading}
             generatedText={generatedText}
+            userPrompt={userPrompt}
+            onUserPromptChange={setUserPrompt}
             onShowTest={() => setShowTest(true)}
             onFinishLesson={() => navigate("/program")}
+            topQuestions={topQuestions}
           />
           <Chat
             topQuestions={topQuestions}

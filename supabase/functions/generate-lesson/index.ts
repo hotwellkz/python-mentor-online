@@ -15,6 +15,7 @@ serve(async (req) => {
 
   try {
     const { lessonId } = await req.json();
+    console.log('Generating lesson for:', lessonId);
 
     const response = await fetch('https://api.openai.com/v1/chat/completions', {
       method: 'POST',
@@ -38,6 +39,8 @@ serve(async (req) => {
     });
 
     const data = await response.json();
+    console.log('OpenAI response received');
+    
     return new Response(JSON.stringify({ 
       text: data.choices[0].message.content 
     }), {
