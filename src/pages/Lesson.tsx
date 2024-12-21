@@ -108,8 +108,10 @@ const Lesson = () => {
         />
         <meta 
           name="keywords" 
-          content={`${currentLesson.topics.join(", ")}, python обучение, курсы программирования`} 
+          content={`${currentLesson.topics.join(", ")}, проверка установки python, python cli, версия python, python обучение, курсы программирования`} 
         />
+        <meta name="robots" content="index, follow" />
+        <link rel="canonical" href={window.location.href} />
       </Helmet>
       <div className="container mx-auto px-4 py-8">
         <div className="max-w-4xl mx-auto">
