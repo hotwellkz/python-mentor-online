@@ -136,43 +136,49 @@ export const LessonContent = ({
             <div dangerouslySetInnerHTML={{ __html: cleanText(generatedText) }} />
           </div>
 
-          <div className="flex flex-wrap gap-4">
-            <div className="flex gap-2">
-              <Button variant="outline" onClick={shareToWhatsApp}>
+          <div className="flex flex-col gap-4">
+            {/* Share buttons group */}
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+              <Button variant="outline" onClick={shareToWhatsApp} className="w-full">
                 <MessageCircle className="h-5 w-5 mr-2" />
-                WhatsApp
+                <span className="hidden sm:inline">WhatsApp</span>
               </Button>
-              <Button variant="outline" onClick={shareToTelegram}>
+              <Button variant="outline" onClick={shareToTelegram} className="w-full">
                 <Send className="h-5 w-5 mr-2" />
-                Telegram
+                <span className="hidden sm:inline">Telegram</span>
               </Button>
-              <Button variant="outline" onClick={copyToClipboard}>
+              <Button variant="outline" onClick={copyToClipboard} className="w-full">
                 <Copy className="h-5 w-5 mr-2" />
-                Копировать
+                <span className="hidden sm:inline">Копировать</span>
               </Button>
-              <Button variant="outline" onClick={downloadPDF}>
+              <Button variant="outline" onClick={downloadPDF} className="w-full">
                 <FileDown className="h-5 w-5 mr-2" />
-                Скачать PDF
+                <span className="hidden sm:inline">Скачать PDF</span>
               </Button>
             </div>
 
-            <div className="flex flex-col md:flex-row justify-between gap-4 w-full">
+            {/* Control buttons group */}
+            <div className="flex flex-col sm:flex-row justify-between gap-2">
               {onTogglePlayback && (
                 <Button 
                   onClick={onTogglePlayback}
                   variant="outline"
-                  className="flex items-center gap-2"
+                  className="w-full sm:w-auto"
                 >
-                  {isPlaying ? <Pause className="h-4 w-4" /> : <Play className="h-4 w-4" />}
+                  {isPlaying ? <Pause className="h-4 w-4 mr-2" /> : <Play className="h-4 w-4 mr-2" />}
                   {isPlaying ? "Пауза" : "Продолжить"}
                 </Button>
               )}
-              <Button onClick={onShowTest}>
+              <Button 
+                onClick={onShowTest}
+                className="w-full sm:w-auto"
+              >
                 Пройти тест
               </Button>
               <Button
                 variant="destructive"
                 onClick={onFinishLesson}
+                className="w-full sm:w-auto"
               >
                 Завершить урок
               </Button>
