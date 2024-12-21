@@ -35,20 +35,30 @@ export const UsersTable = () => {
       if (adminError) throw adminError;
       if (!adminData) throw new Error('Не авторизован как администратор');
 
-      // Now fetch profiles (this will work because we have admin RLS policy)
+      // Now fetch users and their profiles
+      const { data: users, error: usersError } = await supabase
+        .from('auth.users')
+        .select('id, email');
+
+      if (usersError) throw usersError;
+
+      // Fetch profiles to get tokens
       const { data: profiles, error: profilesError } = await supabase
         .from('profiles')
         .select('*');
 
       if (profilesError) throw profilesError;
 
-      if (profiles) {
-        // Transform profiles into user data
-        const usersList = profiles.map(profile => ({
-          id: profile.id,
-          email: profile.id, // Using ID as email since we can't access auth.users
-          tokens: profile.tokens,
-        }));
+      if (users && profiles) {
+        // Combine user and profile data
+        const usersList = users.map(user => {
+          const profile = profiles.find(p => p.id === user.id);
+          return {
+            id: user.id,
+            email: user.email,
+            tokens: profile?.tokens || 0,
+          };
+        });
         
         setUsers(usersList);
       }
