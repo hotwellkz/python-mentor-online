@@ -102,15 +102,16 @@ const Admin = () => {
   if (!isAuthenticated) {
     return (
       <div className="container mx-auto px-4 py-8">
-        <div className="max-w-md mx-auto space-y-4">
-          <h1 className="text-2xl font-bold">Панель администратора</h1>
+        <div className="max-w-md mx-auto space-y-4 bg-background p-6 rounded-lg shadow-lg border">
+          <h1 className="text-2xl font-bold text-foreground">Панель администратора</h1>
           <Input
             type="password"
             placeholder="Введите пароль"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
+            className="bg-background text-foreground"
           />
-          <Button onClick={authenticate}>Войти</Button>
+          <Button onClick={authenticate} className="w-full">Войти</Button>
         </div>
       </div>
     );
@@ -119,7 +120,7 @@ const Admin = () => {
   return (
     <div className="container mx-auto px-4 py-8">
       <h1 className="text-2xl font-bold mb-6">Управление пользователями</h1>
-      <div className="overflow-x-auto">
+      <div className="overflow-x-auto bg-background rounded-lg shadow">
         <Table>
           <TableHeader>
             <TableRow>
@@ -137,7 +138,7 @@ const Admin = () => {
                     type="number"
                     value={user.tokens}
                     onChange={(e) => updateTokens(user.id, parseInt(e.target.value))}
-                    className="w-24"
+                    className="w-24 bg-background"
                   />
                 </TableCell>
                 <TableCell>

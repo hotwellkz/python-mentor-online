@@ -1,5 +1,7 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
+import { Pause, Play } from "lucide-react";
+import { useState } from "react";
 
 interface LessonContentProps {
   loading: boolean;
@@ -9,6 +11,8 @@ interface LessonContentProps {
   onShowTest: () => void;
   onFinishLesson: () => void;
   topQuestions: string[];
+  onTogglePlayback?: () => void;
+  isPlaying?: boolean;
 }
 
 export const LessonContent = ({
@@ -16,6 +20,8 @@ export const LessonContent = ({
   generatedText,
   onShowTest,
   onFinishLesson,
+  onTogglePlayback,
+  isPlaying,
 }: LessonContentProps) => {
   return (
     <>
@@ -44,6 +50,16 @@ export const LessonContent = ({
           </div>
 
           <div className="flex flex-col md:flex-row justify-between gap-4">
+            {onTogglePlayback && (
+              <Button 
+                onClick={onTogglePlayback}
+                variant="outline"
+                className="flex items-center gap-2"
+              >
+                {isPlaying ? <Pause className="h-4 w-4" /> : <Play className="h-4 w-4" />}
+                {isPlaying ? "Пауза" : "Продолжить"}
+              </Button>
+            )}
             <Button onClick={onShowTest}>
               Пройти тест
             </Button>
