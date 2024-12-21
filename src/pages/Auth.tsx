@@ -26,24 +26,42 @@ export const Auth = () => {
     try {
       if (isLogin) {
         const { error } = await supabase.auth.signInWithPassword({
-          email,
-          password,
+          email: email.trim(),
+          password: password.trim(),
         });
-        if (error) throw error;
+        
+        if (error) {
+          if (error.message === "Invalid login credentials") {
+            throw new Error("Неверный email или пароль");
+          }
+          throw error;
+        }
+        
         navigate("/program");
       } else {
+        if (password.length < 6) {
+          throw new Error("Пароль должен содержать минимум 6 символов");
+        }
+
         const { error } = await supabase.auth.signUp({
-          email,
-          password,
+          email: email.trim(),
+          password: password.trim(),
         });
-        if (error) throw error;
+
+        if (error) {
+          if (error.message.includes("already registered")) {
+            throw new Error("Этот email уже зарегистрирован");
+          }
+          throw error;
+        }
+
         setShowGiftModal(true);
       }
     } catch (error: any) {
       toast({
         variant: "destructive",
         title: "Ошибка",
-        description: error.message,
+        description: error.message || "Произошла ошибка при авторизации",
       });
     } finally {
       setLoading(false);
@@ -82,6 +100,7 @@ export const Auth = () => {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
+                placeholder="example@mail.com"
               />
             </div>
             <div className="space-y-2">
@@ -93,6 +112,7 @@ export const Auth = () => {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   required
+                  placeholder={isLogin ? "Введите пароль" : "Минимум 6 символов"}
                 />
                 <button
                   type="button"
