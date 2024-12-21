@@ -8,18 +8,141 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
-const cleanMarkdown = (text: string) => {
+const cleanText = (text: string) => {
   return text
-    .replace(/\*\*(.*?)\*\*/g, '$1')
-    .replace(/\*(.*?)\*/g, '$1')
-    .replace(/\[(.*?)\]\(.*?\)/g, '$1')
-    .replace(/#{1,6}\s/g, '')
-    .replace(/`(.*?)`/g, '$1')
-    .replace(/<[^>]*>/g, '')
-    .replace(/\n\s*[-*+]\s/g, '\n')
-    .replace(/\n\s*\d+\.\s/g, '\n')
-    .replace(/\n{2,}/g, '\n')
+    // Convert headers to HTML
+    .replace(/#{1,6}\s(.*?)(?:\n|$)/g, (_, title) => `<h3 class="text-xl font-semibold my-4">${title}</h3>`)
+    // Convert bold text
+    .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+    // Convert italic text
+    .replace(/\*(.*?)\*/g, '<em>$1</em>')
+    // Convert code blocks with syntax highlighting
+    .replace(/```(.*?)```/gs, (_, code) => `<pre class="bg-gray-100 dark:bg-gray-800 p-4 rounded-lg my-4 overflow-x-auto"><code>${code}</code></pre>`)
+    // Convert inline code
+    .replace(/`(.*?)`/g, '<code class="bg-gray-100 dark:bg-gray-800 px-1 rounded">$1</code>')
+    // Convert links
+    .replace(/\[(.*?)\]\((.*?)\)/g, '<a href="$2" class="text-primary hover:underline">$1</a>')
+    // Convert bullet points
+    .replace(/^\s*[-*+]\s+(.*?)(?:\n|$)/gm, '<li class="ml-4">$1</li>')
+    // Convert numbered lists
+    .replace(/^\s*\d+\.\s+(.*?)(?:\n|$)/gm, '<li class="ml-4">$1</li>')
+    // Wrap consecutive list items in ul/ol
+    .replace(/(<li.*?>.*?<\/li>)\n(<li.*?>.*?<\/li>)/gs, '<ul class="list-disc my-4">$1$2</ul>')
+    // Convert paragraphs (text blocks separated by blank lines)
+    .split('\n\n')
+    .map(paragraph => {
+      if (!paragraph.trim()) return '';
+      if (paragraph.startsWith('<')) return paragraph;
+      return `<p class="my-4">${paragraph}</p>`;
+    })
+    .join('\n')
     .trim();
+};
+
+const getDevOpsLessonPrompt = (lessonId: string) => {
+  const [, moduleIndex, topicIndex] = lessonId.split("-").map(Number);
+  
+  const modules = [
+    {
+      title: "Введение в DevOps",
+      topics: [
+        "Что такое DevOps и зачем он нужен?",
+        "Основные концепции DevOps",
+        "Культура DevOps: взаимодействие команд",
+        "Основные задачи DevOps-инженера",
+        "Обзор инструментов DevOps"
+      ]
+    },
+    {
+      title: "Контроль версий и управление исходным кодом",
+      topics: [
+        "Основы Git и GitHub/GitLab",
+        "Создание репозиториев, работа с ветками",
+        "Ревью кода и pull requests",
+        "GitOps и управление инфраструктурой через код",
+        "Концепция Infrastructure as Code (IaC)"
+      ]
+    },
+    {
+      title: "Контейнеризация и управление контейнерами",
+      topics: [
+        "Docker: основы и практика",
+        "Работа с Docker Compose",
+        "Kubernetes: основы и архитектура",
+        "Управление кластерами Kubernetes",
+        "Практика работы с контейнерами"
+      ]
+    },
+    {
+      title: "CI/CD (Непрерывная интеграция и доставка)",
+      topics: [
+        "Основы CI/CD",
+        "Jenkins: установка и настройка",
+        "GitHub Actions",
+        "Автоматизация процессов",
+        "Практика создания пайплайнов"
+      ]
+    },
+    {
+      title: "Мониторинг и логирование",
+      topics: [
+        "Основы мониторинга",
+        "Prometheus и Grafana",
+        "Системы логирования",
+        "ELK Stack",
+        "Практика настройки мониторинга"
+      ]
+    },
+    {
+      title: "Безопасность в DevOps",
+      topics: [
+        "Основы DevSecOps",
+        "Сканирование уязвимостей",
+        "Управление секретами",
+        "Безопасность контейнеров",
+        "Практика безопасной разработки"
+      ]
+    },
+    {
+      title: "Работа с облачными платформами",
+      topics: [
+        "Введение в облачные технологии",
+        "AWS основы",
+        "Azure и Google Cloud",
+        "Terraform",
+        "Практика работы с облаком"
+      ]
+    },
+    {
+      title: "Оркестрация и автоматизация",
+      topics: [
+        "Ansible основы",
+        "Написание playbooks",
+        "HashiCorp инструменты",
+        "Consul и Nomad",
+        "Практика автоматизации"
+      ]
+    },
+    {
+      title: "Финальный проект",
+      topics: [
+        "Планирование DevOps проекта",
+        "Реализация CI/CD",
+        "Настройка мониторинга",
+        "Обеспечение безопасности",
+        "Защита проекта"
+      ]
+    }
+  ];
+
+  const module = modules[moduleIndex - 1];
+  const topic = module?.topics[topicIndex - 1];
+
+  if (!module || !topic) {
+    throw new Error('Invalid lesson ID');
+  }
+
+  return `Расскажи подробно как будто ты преподаватель и преподаешь курс DevOps-инженер PRO, урок из модуля "${module.title}" на тему: "${topic}". Используй много практических примеров и объясняй сложные концепции простым языком. Добавь примеры кода или команд где это уместно.`;
 };
 
 serve(async (req) => {
@@ -43,15 +166,24 @@ serve(async (req) => {
       messages = [
         {
           role: 'system',
-          content: 'Вы - опытный преподаватель Python. Ваша задача - подробно и понятно отвечать на вопросы ученика, используя примеры кода где это уместно. Отвечайте четко и по существу.'
+          content: 'Вы - опытный преподаватель DevOps и Python. Ваша задача - подробно и понятно отвечать на вопросы ученика, используя примеры кода и команд где это уместно. Отвечайте четко и по существу. Используйте маркдаун для форматирования текста: заголовки через #, жирный текст через **, курсив через *, блоки кода через ```, списки через - или 1., 2. и т.д.'
         },
         { role: 'user', content: prompt }
+      ];
+    } else if (lessonId?.startsWith('devops-')) {
+      const devOpsPrompt = getDevOpsLessonPrompt(lessonId);
+      messages = [
+        {
+          role: 'system',
+          content: 'Вы - опытный преподаватель DevOps. Ваша задача - подробно объяснить тему урока, используя примеры и понятные объяснения. Используйте маркдаун для форматирования текста: заголовки через #, жирный текст через **, курсив через *, блоки кода через ```, списки через - или 1., 2. и т.д.'
+        },
+        { role: 'user', content: devOpsPrompt }
       ];
     } else {
       messages = [
         {
           role: 'system',
-          content: 'Вы - опытный преподаватель Python. Ваша задача - подробно объяснить тему урока, используя примеры и понятные объяснения. Форматируйте текст, используя HTML-теги для лучшей читаемости.'
+          content: 'Вы - опытный преподаватель Python. Ваша задача - подробно объяснить тему урока, используя примеры и понятные объяснения. Используйте маркдаун для форматирования текста: заголовки через #, жирный текст через **, курсив через *, блоки кода через ```, списки через - или 1., 2. и т.д.'
         },
         {
           role: 'user',
@@ -83,7 +215,7 @@ serve(async (req) => {
     console.log('OpenAI response received');
     
     const generatedText = data.choices[0].message.content;
-    const cleanedText = cleanMarkdown(generatedText);
+    const cleanedText = cleanText(generatedText);
 
     return new Response(JSON.stringify({ 
       text: cleanedText 

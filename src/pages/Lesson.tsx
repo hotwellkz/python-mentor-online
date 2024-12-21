@@ -11,6 +11,8 @@ import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { courseBlocks } from "@/data/courseData";
 import { useEffect, useState } from "react";
+import { modules } from "@/components/course/DevOpsCourseProgram";
+import { getDevOpsQuestions } from '@/utils/devopsQuestions';
 
 const Lesson = () => {
   const { lessonId } = useParams();
@@ -26,10 +28,30 @@ const Lesson = () => {
     setIsEmailVerified(user?.email_confirmed_at !== null);
   };
 
-  // Находим текущий урок в courseData
-  const [blockIndex, lessonIndex] = (lessonId || "").split("-").map(Number);
-  const currentBlock = courseBlocks[blockIndex - 1];
-  const currentLesson = currentBlock?.lessons[lessonIndex - 1];
+  // Определяем, является ли это уроком DevOps
+  const isDevOpsLesson = lessonId?.startsWith('devops-');
+
+  // Находим текущий урок в зависимости от типа
+  let currentLesson;
+  let topQuestions: string[] = [];
+
+  if (isDevOpsLesson) {
+    const [, moduleIndex, topicIndex] = (lessonId || "").split("-").map(Number);
+    const currentModule = modules[moduleIndex - 1];
+    if (currentModule) {
+      currentLesson = {
+        title: currentModule.topics[topicIndex - 1],
+        topics: [currentModule.title], // Используем название модуля как тему
+      };
+      const questions = getDevOpsQuestions(moduleIndex, topicIndex);
+      topQuestions = questions.map(q => q.question);
+    }
+  } else {
+    const [blockIndex, lessonIndex] = (lessonId || "").split("-").map(Number);
+    const currentBlock = courseBlocks[blockIndex - 1];
+    currentLesson = currentBlock?.lessons[lessonIndex - 1];
+    topQuestions = currentLesson?.topics || [];
+  }
 
   const {
     loading,
@@ -49,15 +71,8 @@ const Lesson = () => {
     synthesis,
     setSynthesis,
     playText,
+    stopPlayback,
   } = useSpeech();
-
-  const topQuestions = currentLesson?.topics || [
-    "Как установить VS Code для Python?",
-    "Какие расширения нужны для Python в VS Code?",
-    "Как настроить PyCharm для Python?",
-    "Как установить Jupyter Notebook?",
-    "Какой редактор лучше выбрать для начинающего Python разработчика?"
-  ];
 
   const handleAskQuestion = async (question: string) => {
     try {
@@ -112,14 +127,14 @@ const Lesson = () => {
   return (
     <>
       <Helmet>
-        <title>{currentLesson.title} | Python с ИИ-учителем</title>
+        <title>{currentLesson.title} | {isDevOpsLesson ? 'DevOps' : 'Python'} с ИИ-учителем</title>
         <meta
           name="description"
           content={`${currentLesson.title}. ${currentLesson.topics.join(". ")}. Интерактивное обучение с ИИ-учителем.`}
         />
         <meta 
           name="keywords" 
-          content={`${currentLesson.topics.join(", ")}, проверка установки python, python cli, версия python, python обучение, курсы программирования`} 
+          content={`${currentLesson.topics.join(", ")}, ${isDevOpsLesson ? 'devops обучение, devops курс' : 'python обучение, python курс'}`} 
         />
         <meta name="robots" content="index, follow" />
         <link rel="canonical" href={window.location.href} />
@@ -151,6 +166,11 @@ const Lesson = () => {
                 } else {
                   synthesis.resume();
                 }
+              }
+            }}
+            onStopPlayback={() => {
+              if (synthesis && stopPlayback) {
+                stopPlayback();
               }
             }}
             isPlaying={isPlaying}

@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Helmet } from "react-helmet";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { Eye, EyeOff } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -16,7 +16,6 @@ export const Auth = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [showGiftModal, setShowGiftModal] = useState(false);
-  const navigate = useNavigate();
   const { toast } = useToast();
 
   const validateEmail = (email: string) => {
@@ -32,12 +31,10 @@ export const Auth = () => {
     const trimmedPassword = password.trim();
 
     try {
-      // Валидация email
       if (!validateEmail(trimmedEmail)) {
         throw new Error("Пожалуйста, введите корректный email адрес");
       }
 
-      // Валидация пароля
       if (trimmedPassword.length < 6) {
         throw new Error("Пароль должен содержать минимум 6 символов");
       }
@@ -56,9 +53,7 @@ export const Auth = () => {
           throw error;
         }
 
-        if (data?.user) {
-          navigate("/program");
-        } else {
+        if (!data?.user) {
           throw new Error("Не удалось получить данные пользователя");
         }
       } else {

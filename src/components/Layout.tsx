@@ -2,16 +2,11 @@ import { Link, Outlet, useLocation, useNavigate } from "react-router-dom";
 import { Footer } from "./Footer";
 import { Breadcrumbs } from "./Breadcrumbs";
 import { useEffect, useState } from "react";
-import { Button } from "./ui/button";
-import { TokenDisplay } from "./TokenDisplay";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
-import { Menu, Settings, User } from "lucide-react";
-import {
-  Sheet,
-  SheetContent,
-  SheetTrigger,
-} from "@/components/ui/sheet";
+import { NavLinks } from "./navigation/NavLinks";
+import { UserMenu } from "./navigation/UserMenu";
+import { MobileMenu } from "./navigation/MobileMenu";
 
 export const Layout = () => {
   const { pathname } = useLocation();
@@ -66,107 +61,17 @@ export const Layout = () => {
               to="/"
               className="text-2xl font-bold hover:text-primary transition-colors"
             >
-              Python с ИИ-учителем
+              Курсы с ИИ-учителем
             </Link>
             
             {/* Desktop Navigation */}
             <div className="hidden md:flex items-center gap-4">
-              <Link 
-                to="/program"
-                className="text-white hover:text-primary transition-colors"
-              >
-                Программа курса
-              </Link>
-              <Link 
-                to="/pricing"
-                className="text-white hover:text-primary transition-colors"
-              >
-                Тарифы
-              </Link>
-              <Link
-                to="/admin"
-                className="text-white hover:text-primary transition-colors"
-              >
-                <Settings className="h-5 w-5" />
-              </Link>
-              <TokenDisplay />
-              {userEmail ? (
-                <div className="flex items-center gap-2">
-                  <Link 
-                    to="/profile"
-                    className="flex items-center gap-2 text-white hover:text-primary transition-colors"
-                  >
-                    <User className="h-5 w-5" />
-                    {userEmail}
-                  </Link>
-                  <Button
-                    variant="ghost"
-                    className="text-white hover:text-primary"
-                    onClick={handleLogout}
-                  >
-                    Выйти
-                  </Button>
-                </div>
-              ) : (
-                <Link to="/auth">
-                  <Button>Войти</Button>
-                </Link>
-              )}
+              <NavLinks />
+              <UserMenu userEmail={userEmail} onLogout={handleLogout} />
             </div>
 
             {/* Mobile Navigation */}
-            <Sheet>
-              <SheetTrigger asChild className="md:hidden">
-                <Button variant="ghost" size="icon">
-                  <Menu className="h-6 w-6" />
-                </Button>
-              </SheetTrigger>
-              <SheetContent>
-                <div className="flex flex-col gap-4">
-                  <Link 
-                    to="/program"
-                    className="text-foreground hover:text-primary transition-colors flex items-center gap-2"
-                  >
-                    Программа курса
-                  </Link>
-                  <Link 
-                    to="/pricing"
-                    className="text-foreground hover:text-primary transition-colors"
-                  >
-                    Тарифы
-                  </Link>
-                  <Link
-                    to="/admin"
-                    className="text-foreground hover:text-primary transition-colors"
-                  >
-                    Администратор
-                  </Link>
-                  {userEmail && (
-                    <Link
-                      to="/profile"
-                      className="text-foreground hover:text-primary transition-colors flex items-center gap-2"
-                    >
-                      <User className="h-5 w-5" />
-                      Профиль
-                    </Link>
-                  )}
-                  <TokenDisplay />
-                  {userEmail ? (
-                    <Button
-                      variant="ghost"
-                      className="w-full"
-                      onClick={handleLogout}
-                    >
-                      Выйти
-                    </Button>
-                  ) : (
-                    <Link to="/auth" className="w-full">
-                      <Button className="w-full">Войти</Button>
-                    </Link>
-                  )}
-                </div>
-              </SheetContent>
-            </Sheet>
+            <MobileMenu userEmail={userEmail} onLogout={handleLogout} />
           </div>
         </div>
       </header>

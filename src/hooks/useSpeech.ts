@@ -1,13 +1,17 @@
-import { useState, useEffect } from "react";
-import { useToast } from "@/hooks/use-toast";
-import { supabase } from "@/integrations/supabase/client";
+import { useState, useEffect, useRef } from "react";
+import { toast } from "@/hooks/use-toast";
+import { cleanMarkdown } from "./speech/voiceUtils";
+import { playPremiumVoice } from "./speech/supabaseUtils";
+import { createUtterance, speakUtterance } from "./speech/browserSpeechUtils";
 
 export const useSpeech = () => {
-  const { toast } = useToast();
   const [isPlaying, setIsPlaying] = useState(false);
   const [isPremiumPlaying, setIsPremiumPlaying] = useState(false);
   const [synthesis, setSynthesis] = useState<SpeechSynthesis | null>(null);
   const [utterance, setUtterance] = useState<SpeechSynthesisUtterance | null>(null);
+  const [isPaused, setIsPaused] = useState(false);
+  const [currentText, setCurrentText] = useState<string>("");
+  const currentUtteranceRef = useRef<SpeechSynthesisUtterance | null>(null);
 
   useEffect(() => {
     if (window.speechSynthesis) {
@@ -15,32 +19,47 @@ export const useSpeech = () => {
     }
 
     return () => {
-      if (synthesis && utterance) {
+      if (synthesis) {
         synthesis.cancel();
       }
     };
   }, []);
 
-  const cleanMarkdown = (text: string) => {
-    return text
-      .replace(/\*\*(.*?)\*\*/g, '$1') // Bold
-      .replace(/\*(.*?)\*/g, '$1') // Italic
-      .replace(/\[(.*?)\]\(.*?\)/g, '$1') // Links
-      .replace(/#{1,6}\s/g, '') // Headers
-      .replace(/`(.*?)`/g, '$1') // Code
-      .replace(/<[^>]*>/g, '') // HTML tags
-      .replace(/\n\s*[-*+]\s/g, '\n') // Lists
-      .replace(/\n\s*\d+\.\s/g, '\n') // Numbered lists
-      .replace(/\n{2,}/g, '\n') // Multiple newlines
-      .trim();
-  };
-
   const playText = async (text: string, isPremium = false) => {
     const cleanText = cleanMarkdown(text);
     if (isPremium) {
-      await playPremiumVoice(cleanText);
+      await playPremiumVoice(cleanText, setIsPremiumPlaying);
     } else {
+      setCurrentText(cleanText);
       playBrowserVoice(cleanText);
+    }
+  };
+
+  const stopPlayback = () => {
+    if (synthesis) {
+      synthesis.cancel();
+      setIsPlaying(false);
+      setIsPaused(false);
+      setUtterance(null);
+      currentUtteranceRef.current = null;
+      setCurrentText("");
+    }
+  };
+
+  const togglePlayback = () => {
+    if (!synthesis) return;
+
+    if (isPlaying && !isPaused) {
+      synthesis.pause();
+      setIsPaused(true);
+    } else if (isPaused && currentUtteranceRef.current) {
+      synthesis.resume();
+      setIsPaused(false);
+    } else if (currentText) {
+      if (currentUtteranceRef.current) {
+        synthesis.cancel();
+      }
+      playBrowserVoice(currentText);
     }
   };
 
@@ -54,98 +73,27 @@ export const useSpeech = () => {
       return;
     }
 
-    if (isPlaying) {
-      synthesis.cancel();
-      setIsPlaying(false);
-      setUtterance(null);
-      return;
-    }
-
-    const newUtterance = new SpeechSynthesisUtterance(text);
-    newUtterance.lang = "ru-RU";
-    newUtterance.rate = 0.9;
-    
-    newUtterance.onend = () => {
-      setIsPlaying(false);
-      setUtterance(null);
-    };
-
-    newUtterance.onerror = (event) => {
-      console.error('Speech synthesis error:', event);
-      toast({
-        variant: "destructive",
-        title: "Ошибка",
-        description: "Произошла ошибка при озвучивании текста",
-      });
-      setIsPlaying(false);
-      setUtterance(null);
-    };
-
-    setUtterance(newUtterance);
-    setIsPlaying(true);
-    synthesis.speak(newUtterance);
-  };
-
-  const playPremiumVoice = async (text: string) => {
-    try {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) {
-        toast({
-          variant: "destructive",
-          title: "Ошибка",
-          description: "Пожалуйста, войдите в систему",
-        });
-        return;
-      }
-
-      const { data: profile } = await supabase
-        .from("profiles")
-        .select("tokens")
-        .eq("id", user.id)
-        .single();
-
-      if (!profile || profile.tokens < 45) {
-        toast({
-          variant: "destructive",
-          title: "Недостаточно токенов",
-          description: "Для премиум озвучки необходимо 45 токенов",
-        });
-        return;
-      }
-
-      setIsPremiumPlaying(true);
-      const response = await supabase.functions.invoke('text-to-speech', {
-        body: { text },
-      });
-
-      if (response.error) throw new Error(response.error.message);
-
-      const audioUrl = response.data.audioUrl;
-      const audio = new Audio(audioUrl);
-      
-      audio.play();
-
-      await supabase
-        .from("profiles")
-        .update({ tokens: profile.tokens - 45 })
-        .eq("id", user.id);
-
-    } catch (error: any) {
-      toast({
-        variant: "destructive",
-        title: "Ошибка",
-        description: error.message,
-      });
-    } finally {
-      setIsPremiumPlaying(false);
+    if (synthesis.getVoices().length === 0) {
+      synthesis.addEventListener('voiceschanged', () => {
+        const newUtterance = createUtterance(text, setIsPlaying, setIsPaused, setUtterance);
+        currentUtteranceRef.current = newUtterance;
+        speakUtterance(newUtterance, synthesis, setUtterance, setIsPlaying, setIsPaused);
+      }, { once: true });
+    } else {
+      const newUtterance = createUtterance(text, setIsPlaying, setIsPaused, setUtterance);
+      currentUtteranceRef.current = newUtterance;
+      speakUtterance(newUtterance, synthesis, setUtterance, setIsPlaying, setIsPaused);
     }
   };
 
   return {
     isPlaying,
     isPremiumPlaying,
+    isPaused,
     synthesis,
     setSynthesis,
     playText,
+    stopPlayback,
+    togglePlayback,
   };
 };
