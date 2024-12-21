@@ -35,7 +35,7 @@ export const UsersTable = () => {
       if (adminError) throw adminError;
       if (!adminData) throw new Error('Не авторизован как администратор');
 
-      // Fetch profiles to get tokens and user IDs
+      // Fetch profiles to get tokens
       const { data: profiles, error: profilesError } = await supabase
         .from('profiles')
         .select('*');
@@ -43,10 +43,8 @@ export const UsersTable = () => {
       if (profilesError) throw profilesError;
 
       if (profiles) {
-        // Get user data from auth.users using service role (this is handled by RLS policy)
-        const { data: authUsers, error: authError } = await supabase
-          .from('users')
-          .select('id, email');
+        // Get user data using admin API
+        const { data: { users: authUsers }, error: authError } = await supabase.auth.admin.listUsers();
 
         if (authError) throw authError;
 
