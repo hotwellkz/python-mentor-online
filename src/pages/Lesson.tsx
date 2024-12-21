@@ -9,10 +9,17 @@ import { useLesson } from "@/hooks/useLesson";
 import { useSpeech } from "@/hooks/useSpeech";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
+import { courseBlocks } from "@/data/courseData";
 
 const Lesson = () => {
   const { lessonId } = useParams();
   const { toast } = useToast();
+
+  // Находим текущий урок в courseData
+  const [blockIndex, lessonIndex] = (lessonId || "").split("-").map(Number);
+  const currentBlock = courseBlocks[blockIndex - 1];
+  const currentLesson = currentBlock?.lessons[lessonIndex - 1];
+
   const {
     loading,
     generatedText,
@@ -33,7 +40,7 @@ const Lesson = () => {
     playText,
   } = useSpeech();
 
-  const topQuestions = [
+  const topQuestions = currentLesson?.topics || [
     "Как установить VS Code для Python?",
     "Какие расширения нужны для Python в VS Code?",
     "Как настроить PyCharm для Python?",
@@ -83,18 +90,30 @@ const Lesson = () => {
     return <AuthCheck />;
   }
 
+  if (!currentLesson) {
+    return (
+      <div className="container mx-auto px-4 py-8">
+        <h1 className="text-2xl font-bold text-center">Урок не найден</h1>
+      </div>
+    );
+  }
+
   return (
     <>
       <Helmet>
-        <title>Урок 3: Настройка редактора кода | Python с ИИ-учителем</title>
+        <title>{currentLesson.title} | Python с ИИ-учителем</title>
         <meta
           name="description"
-          content="Научитесь настраивать популярные редакторы кода для Python: VS Code, PyCharm и Jupyter Notebook. Пошаговое руководство по установке и настройке. Интерактивное обучение с ИИ-учителем."
+          content={`${currentLesson.title}. ${currentLesson.topics.join(". ")}. Интерактивное обучение с ИИ-учителем.`}
         />
-        <meta name="keywords" content="настройка редактора кода python, vs code python, pycharm настройка, jupyter notebook установка, python ide" />
+        <meta 
+          name="keywords" 
+          content={`${currentLesson.topics.join(", ")}, python обучение, курсы программирования`} 
+        />
       </Helmet>
       <div className="container mx-auto px-4 py-8">
         <div className="max-w-4xl mx-auto">
+          <h1 className="text-3xl font-bold mb-6">{currentLesson.title}</h1>
           <LessonHeader
             loading={loading}
             generatedText={generatedText}
