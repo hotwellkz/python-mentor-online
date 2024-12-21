@@ -11,15 +11,16 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { User } from "@supabase/supabase-js";
 
-interface User {
+interface UserWithTokens {
   id: string;
   email: string;
   tokens: number;
 }
 
 export const UsersTable = () => {
-  const [users, setUsers] = useState<User[]>([]);
+  const [users, setUsers] = useState<UserWithTokens[]>([]);
   const { toast } = useToast();
 
   const fetchUsers = async () => {
