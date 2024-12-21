@@ -8,6 +8,20 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
+const cleanMarkdown = (text: string) => {
+  return text
+    .replace(/\*\*(.*?)\*\*/g, '$1') // Bold
+    .replace(/\*(.*?)\*/g, '$1') // Italic
+    .replace(/\[(.*?)\]\(.*?\)/g, '$1') // Links
+    .replace(/#{1,6}\s/g, '') // Headers
+    .replace(/`(.*?)`/g, '$1') // Code
+    .replace(/<[^>]*>/g, '') // HTML tags
+    .replace(/\n\s*[-*+]\s/g, '\n') // Lists
+    .replace(/\n\s*\d+\.\s/g, '\n') // Numbered lists
+    .replace(/\n{2,}/g, '\n') // Multiple newlines
+    .trim();
+};
+
 serve(async (req) => {
   console.log('Function called with method:', req.method);
   
@@ -16,12 +30,34 @@ serve(async (req) => {
   }
 
   try {
-    const { lessonId } = await req.json();
-    console.log('Generating lesson for:', lessonId);
+    const { lessonId, prompt } = await req.json();
+    console.log('Generating lesson for:', lessonId, 'with prompt:', prompt);
 
     if (!openAIApiKey) {
       console.error('OpenAI API key not found');
       throw new Error('OpenAI API key not configured');
+    }
+
+    let messages = [];
+    if (prompt) {
+      messages = [
+        {
+          role: 'system',
+          content: 'Вы - опытный преподаватель Python. Ваша задача - подробно и понятно отвечать на вопросы ученика, используя примеры кода где это уместно. Отвечайте четко и по существу.'
+        },
+        { role: 'user', content: prompt }
+      ];
+    } else {
+      messages = [
+        {
+          role: 'system',
+          content: 'Вы - опытный преподаватель Python. Ваша задача - подробно объяснить тему урока, используя примеры и понятные объяснения. Форматируйте текст, используя HTML-теги для лучшей читаемости.'
+        },
+        {
+          role: 'user',
+          content: 'Расскажи подробно как будто ты преподаватель и преподаешь Курс Python урок на тему: "Переменные и типы данных: Типы данных: int, float, str, bool., Создание и вывод переменных." Используй много примеров кода.'
+        }
+      ];
     }
 
     console.log('Making request to OpenAI API...');
@@ -33,16 +69,7 @@ serve(async (req) => {
       },
       body: JSON.stringify({
         model: 'gpt-4o',
-        messages: [
-          {
-            role: 'system',
-            content: 'Вы - опытный преподаватель Python. Ваша задача - подробно объяснить тему урока, используя примеры и понятные объяснения. Форматируйте текст, используя HTML-теги для лучшей читаемости. Не используйте маркдаун.'
-          },
-          {
-            role: 'user',
-            content: 'Расскажи подробно как будто ты преподаватель и преподаешь Курс Python урок на тему: "Переменные и типы данных: Типы данных: int, float, str, bool., Создание и вывод переменных." Используй много примеров кода.'
-          }
-        ],
+        messages: messages,
       }),
     });
 
@@ -54,8 +81,11 @@ serve(async (req) => {
     const data = await response.json();
     console.log('OpenAI response received');
     
+    const generatedText = data.choices[0].message.content;
+    const cleanedText = cleanMarkdown(generatedText);
+
     return new Response(JSON.stringify({ 
-      text: data.choices[0].message.content 
+      text: cleanedText 
     }), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });
