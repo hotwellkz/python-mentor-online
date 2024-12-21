@@ -1,12 +1,12 @@
 import { Link, Outlet, useLocation, useNavigate } from "react-router-dom";
 import { Footer } from "./Footer";
 import { Breadcrumbs } from "./Breadcrumbs";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "./ui/button";
 import { TokenDisplay } from "./TokenDisplay";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
-import { Menu, Settings } from "lucide-react";
+import { Menu, Settings, User } from "lucide-react";
 import {
   Sheet,
   SheetContent,
@@ -17,9 +17,29 @@ export const Layout = () => {
   const { pathname } = useLocation();
   const navigate = useNavigate();
   const { toast } = useToast();
+  const [userEmail, setUserEmail] = useState<string | null>(null);
 
   useEffect(() => {
     window.scrollTo(0, 0);
+    
+    const getUser = async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      setUserEmail(user?.email || null);
+    };
+    
+    getUser();
+
+    const { data: authListener } = supabase.auth.onAuthStateChange(async (event, session) => {
+      if (event === 'SIGNED_IN') {
+        setUserEmail(session?.user?.email || null);
+      } else if (event === 'SIGNED_OUT') {
+        setUserEmail(null);
+      }
+    });
+
+    return () => {
+      authListener?.subscription.unsubscribe();
+    };
   }, [pathname]);
 
   const handleLogout = async () => {
@@ -64,18 +84,28 @@ export const Layout = () => {
                 <Settings className="h-5 w-5" />
               </Link>
               <TokenDisplay />
-              <div className="flex items-center gap-2">
-                <Button
-                  variant="ghost"
-                  className="text-white hover:text-primary"
-                  onClick={handleLogout}
-                >
-                  Выйти
-                </Button>
+              {userEmail ? (
+                <div className="flex items-center gap-2">
+                  <Link 
+                    to="/profile"
+                    className="flex items-center gap-2 text-white hover:text-primary transition-colors"
+                  >
+                    <User className="h-5 w-5" />
+                    {userEmail}
+                  </Link>
+                  <Button
+                    variant="ghost"
+                    className="text-white hover:text-primary"
+                    onClick={handleLogout}
+                  >
+                    Выйти
+                  </Button>
+                </div>
+              ) : (
                 <Link to="/auth">
                   <Button>Войти</Button>
                 </Link>
-              </div>
+              )}
             </div>
 
             {/* Mobile Navigation */}
@@ -99,17 +129,29 @@ export const Layout = () => {
                   >
                     Администратор
                   </Link>
+                  {userEmail && (
+                    <Link
+                      to="/profile"
+                      className="text-foreground hover:text-primary transition-colors flex items-center gap-2"
+                    >
+                      <User className="h-5 w-5" />
+                      Профиль
+                    </Link>
+                  )}
                   <TokenDisplay />
-                  <Link to="/auth" className="w-full">
-                    <Button className="w-full">Войти</Button>
-                  </Link>
-                  <Button
-                    variant="ghost"
-                    className="w-full"
-                    onClick={handleLogout}
-                  >
-                    Выйти
-                  </Button>
+                  {userEmail ? (
+                    <Button
+                      variant="ghost"
+                      className="w-full"
+                      onClick={handleLogout}
+                    >
+                      Выйти
+                    </Button>
+                  ) : (
+                    <Link to="/auth" className="w-full">
+                      <Button className="w-full">Войти</Button>
+                    </Link>
+                  )}
                 </div>
               </SheetContent>
             </Sheet>
