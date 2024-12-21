@@ -5,6 +5,7 @@ import { Features } from "@/components/Features";
 import { TargetAudience } from "@/components/TargetAudience";
 import { Reviews } from "@/components/Reviews";
 import { StartLearning } from "@/components/StartLearning";
+import { Categories } from "@/components/Categories";
 
 const Index = () => {
   return (
@@ -32,6 +33,7 @@ const Index = () => {
       </Helmet>
       <main className="min-h-screen bg-gradient-to-br from-blue-400 to-blue-800">
         <Hero />
+        <Categories />
         <Features />
         <TargetAudience />
         <StartLearning />
