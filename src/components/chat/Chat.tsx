@@ -42,7 +42,15 @@ export const Chat = ({ topQuestions, onAskQuestion }: ChatProps) => {
         .single();
 
       if (progress?.chat_messages) {
-        setMessages((progress.chat_messages as Json as Message[]));
+        const loadedMessages = progress.chat_messages as unknown as Message[];
+        if (Array.isArray(loadedMessages) && loadedMessages.every(msg => 
+          typeof msg === 'object' && 
+          'role' in msg && 
+          'content' in msg && 
+          (msg.role === 'user' || msg.role === 'assistant')
+        )) {
+          setMessages(loadedMessages);
+        }
       }
     } catch (error) {
       console.error('Error loading chat messages:', error);

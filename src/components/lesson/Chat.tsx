@@ -4,6 +4,7 @@ import { Input } from "@/components/ui/input";
 import { Send } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
+import { Json } from "@/integrations/supabase/types";
 
 interface ChatProps {
   topQuestions: string[];
@@ -41,7 +42,15 @@ export const Chat = ({ topQuestions, onAskQuestion }: ChatProps) => {
         .single();
 
       if (progress?.chat_messages) {
-        setMessages(progress.chat_messages as Message[]);
+        const loadedMessages = progress.chat_messages as unknown as Message[];
+        if (Array.isArray(loadedMessages) && loadedMessages.every(msg => 
+          typeof msg === 'object' && 
+          'role' in msg && 
+          'content' in msg && 
+          (msg.role === 'user' || msg.role === 'assistant')
+        )) {
+          setMessages(loadedMessages);
+        }
       }
     } catch (error) {
       console.error('Error loading chat messages:', error);
