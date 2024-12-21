@@ -10,27 +10,27 @@ const Index = () => {
   return (
     <>
       <Helmet>
-        <title>Курс Python Бесплатно | Изучайте Python с ИИ-учителем</title>
+        <title>Курсы с ИИ-учителем Бесплатно | Изучайте программирование онлайн</title>
         <meta
           name="description"
-          content="Бесплатный курс Python с персональным ИИ-учителем. Начните изучать программирование прямо сейчас! Индивидуальный подход, практические задания и поддержка 24/7."
+          content="Бесплатные курсы программирования с персональным ИИ-учителем. Python, DevOps и другие направления. Начните обучение прямо сейчас! Индивидуальный подход и поддержка 24/7."
         />
         <meta
           name="keywords"
-          content="курс Python бесплатно, изучение Python, программирование, ИИ учитель, обучение Python"
+          content="курсы с ИИ-учителем бесплатно, обучение программированию, Python курсы, DevOps курсы, ИИ учитель"
         />
         <meta
           property="og:title"
-          content="Курс Python Бесплатно | Изучайте Python с ИИ-учителем"
+          content="Курсы с ИИ-учителем Бесплатно | Изучайте программирование онлайн"
         />
         <meta
           property="og:description"
-          content="Бесплатный курс Python с персональным ИИ-учителем. Начните изучать программирование прямо сейчас!"
+          content="Бесплатные курсы программирования с персональным ИИ-учителем. Начните обучение прямо сейчас!"
         />
         <meta property="og:type" content="website" />
         <link rel="canonical" href="https://your-domain.com" />
       </Helmet>
-      <main className="min-h-screen bg-gray-900">
+      <main className="min-h-screen bg-gradient-to-br from-blue-400 to-blue-800">
         <Hero />
         <Features />
         <TargetAudience />
