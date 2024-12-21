@@ -35,19 +35,12 @@
     --radius: 0.5rem;
 
     --sidebar-background: 0 0% 98%;
-
     --sidebar-foreground: 240 5.3% 26.1%;
-
     --sidebar-primary: 240 5.9% 10%;
-
     --sidebar-primary-foreground: 0 0% 98%;
-
     --sidebar-accent: 240 4.8% 95.9%;
-
     --sidebar-accent-foreground: 240 5.9% 10%;
-
     --sidebar-border: 220 13% 91%;
-
     --sidebar-ring: 217.2 91.2% 59.8%;
   }
 
@@ -112,4 +105,55 @@
 .animate-scroll {
   display: flex;
   width: max-content;
+}
+
+/* Стили для форматирования текста в чате */
+.prose pre {
+  margin: 1em 0;
+  padding: 1em;
+  background-color: rgb(243 244 246);
+  border-radius: 0.5rem;
+  overflow-x: auto;
+}
+
+.prose code {
+  color: rgb(31 41 55);
+  background-color: rgb(243 244 246);
+  padding: 0.2em 0.4em;
+  border-radius: 0.25rem;
+}
+
+.dark .prose code {
+  color: rgb(229 231 235);
+  background-color: rgb(31 41 55);
+}
+
+.dark .prose pre {
+  background-color: rgb(31 41 55);
+}
+
+.prose h3 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin-top: 1.5em;
+  margin-bottom: 0.5em;
+}
+
+.prose p {
+  margin: 1em 0;
+  line-height: 1.6;
+}
+
+.prose ul,
+.prose ol {
+  margin: 1em 0;
+  padding-left: 1.5em;
+}
+
+.prose li {
+  margin: 0.5em 0;
+}
+
+.prose-sm {
+  font-size: 0.875rem;
 }

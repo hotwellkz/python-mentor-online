@@ -136,6 +136,45 @@ export const Chat = ({ topQuestions, onAskQuestion }: ChatProps) => {
     }
   };
 
+  const formatMessage = (content: string) => {
+    return content
+      .split('\n\n')
+      .map((paragraph, index) => {
+        // Обработка заголовков
+        if (paragraph.startsWith('#')) {
+          return `<h3 class="text-xl font-semibold my-4">${paragraph.replace(/^#+\s/, '')}</h3>`;
+        }
+        
+        // Обработка списков
+        if (paragraph.includes('\n- ')) {
+          const items = paragraph.split('\n- ').filter(Boolean);
+          return `<ul class="list-disc pl-6 my-4 space-y-2">
+            ${items.map(item => `<li>${item}</li>`).join('')}
+          </ul>`;
+        }
+
+        // Обработка нумерованных списков
+        if (paragraph.match(/^\d+\./)) {
+          const items = paragraph.split('\n').filter(Boolean);
+          return `<ol class="list-decimal pl-6 my-4 space-y-2">
+            ${items.map(item => `<li>${item.replace(/^\d+\.\s/, '')}</li>`).join('')}
+          </ol>`;
+        }
+
+        // Обработка кода
+        if (paragraph.includes('```')) {
+          return paragraph
+            .replace(/```(.*?)```/gs, (_, code) => 
+              `<pre class="bg-gray-100 dark:bg-gray-800 p-4 rounded-lg my-4 overflow-x-auto"><code>${code.trim()}</code></pre>`
+            );
+        }
+
+        // Обычные параграфы
+        return `<p class="my-4">${paragraph}</p>`;
+      })
+      .join('');
+  };
+
   return (
     <div className="mt-8 space-y-4">
       <h2 className="text-xl font-semibold mb-4">Часто задаваемые вопросы</h2>
@@ -164,7 +203,14 @@ export const Chat = ({ topQuestions, onAskQuestion }: ChatProps) => {
                 : 'bg-muted mr-8'
             }`}
           >
-            {msg.content}
+            {msg.role === 'assistant' ? (
+              <div 
+                className="prose prose-sm dark:prose-invert max-w-none"
+                dangerouslySetInnerHTML={{ __html: formatMessage(msg.content) }}
+              />
+            ) : (
+              msg.content
+            )}
           </div>
         ))}
       </div>
