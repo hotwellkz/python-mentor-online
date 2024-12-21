@@ -1,11 +1,17 @@
 import { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Send } from "lucide-react";
+import { Send, Info } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { ModelSelector } from "./ModelSelector";
 import { MessageList } from "./MessageList";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 interface Message {
   role: 'user' | 'assistant';
@@ -41,11 +47,11 @@ export const ChatInterface = () => {
         .eq('id', user.id)
         .single();
 
-      if (!profile || profile.tokens < 1) {
+      if (!profile || profile.tokens < 5) {
         toast({
           variant: "destructive",
           title: "Недостаточно токенов",
-          description: "Пополните баланс токенов для продолжения общения",
+          description: "Для отправки вопроса необходимо 5 токенов",
         });
         return;
       }
@@ -62,7 +68,7 @@ export const ChatInterface = () => {
       
       await supabase
         .from('profiles')
-        .update({ tokens: profile.tokens - 1 })
+        .update({ tokens: profile.tokens - 5 })
         .eq('id', user.id);
 
       setMessage("");
@@ -87,14 +93,26 @@ export const ChatInterface = () => {
       
       <MessageList messages={messages} />
       
-      <div className="flex gap-2">
-        <Input
-          value={message}
-          onChange={(e) => setMessage(e.target.value)}
-          placeholder="Задайте вопрос ИИ-учителю..."
-          onKeyPress={(e) => e.key === 'Enter' && sendMessage()}
-          disabled={loading}
-        />
+      <div className="flex gap-2 items-center">
+        <div className="flex-grow relative">
+          <Input
+            value={message}
+            onChange={(e) => setMessage(e.target.value)}
+            placeholder="Задайте вопрос ИИ-учителю..."
+            onKeyPress={(e) => e.key === 'Enter' && sendMessage()}
+            disabled={loading}
+          />
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Info className="h-4 w-4 absolute right-2 top-1/2 -translate-y-1/2 text-gray-400" />
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>Стоимость вопроса: 5 токенов</p>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+        </div>
         <Button onClick={sendMessage} disabled={loading}>
           <Send className="h-4 w-4" />
         </Button>
