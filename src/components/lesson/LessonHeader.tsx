@@ -32,22 +32,35 @@ export const LessonHeader = ({
         Урок 1: Переменные и типы данных
       </h1>
       <div className="flex flex-wrap gap-4">
-        <Button
-          className="start-lesson-button"
-          onClick={onStartLesson}
-          disabled={loading}
+        <motion.div
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
+          animate={{ 
+            boxShadow: ['0 0 0 0 rgba(59, 130, 246, 0)', '0 0 0 15px rgba(59, 130, 246, 0)'],
+          }}
+          transition={{ 
+            duration: 2,
+            repeat: Infinity,
+            repeatDelay: 13
+          }}
         >
-          {loading ? (
-            <motion.div
-              animate={{ rotate: 360 }}
-              transition={{ duration: 1, repeat: Infinity }}
-            >
-              <Sparkles className="h-5 w-5 mr-2" />
-            </motion.div>
-          ) : (
-            "Начать урок"
-          )}
-        </Button>
+          <Button
+            className="start-lesson-button"
+            onClick={onStartLesson}
+            disabled={loading}
+          >
+            {loading ? (
+              <motion.div
+                animate={{ rotate: 360 }}
+                transition={{ duration: 1, repeat: Infinity }}
+              >
+                <Sparkles className="h-5 w-5 mr-2" />
+              </motion.div>
+            ) : (
+              "Начать урок"
+            )}
+          </Button>
+        </motion.div>
         {generatedText && (
           <>
             <Button
