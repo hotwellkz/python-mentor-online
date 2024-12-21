@@ -5,6 +5,8 @@ import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { LessonHeader } from "@/components/lesson/LessonHeader";
 import { LessonContent } from "@/components/lesson/LessonContent";
+import { LessonTest } from "@/components/lesson/LessonTest";
+import { Chat } from "@/components/lesson/Chat";
 
 const Lesson = () => {
   const { lessonId } = useParams();
@@ -15,26 +17,11 @@ const Lesson = () => {
   const [isPlaying, setIsPlaying] = useState(false);
   const [isPremiumPlaying, setIsPremiumPlaying] = useState(false);
   const [showTest, setShowTest] = useState(false);
-  const [userPrompt, setUserPrompt] = useState("");
   const [synthesis, setSynthesis] = useState<SpeechSynthesis | null>(null);
   const [utterance, setUtterance] = useState<SpeechSynthesisUtterance | null>(null);
 
   useEffect(() => {
     setSynthesis(window.speechSynthesis);
-  }, []);
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      const button = document.querySelector(".start-lesson-button");
-      if (button) {
-        button.classList.add("animate-pulse");
-        setTimeout(() => {
-          button.classList.remove("animate-pulse");
-        }, 1000);
-      }
-    }, 15000);
-
-    return () => clearInterval(interval);
   }, []);
 
   const startLesson = async () => {
@@ -71,9 +58,7 @@ const Lesson = () => {
           "Content-Type": "application/json",
           Authorization: `Bearer ${(await supabase.auth.getSession()).data.session?.access_token}`,
         },
-        body: JSON.stringify({
-          lessonId,
-        }),
+        body: JSON.stringify({ lessonId }),
       });
 
       if (!response.ok) throw new Error("Ошибка при генерации урока");
@@ -163,6 +148,13 @@ const Lesson = () => {
       const audioBlob = await response.blob();
       const audioUrl = URL.createObjectURL(audioBlob);
       const audio = new Audio(audioUrl);
+      
+      // Create download link
+      const downloadLink = document.createElement('a');
+      downloadLink.href = audioUrl;
+      downloadLink.download = 'lesson-audio.mp3';
+      downloadLink.click();
+
       audio.play();
 
       await supabase
@@ -198,20 +190,24 @@ const Lesson = () => {
   };
 
   const topQuestions = [
-    "Как объявить переменную в Python?",
-    "Чем отличается int от float?",
-    "Как преобразовать один тип данных в другой?",
-    "Что такое булевы значения?",
-    "Как работать со строками в Python?",
+    "Какие основные обязанности бизнес-аналитика?",
+    "Какие инструменты использует бизнес-аналитик?",
+    "Как стать бизнес-аналитиком?",
+    "Какие soft skills нужны бизнес-аналитику?",
+    "Сколько зарабатывает бизнес-аналитик?",
   ];
+
+  const handleAskQuestion = async (question: string) => {
+    // Implement question handling logic here
+  };
 
   return (
     <>
       <Helmet>
-        <title>Переменные и типы данных в Python | Python с ИИ-учителем</title>
+        <title>Кто такой бизнес-аналитик? | Курс по бизнес-анализу</title>
         <meta
           name="description"
-          content="Изучите переменные и типы данных в Python: целые числа (int), числа с плавающей точкой (float), строки (str) и логические значения (bool). Практические примеры и интерактивное обучение."
+          content="Узнайте, кто такой бизнес-аналитик, какие у него обязанности, необходимые навыки и инструменты. Практические примеры и реальные задачи."
         />
       </Helmet>
       <div className="container mx-auto px-4 py-8">
@@ -228,11 +224,16 @@ const Lesson = () => {
           <LessonContent
             loading={loading}
             generatedText={generatedText}
-            userPrompt={userPrompt}
-            onUserPromptChange={setUserPrompt}
             onShowTest={() => setShowTest(true)}
             onFinishLesson={() => navigate("/program")}
+          />
+          <Chat
             topQuestions={topQuestions}
+            onAskQuestion={handleAskQuestion}
+          />
+          <LessonTest
+            open={showTest}
+            onOpenChange={setShowTest}
           />
         </div>
       </div>
