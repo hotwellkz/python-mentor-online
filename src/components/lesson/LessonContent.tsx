@@ -34,28 +34,27 @@ export const LessonContent = ({
       </AnimatePresence>
 
       {generatedText && (
-        <>
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            className="prose prose-lg max-w-none"
-            dangerouslySetInnerHTML={{ __html: generatedText }}
-          />
-
-          <div className="mt-8 space-y-4">
-            <div className="flex justify-between">
-              <Button onClick={onShowTest}>
-                Пройти тест
-              </Button>
-              <Button
-                variant="destructive"
-                onClick={onFinishLesson}
-              >
-                Завершить урок
-              </Button>
-            </div>
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          className="space-y-8"
+        >
+          <div className="prose prose-lg max-w-none dark:prose-invert">
+            <div dangerouslySetInnerHTML={{ __html: generatedText }} />
           </div>
-        </>
+
+          <div className="flex flex-col md:flex-row justify-between gap-4">
+            <Button onClick={onShowTest}>
+              Пройти тест
+            </Button>
+            <Button
+              variant="destructive"
+              onClick={onFinishLesson}
+            >
+              Завершить урок
+            </Button>
+          </div>
+        </motion.div>
       )}
     </>
   );

@@ -40,11 +40,12 @@ export const LessonHeader = ({
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      className="mb-8"
+      className="mb-8 space-y-6"
     >
-      <h1 className="text-3xl md:text-4xl font-bold mb-4">
+      <h1 className="text-3xl md:text-4xl font-bold">
         Урок 1: Переменные и типы данных
       </h1>
+      
       <div className="flex flex-wrap gap-4">
         <motion.div
           whileHover={{ scale: 1.05 }}
@@ -75,12 +76,14 @@ export const LessonHeader = ({
             )}
           </Button>
         </motion.div>
+        
         {generatedText && (
-          <>
+          <div className="flex flex-wrap gap-4 w-full md:w-auto">
             <Button
               variant="outline"
               onClick={() => onPlayText(generatedText)}
               disabled={isPlaying || isPremiumPlaying}
+              className="flex-1 md:flex-none"
             >
               {isPlaying ? (
                 <Pause className="h-5 w-5 mr-2" />
@@ -89,15 +92,18 @@ export const LessonHeader = ({
               )}
               Озвучить бесплатно
             </Button>
+            
             <Button
               variant="secondary"
               onClick={() => onPlayText(generatedText, true)}
               disabled={isPlaying || isPremiumPlaying}
+              className="flex-1 md:flex-none"
             >
               <Sparkles className="h-5 w-5 mr-2" />
-              Озвучить красивым голосом
+              Озвучить красивым голосом (45 токенов)
             </Button>
-            <div className="flex gap-2">
+            
+            <div className="flex gap-2 w-full md:w-auto">
               <Button variant="outline" onClick={shareToWhatsApp}>
                 <MessageCircle className="h-5 w-5 mr-2" />
                 WhatsApp
@@ -111,7 +117,7 @@ export const LessonHeader = ({
                 Копировать ссылку
               </Button>
             </div>
-          </>
+          </div>
         )}
       </div>
     </motion.div>
