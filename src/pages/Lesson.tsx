@@ -43,7 +43,8 @@ const Lesson = () => {
         title: currentModule.topics[topicIndex - 1],
         topics: [currentModule.title], // Используем название модуля как тему
       };
-      topQuestions = getDevOpsQuestions(moduleIndex, topicIndex);
+      const questions = getDevOpsQuestions(moduleIndex, topicIndex);
+      topQuestions = questions.map(q => q.question);
     }
   } else {
     const [blockIndex, lessonIndex] = (lessonId || "").split("-").map(Number);
