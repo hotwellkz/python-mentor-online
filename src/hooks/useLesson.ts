@@ -138,14 +138,29 @@ export const useLesson = (lessonId: string | undefined) => {
         .eq('lesson_id', lessonId)
         .eq('user_id', user.id);
 
+      // Determine which table to use based on lesson type
+      let table = 'completed_lessons';
+      if (lessonId?.startsWith('devops-')) {
+        table = 'devops_progress';
+      } else if (lessonId?.startsWith('ba-')) {
+        table = 'business_analyst_progress';
+      }
+
       // Mark lesson as completed
       await supabase
-        .from('completed_lessons')
+        .from(table)
         .insert([
           { user_id: user.id, lesson_id: lessonId }
         ]);
 
-      navigate("/program");
+      // Navigate to appropriate program page
+      if (lessonId?.startsWith('devops-')) {
+        navigate("/devops-program");
+      } else if (lessonId?.startsWith('ba-')) {
+        navigate("/business-analyst-program");
+      } else {
+        navigate("/program");
+      }
     } catch (error: any) {
       toast({
         variant: "destructive",

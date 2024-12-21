@@ -32,7 +32,7 @@ export const CourseProgram = ({ courseType = 'python' }: CourseProgramProps) => 
     return () => {
       authListener?.subscription.unsubscribe();
     };
-  }, []);
+  }, [courseType]);
 
   const fetchCompletedLessons = async () => {
     const { data: { user } } = await supabase.auth.getUser();
@@ -63,7 +63,9 @@ export const CourseProgram = ({ courseType = 'python' }: CourseProgramProps) => 
             <AccordionContent>
               <div className="space-y-4 pl-4">
                 {block.lessons.map((lesson, lessonIndex) => {
-                  const lessonId = `${blockIndex + 1}-${lessonIndex + 1}`;
+                  const lessonId = courseType === 'business-analyst' 
+                    ? `ba-${blockIndex + 1}-${lessonIndex + 1}`
+                    : `${blockIndex + 1}-${lessonIndex + 1}`;
                   const isCompleted = completedLessons.includes(lessonId);
 
                   return (
