@@ -2,7 +2,8 @@ import { Link, useLocation } from "react-router-dom";
 import { ChevronRight } from "lucide-react";
 
 const routes: { [key: string]: string } = {
-  "/program": "Программа курса",
+  "/program": "Программа курса Python",
+  "/devops": "Программа курса DevOps",
   "/privacy": "Политика конфиденциальности",
   "/terms": "Публичная оферта",
   "/pricing": "Тарифы"

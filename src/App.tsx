@@ -6,6 +6,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { Layout } from "./components/Layout";
 import Index from "./pages/Index";
 import Program from "./pages/Program";
+import DevOps from "./pages/DevOps";
 import { Auth } from "./pages/Auth";
 import Lesson from "./pages/Lesson";
 import Pricing from "./pages/Pricing";
@@ -27,6 +28,7 @@ const App = () => (
           <Route element={<Layout />}>
             <Route path="/" element={<Index />} />
             <Route path="/program" element={<Program />} />
+            <Route path="/devops" element={<DevOps />} />
             <Route path="/auth" element={<Auth />} />
             <Route path="/lesson/:lessonId" element={<Lesson />} />
             <Route path="/pricing" element={<Pricing />} />
