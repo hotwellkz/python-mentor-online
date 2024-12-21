@@ -1,21 +1,51 @@
 import { useEffect, useState } from "react";
 import { Coins } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
+import { useToast } from "@/hooks/use-toast";
 
 export const TokenDisplay = () => {
   const [tokens, setTokens] = useState<number | null>(null);
+  const { toast } = useToast();
 
   useEffect(() => {
     const fetchTokens = async () => {
       const { data: { user } } = await supabase.auth.getUser();
       if (user) {
-        const { data } = await supabase
+        const { data, error } = await supabase
           .from('profiles')
           .select('tokens')
           .eq('id', user.id)
-          .single();
+          .maybeSingle();
+        
+        if (error) {
+          console.error('Error fetching tokens:', error);
+          toast({
+            variant: "destructive",
+            title: "Ошибка",
+            description: "Не удалось загрузить токены",
+          });
+          return;
+        }
+
         if (data) {
           setTokens(data.tokens);
+        } else {
+          // Handle case when profile doesn't exist
+          const { error: insertError } = await supabase
+            .from('profiles')
+            .insert([{ id: user.id, tokens: 100 }]);
+          
+          if (insertError) {
+            console.error('Error creating profile:', insertError);
+            toast({
+              variant: "destructive",
+              title: "Ошибка",
+              description: "Не удалось создать профиль",
+            });
+            return;
+          }
+          
+          setTokens(100);
         }
       }
     };
