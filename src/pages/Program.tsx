@@ -5,12 +5,20 @@ import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { Send } from "lucide-react";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 const Program = () => {
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
   const { toast } = useToast();
   const [messages, setMessages] = useState<Array<{ role: 'user' | 'assistant', content: string }>>([]);
+  const [selectedModel, setSelectedModel] = useState<'openai' | 'anthropic'>('openai');
 
   const sendMessage = async () => {
     if (!message.trim()) return;
@@ -56,7 +64,7 @@ const Program = () => {
         },
         body: JSON.stringify({
           message,
-          model: 'openai', // или 'anthropic'
+          model: selectedModel,
         }),
       });
 
@@ -95,6 +103,21 @@ const Program = () => {
         
         {/* Чат с ИИ */}
         <div className="max-w-3xl mx-auto">
+          <div className="mb-4">
+            <Select
+              value={selectedModel}
+              onValueChange={(value: 'openai' | 'anthropic') => setSelectedModel(value)}
+            >
+              <SelectTrigger className="w-[200px]">
+                <SelectValue placeholder="Выберите модель" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="openai">OpenAI GPT-4</SelectItem>
+                <SelectItem value="anthropic">Anthropic Claude</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+          
           <div className="bg-white rounded-lg shadow-lg p-4 mb-4 h-[500px] overflow-y-auto">
             {messages.map((msg, index) => (
               <div
