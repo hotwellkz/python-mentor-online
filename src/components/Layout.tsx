@@ -6,7 +6,7 @@ import { Button } from "./ui/button";
 import { TokenDisplay } from "./TokenDisplay";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
-import { Menu, X } from "lucide-react";
+import { Menu } from "lucide-react";
 import {
   Sheet,
   SheetContent,
