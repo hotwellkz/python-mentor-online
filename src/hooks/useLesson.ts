@@ -139,16 +139,15 @@ export const useLesson = (lessonId: string | undefined) => {
         .eq('user_id', user.id);
 
       // Determine which table to use based on lesson type
-      let table = 'completed_lessons';
-      if (lessonId?.startsWith('devops-')) {
-        table = 'devops_progress';
-      } else if (lessonId?.startsWith('ba-')) {
-        table = 'business_analyst_progress';
-      }
+      const progressTable = lessonId?.startsWith('devops-') 
+        ? 'devops_progress' as const
+        : lessonId?.startsWith('ba-') 
+          ? 'business_analyst_progress' as const
+          : 'completed_lessons' as const;
 
       // Mark lesson as completed
       await supabase
-        .from(table)
+        .from(progressTable)
         .insert([
           { user_id: user.id, lesson_id: lessonId }
         ]);
