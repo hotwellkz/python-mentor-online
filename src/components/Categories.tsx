@@ -1,4 +1,4 @@
-import { Code, Database, ChartBar, Users, Globe, DollarSign, PaintBrush, Brain, Shield } from "lucide-react";
+import { Code, Database, ChartBar, Users, Globe, DollarSign, Paintbrush, Brain, Shield } from "lucide-react";
 import { Link } from "react-router-dom";
 
 const categories = [
@@ -45,7 +45,7 @@ const categories = [
   {
     title: "Веб-дизайнер",
     duration: "12 мес",
-    icon: PaintBrush,
+    icon: Paintbrush,
     bg: "bg-[#FEF7CD]",
     link: "/program",
   },
