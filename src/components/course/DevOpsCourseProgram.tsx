@@ -5,7 +5,7 @@ import { BookOpen, Code2, Server, Shield, Cloud, Container, GitBranch, Workflow,
 import { motion } from "framer-motion";
 import { DevOpsModule } from "./devops/DevOpsModule";
 
-const modules = [
+export const modules = [
   {
     title: "Модуль 1: Введение в DevOps",
     icon: BookOpen,
