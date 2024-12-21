@@ -2,6 +2,8 @@ import { Helmet } from "react-helmet";
 import { Hero } from "@/components/Hero";
 import { Benefits } from "@/components/Benefits";
 import { Features } from "@/components/Features";
+import { TargetAudience } from "@/components/TargetAudience";
+import { Reviews } from "@/components/Reviews";
 
 const Index = () => {
   return (
@@ -16,7 +18,10 @@ const Index = () => {
           name="keywords"
           content="курс Python бесплатно, изучение Python, программирование, ИИ учитель, обучение Python"
         />
-        <meta property="og:title" content="Курс Python Бесплатно | Изучайте Python с ИИ-учителем" />
+        <meta
+          property="og:title"
+          content="Курс Python Бесплатно | Изучайте Python с ИИ-учителем"
+        />
         <meta
           property="og:description"
           content="Бесплатный курс Python с персональным ИИ-учителем. Начните изучать программирование прямо сейчас!"
@@ -27,6 +32,8 @@ const Index = () => {
       <main className="min-h-screen bg-gray-900">
         <Hero />
         <Features />
+        <TargetAudience />
+        <Reviews />
         <Benefits />
       </main>
     </>
