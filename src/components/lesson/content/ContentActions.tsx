@@ -2,6 +2,7 @@ import { Button } from "@/components/ui/button";
 import { MessageCircle, Send, Copy, FileDown } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import html2pdf from 'html2pdf.js';
+import { cleanText } from "./TextFormatter";
 
 interface ContentActionsProps {
   generatedText: string;
