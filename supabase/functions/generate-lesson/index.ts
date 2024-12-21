@@ -10,25 +10,15 @@ const corsHeaders = {
 
 const cleanText = (text: string) => {
   return text
-    // Convert headers to HTML
     .replace(/#{1,6}\s(.*?)(?:\n|$)/g, (_, title) => `<h3 class="text-xl font-semibold my-4">${title}</h3>`)
-    // Convert bold text
     .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
-    // Convert italic text
     .replace(/\*(.*?)\*/g, '<em>$1</em>')
-    // Convert code blocks with syntax highlighting
     .replace(/```(.*?)```/gs, (_, code) => `<pre class="bg-gray-100 dark:bg-gray-800 p-4 rounded-lg my-4 overflow-x-auto"><code>${code}</code></pre>`)
-    // Convert inline code
     .replace(/`(.*?)`/g, '<code class="bg-gray-100 dark:bg-gray-800 px-1 rounded">$1</code>')
-    // Convert links
     .replace(/\[(.*?)\]\((.*?)\)/g, '<a href="$2" class="text-primary hover:underline">$1</a>')
-    // Convert bullet points
     .replace(/^\s*[-*+]\s+(.*?)(?:\n|$)/gm, '<li class="ml-4">$1</li>')
-    // Convert numbered lists
     .replace(/^\s*\d+\.\s+(.*?)(?:\n|$)/gm, '<li class="ml-4">$1</li>')
-    // Wrap consecutive list items in ul/ol
     .replace(/(<li.*?>.*?<\/li>)\n(<li.*?>.*?<\/li>)/gs, '<ul class="list-disc my-4">$1$2</ul>')
-    // Convert paragraphs (text blocks separated by blank lines)
     .split('\n\n')
     .map(paragraph => {
       if (!paragraph.trim()) return '';
@@ -37,6 +27,86 @@ const cleanText = (text: string) => {
     })
     .join('\n')
     .trim();
+};
+
+const getBusinessAnalystLessonPrompt = (lessonId: string) => {
+  const [, blockIndex, lessonIndex] = lessonId.split("-").map(Number);
+  
+  const blocks = [
+    {
+      title: "Введение в бизнес-анализ",
+      lessons: [
+        "Основы профессии бизнес-аналитика",
+        "Основы проектного подхода",
+        "Знакомство с ключевыми инструментами"
+      ]
+    },
+    {
+      title: "Сбор и анализ требований",
+      lessons: [
+        "Методы сбора требований",
+        "Анализ и документирование требований",
+        "Управление изменениями требований"
+      ]
+    },
+    {
+      title: "Анализ данных и визуализация",
+      lessons: [
+        "Основы анализа данных",
+        "Работа с инструментами анализа",
+        "Визуализация данных"
+      ]
+    },
+    {
+      title: "Моделирование процессов",
+      lessons: [
+        "Введение в моделирование бизнес-процессов",
+        "Разработка бизнес-процессов",
+        "Документирование и представление моделей"
+      ]
+    },
+    {
+      title: "Основы управления проектами",
+      lessons: [
+        "Роли и ответственность",
+        "Инструменты управления проектами",
+        "Практическое применение"
+      ]
+    },
+    {
+      title: "Финансовый анализ и оценка",
+      lessons: [
+        "Основы финансов для бизнес-аналитика",
+        "Подготовка бизнес-кейсов",
+        "Практическое применение"
+      ]
+    },
+    {
+      title: "Взаимодействие со стейкхолдерами",
+      lessons: [
+        "Определение и управление стейкхолдерами",
+        "Структура и подача информации",
+        "Практика взаимодействия"
+      ]
+    },
+    {
+      title: "Завершающий проект",
+      lessons: [
+        "Работа над командным проектом",
+        "Подготовка к трудоустройству",
+        "Итоговая работа"
+      ]
+    }
+  ];
+
+  const block = blocks[blockIndex - 1];
+  const lesson = block?.lessons[lessonIndex - 1];
+
+  if (!block || !lesson) {
+    throw new Error('Invalid lesson ID');
+  }
+
+  return `Расскажи подробно как будто ты преподаватель и преподаешь курс Бизнес-аналитик PRO, урок из модуля "${block.title}" на тему: "${lesson}". Используй много практических примеров и объясняй сложные концепции простым языком. Добавь примеры документов, диаграмм или инструментов где это уместно.`;
 };
 
 const getDevOpsLessonPrompt = (lessonId: string) => {
@@ -169,6 +239,15 @@ serve(async (req) => {
           content: 'Вы - опытный преподаватель DevOps и Python. Ваша задача - подробно и понятно отвечать на вопросы ученика, используя примеры кода и команд где это уместно. Отвечайте четко и по существу. Используйте маркдаун для форматирования текста: заголовки через #, жирный текст через **, курсив через *, блоки кода через ```, списки через - или 1., 2. и т.д.'
         },
         { role: 'user', content: prompt }
+      ];
+    } else if (lessonId?.startsWith('ba-')) {
+      const baPrompt = getBusinessAnalystLessonPrompt(lessonId);
+      messages = [
+        {
+          role: 'system',
+          content: 'Вы - опытный преподаватель бизнес-анализа. Ваша задача - подробно объяснить тему урока, используя примеры и понятные объяснения. Используйте маркдаун для форматирования текста: заголовки через #, жирный текст через **, курсив через *, блоки кода через ```, списки через - или 1., 2. и т.д.'
+        },
+        { role: 'user', content: baPrompt }
       ];
     } else if (lessonId?.startsWith('devops-')) {
       const devOpsPrompt = getDevOpsLessonPrompt(lessonId);

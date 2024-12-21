@@ -67,6 +67,9 @@ export const Auth = () => {
           if (error.message.includes("already registered")) {
             throw new Error("Этот email уже зарегистрирован. Попробуйте войти в систему");
           }
+          if (error.message.includes("rate limit exceeded") || error.message.includes("over_email_send_rate_limit")) {
+            throw new Error("Превышен лимит отправки писем. Пожалуйста, подождите несколько минут и попробуйте снова, или используйте другой email адрес");
+          }
           throw error;
         }
 
@@ -102,7 +105,7 @@ export const Auth = () => {
           to="/"
           className="mb-8 text-2xl font-bold hover:text-primary transition-colors"
         >
-          Python с ИИ-учителем
+          Главная страница
         </Link>
         <div className="w-full max-w-md space-y-8">
           <div className="text-center">

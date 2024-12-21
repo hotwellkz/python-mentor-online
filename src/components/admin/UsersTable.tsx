@@ -1,41 +1,35 @@
-import { useState, useEffect } from "react";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-
-interface User {
-  id: string;
-  email: string;
-  tokens: number;
-}
+import { Table, TableBody } from "@/components/ui/table";
+import { AdminCheck } from "./AdminCheck";
+import { UserRow } from "./UserRow";
+import { UsersTableHeader } from "./UsersTableHeader";
+import { UserWithTokens } from "@/types/admin";
 
 export const UsersTable = () => {
-  const [users, setUsers] = useState<User[]>([]);
+  const [users, setUsers] = useState<UserWithTokens[]>([]);
   const { toast } = useToast();
 
   const fetchUsers = async () => {
     try {
-      const { data: { users: authUsers } } = await supabase.auth.admin.listUsers();
-      const { data: profiles } = await supabase.from('profiles').select('*');
+      const { data: profiles, error: profilesError } = await supabase
+        .from('profiles')
+        .select('*');
 
-      if (authUsers && profiles) {
-        const combinedUsers = authUsers.map(authUser => ({
-          id: authUser.id,
-          email: authUser.email || '',
-          tokens: profiles.find(p => p.id === authUser.id)?.tokens || 0,
+      if (profilesError) throw profilesError;
+
+      if (profiles) {
+        const usersList = profiles.map(profile => ({
+          id: profile.id,
+          email: 'Email скрыт',
+          tokens: profile.tokens,
         }));
-        setUsers(combinedUsers);
+        
+        setUsers(usersList);
       }
     } catch (error: any) {
+      console.error('Error fetching users:', error);
       toast({
         variant: "destructive",
         title: "Ошибка",
@@ -47,10 +41,12 @@ export const UsersTable = () => {
 
   const updateTokens = async (userId: string, newTokens: number) => {
     try {
-      await supabase
+      const { error } = await supabase
         .from('profiles')
         .update({ tokens: newTokens })
         .eq('id', userId);
+      
+      if (error) throw error;
       
       toast({
         title: "Успешно",
@@ -71,17 +67,23 @@ export const UsersTable = () => {
 
   const deleteUser = async (userId: string) => {
     try {
-      await supabase.auth.admin.deleteUser(userId);
-      await supabase.from('profiles').delete().eq('id', userId);
+      const { data, error } = await supabase.functions.invoke('delete-user', {
+        body: { userId }
+      });
+
+      if (error) throw error;
+
+      // Профиль пользователя будет удален автоматически благодаря каскадному удалению
       
       toast({
         title: "Успешно",
-        description: "Пользователь удален",
+        description: "Пользователь полностью удален",
         className: "bg-background text-foreground border border-border",
       });
       
       fetchUsers();
     } catch (error: any) {
+      console.error('Error deleting user:', error);
       toast({
         variant: "destructive",
         title: "Ошибка",
@@ -91,44 +93,31 @@ export const UsersTable = () => {
     }
   };
 
-  // Fetch users when component mounts
-  useEffect(() => {
-    fetchUsers();
-  }, []);
-
   return (
     <div className="container mx-auto px-4 py-8">
+      <AdminCheck 
+        onAuthorized={fetchUsers}
+        onError={(error) => {
+          toast({
+            variant: "destructive",
+            title: "Ошибка",
+            description: error.message,
+            className: "bg-destructive text-destructive-foreground border-none",
+          });
+        }}
+      />
       <h1 className="text-2xl font-bold mb-6 text-foreground">Управление пользователями</h1>
       <div className="overflow-x-auto bg-card rounded-lg shadow border border-border">
         <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>Email</TableHead>
-              <TableHead>Токены</TableHead>
-              <TableHead>Действия</TableHead>
-            </TableRow>
-          </TableHeader>
+          <UsersTableHeader />
           <TableBody>
             {users.map((user) => (
-              <TableRow key={user.id}>
-                <TableCell>{user.email}</TableCell>
-                <TableCell>
-                  <Input
-                    type="number"
-                    value={user.tokens}
-                    onChange={(e) => updateTokens(user.id, parseInt(e.target.value))}
-                    className="w-24 bg-background text-foreground border-input"
-                  />
-                </TableCell>
-                <TableCell>
-                  <Button
-                    variant="destructive"
-                    onClick={() => deleteUser(user.id)}
-                  >
-                    Удалить
-                  </Button>
-                </TableCell>
-              </TableRow>
+              <UserRow
+                key={user.id}
+                user={user}
+                onUpdateTokens={updateTokens}
+                onDeleteUser={deleteUser}
+              />
             ))}
           </TableBody>
         </Table>
