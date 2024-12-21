@@ -89,12 +89,12 @@ export const Chat = ({ topQuestions, onAskQuestion }: ChatProps) => {
           </Button>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
+        <div className="grid grid-cols-1 gap-4 mt-6">
           {topQuestions.map((question, index) => (
             <Button
               key={index}
               variant="outline"
-              className="text-left"
+              className="text-left whitespace-normal h-auto py-2"
               onClick={() => setUserPrompt(question)}
             >
               {question}
