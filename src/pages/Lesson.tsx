@@ -7,6 +7,7 @@ import { LessonHeader } from "@/components/lesson/LessonHeader";
 import { LessonContent } from "@/components/lesson/LessonContent";
 import { LessonTest } from "@/components/lesson/LessonTest";
 import { Chat } from "@/components/lesson/Chat";
+import { AuthCheck } from "@/components/AuthCheck";
 
 const Lesson = () => {
   const { lessonId } = useParams();
@@ -19,6 +20,8 @@ const Lesson = () => {
   const [showTest, setShowTest] = useState(false);
   const [synthesis, setSynthesis] = useState<SpeechSynthesis | null>(null);
   const [utterance, setUtterance] = useState<SpeechSynthesisUtterance | null>(null);
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
+  const [userPrompt, setUserPrompt] = useState("");
 
   const topQuestions = [
     "Как создать переменную в Python и присвоить ей значение?",
@@ -35,9 +38,7 @@ const Lesson = () => {
 
   const checkAuth = async () => {
     const { data: { session } } = await supabase.auth.getSession();
-    if (!session) {
-      navigate("/program");
-    }
+    setIsAuthenticated(!!session);
   };
 
   const startLesson = async () => {
@@ -223,6 +224,14 @@ const Lesson = () => {
     }
   };
 
+  if (isAuthenticated === null) {
+    return null; // Loading state
+  }
+
+  if (!isAuthenticated) {
+    return <AuthCheck />;
+  }
+
   return (
     <>
       <Helmet>
@@ -246,6 +255,8 @@ const Lesson = () => {
           <LessonContent
             loading={loading}
             generatedText={generatedText}
+            userPrompt={userPrompt}
+            onUserPromptChange={setUserPrompt}
             onShowTest={() => setShowTest(true)}
             onFinishLesson={finishLesson}
             topQuestions={topQuestions}
