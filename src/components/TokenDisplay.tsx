@@ -38,9 +38,11 @@ export const TokenDisplay = () => {
   if (tokens === null) return null;
 
   return (
-    <div className="flex items-center gap-2 text-foreground dark:text-white">
-      <Coins className="h-5 w-5" />
-      <span>{tokens} токенов</span>
+    <div className="flex items-center gap-2 px-3 py-1.5 bg-primary/10 rounded-full hover:bg-primary/20 transition-colors">
+      <Coins className="h-5 w-5 text-primary animate-pulse" />
+      <span className="font-medium text-sm">
+        {tokens} токенов
+      </span>
     </div>
   );
 };
