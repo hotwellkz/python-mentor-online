@@ -1,6 +1,6 @@
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
-import { Pause, Play, StopCircle } from "lucide-react";
+import { Play, Pause, StopCircle } from "lucide-react";
 
 interface PlaybackControlsProps {
   onTogglePlayback?: () => void;
@@ -19,7 +19,6 @@ export const PlaybackControls = ({
 
   const getButtonLabel = () => {
     if (isPlaying && !isPaused) return "Пауза";
-    if (isPaused) return "Продолжить";
     return "Воспроизвести";
   };
 
