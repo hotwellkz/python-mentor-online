@@ -1,5 +1,4 @@
-import { useState } from "react";
-import { Star, Mail, MessageSquare } from "lucide-react";
+import { Mail, MessageSquare } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -8,17 +7,10 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { Textarea } from "@/components/ui/textarea";
-import { Input } from "@/components/ui/input";
-import { useToast } from "@/hooks/use-toast";
-import { supabase } from "@/integrations/supabase/client";
+import { ReviewCard } from "./review/ReviewCard";
+import { ReviewForm } from "./review/ReviewForm";
 
 export const Reviews = () => {
-  const { toast } = useToast();
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [message, setMessage] = useState("");
-
   const reviews = [
     {
       id: 1,
@@ -50,111 +42,39 @@ export const Reviews = () => {
     },
   ];
 
-  const handleSubmit = async (type: "review" | "director") => {
-    try {
-      const { error } = await supabase.functions.invoke("send-email", {
-        body: {
-          to: ["a777mmm@mail.ru"],
-          subject: type === "review" ? "Новый отзыв" : "Сообщение директору",
-          html: `
-            <h2>${type === "review" ? "Новый отзыв" : "Сообщение директору"}</h2>
-            <p><strong>Имя:</strong> ${name}</p>
-            <p><strong>Email:</strong> ${email}</p>
-            <p><strong>Сообщение:</strong> ${message}</p>
-          `,
-        },
-      });
-
-      if (error) throw error;
-
-      toast({
-        title: "Успешно отправлено",
-        description: "Спасибо за ваше сообщение!",
-      });
-
-      setName("");
-      setEmail("");
-      setMessage("");
-    } catch (error) {
-      toast({
-        variant: "destructive",
-        title: "Ошибка",
-        description: "Не удалось отправить сообщение. Попробуйте позже.",
-      });
-    }
-  };
-
   return (
     <section className="py-16 bg-gradient-to-br from-gray-50 to-white overflow-hidden">
       <div className="container mx-auto px-4">
-        <div className="flex justify-between items-center mb-12">
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-12 gap-4">
           <h2 className="text-3xl md:text-4xl font-bold text-gray-900">Отзывы</h2>
-          <div className="flex gap-4">
+          <div className="flex flex-col sm:flex-row w-full sm:w-auto gap-4">
             <Dialog>
               <DialogTrigger asChild>
-                <Button variant="outline" className="gap-2">
+                <Button variant="outline" className="w-full sm:w-auto gap-2">
                   <MessageSquare className="w-4 h-4" />
-                  Оставить отзыв
+                  <span>Оставить отзыв</span>
                 </Button>
               </DialogTrigger>
               <DialogContent>
                 <DialogHeader>
                   <DialogTitle>Оставить отзыв</DialogTitle>
                 </DialogHeader>
-                <div className="space-y-4">
-                  <Input
-                    placeholder="Ваше имя"
-                    value={name}
-                    onChange={(e) => setName(e.target.value)}
-                  />
-                  <Input
-                    type="email"
-                    placeholder="Ваш email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                  />
-                  <Textarea
-                    placeholder="Ваш отзыв"
-                    value={message}
-                    onChange={(e) => setMessage(e.target.value)}
-                  />
-                  <Button onClick={() => handleSubmit("review")}>Отправить</Button>
-                </div>
+                <ReviewForm type="review" />
               </DialogContent>
             </Dialog>
 
             <Dialog>
               <DialogTrigger asChild>
-                <Button variant="outline" className="gap-2">
+                <Button variant="outline" className="w-full sm:w-auto gap-2">
                   <Mail className="w-4 h-4" />
-                  Написать директору
+                  <span>Написать директору</span>
                 </Button>
               </DialogTrigger>
               <DialogContent>
                 <DialogHeader>
                   <DialogTitle>Написать директору</DialogTitle>
                 </DialogHeader>
-                <div className="space-y-4">
-                  <Input
-                    placeholder="Ваше имя"
-                    value={name}
-                    onChange={(e) => setName(e.target.value)}
-                  />
-                  <Input
-                    type="email"
-                    placeholder="Ваш email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                  />
-                  <Textarea
-                    placeholder="Ваше сообщение"
-                    value={message}
-                    onChange={(e) => setMessage(e.target.value)}
-                  />
-                  <Button onClick={() => handleSubmit("director")}>
-                    Отправить
-                  </Button>
-                </div>
+                <ReviewForm type="director" />
               </DialogContent>
             </Dialog>
           </div>
@@ -170,28 +90,7 @@ export const Reviews = () => {
             }}
           >
             {[...reviews, ...reviews].map((review, index) => (
-              <div
-                key={index}
-                className="flex-shrink-0 w-[300px] md:w-[350px] bg-white p-6 rounded-xl shadow-lg"
-              >
-                <div className="flex items-center gap-2 mb-4">
-                  {[...Array(review.rating)].map((_, i) => (
-                    <Star
-                      key={i}
-                      className="w-5 h-5 text-yellow-400 fill-current"
-                    />
-                  ))}
-                </div>
-                <p className="text-gray-600 mb-4">{review.text}</p>
-                <div className="flex justify-between items-center">
-                  <span className="font-semibold text-gray-900">
-                    {review.name}
-                  </span>
-                  <span className="text-sm text-gray-500">
-                    {new Date(review.date).toLocaleDateString()}
-                  </span>
-                </div>
-              </div>
+              <ReviewCard key={index} {...review} />
             ))}
           </div>
         </div>

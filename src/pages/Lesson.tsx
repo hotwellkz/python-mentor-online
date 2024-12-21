@@ -10,10 +10,21 @@ import { useSpeech } from "@/hooks/useSpeech";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { courseBlocks } from "@/data/courseData";
+import { useEffect, useState } from "react";
 
 const Lesson = () => {
   const { lessonId } = useParams();
   const { toast } = useToast();
+  const [isEmailVerified, setIsEmailVerified] = useState<boolean | null>(null);
+
+  useEffect(() => {
+    checkEmailVerification();
+  }, []);
+
+  const checkEmailVerification = async () => {
+    const { data: { user } } = await supabase.auth.getUser();
+    setIsEmailVerified(user?.email_confirmed_at !== null);
+  };
 
   // Находим текущий урок в courseData
   const [blockIndex, lessonIndex] = (lessonId || "").split("-").map(Number);
@@ -82,11 +93,11 @@ const Lesson = () => {
     }
   };
 
-  if (isAuthenticated === null) {
+  if (isAuthenticated === null || isEmailVerified === null) {
     return null;
   }
 
-  if (!isAuthenticated) {
+  if (!isAuthenticated || !isEmailVerified) {
     return <AuthCheck />;
   }
 
