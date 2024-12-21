@@ -175,19 +175,19 @@ export const Categories = () => {
             <Link
               key={index}
               to={category.link}
-              className={`${category.bg} rounded-xl p-6 transition-transform hover:scale-105 relative group`}
+              className={`${category.bg} rounded-xl p-6 transition-transform hover:scale-105 relative group min-h-[140px] flex flex-col justify-between`}
             >
               {category.isHot && (
-                <span className="absolute top-4 right-4 bg-[#F97316] text-white text-xs px-2 py-1 rounded">
+                <span className="absolute bottom-4 right-4 bg-[#F97316]/80 text-white text-xs px-2 py-1 rounded backdrop-blur-sm">
                   Хит продаж
                 </span>
               )}
               <div className="flex items-start justify-between">
-                <div className="space-y-2">
+                <div className="space-y-2 flex-1 pr-4">
                   <h3 className="font-semibold text-gray-900">{category.title}</h3>
                   <p className="text-sm text-gray-600">{category.duration}</p>
                 </div>
-                <category.icon className="w-6 h-6 text-gray-700" />
+                <category.icon className="w-6 h-6 text-gray-700 shrink-0" />
               </div>
             </Link>
           ))}
