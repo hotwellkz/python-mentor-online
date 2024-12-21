@@ -54,7 +54,6 @@ export const speakUtterance = (
   setIsPlaying: (value: boolean) => void,
   setIsPaused: (value: boolean) => void
 ) => {
-  synthesis.cancel(); // Отменяем предыдущее воспроизведение
   setUtterance(newUtterance);
   setIsPlaying(true);
   setIsPaused(false);

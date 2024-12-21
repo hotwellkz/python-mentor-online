@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { toast } from "@/hooks/use-toast";
 import { cleanMarkdown } from "./speech/voiceUtils";
 import { playPremiumVoice } from "./speech/supabaseUtils";
@@ -11,6 +11,7 @@ export const useSpeech = () => {
   const [utterance, setUtterance] = useState<SpeechSynthesisUtterance | null>(null);
   const [isPaused, setIsPaused] = useState(false);
   const [currentText, setCurrentText] = useState<string>("");
+  const currentUtteranceRef = useRef<SpeechSynthesisUtterance | null>(null);
 
   useEffect(() => {
     if (window.speechSynthesis) {
@@ -40,6 +41,7 @@ export const useSpeech = () => {
       setIsPlaying(false);
       setIsPaused(false);
       setUtterance(null);
+      currentUtteranceRef.current = null;
       setCurrentText("");
     }
   };
@@ -50,10 +52,13 @@ export const useSpeech = () => {
     if (isPlaying && !isPaused) {
       synthesis.pause();
       setIsPaused(true);
-    } else if (isPaused) {
+    } else if (isPaused && currentUtteranceRef.current) {
       synthesis.resume();
       setIsPaused(false);
     } else if (currentText) {
+      if (currentUtteranceRef.current) {
+        synthesis.cancel();
+      }
       playBrowserVoice(currentText);
     }
   };
@@ -71,10 +76,12 @@ export const useSpeech = () => {
     if (synthesis.getVoices().length === 0) {
       synthesis.addEventListener('voiceschanged', () => {
         const newUtterance = createUtterance(text, setIsPlaying, setIsPaused, setUtterance);
+        currentUtteranceRef.current = newUtterance;
         speakUtterance(newUtterance, synthesis, setUtterance, setIsPlaying, setIsPaused);
       }, { once: true });
     } else {
       const newUtterance = createUtterance(text, setIsPlaying, setIsPaused, setUtterance);
+      currentUtteranceRef.current = newUtterance;
       speakUtterance(newUtterance, synthesis, setUtterance, setIsPlaying, setIsPaused);
     }
   };
