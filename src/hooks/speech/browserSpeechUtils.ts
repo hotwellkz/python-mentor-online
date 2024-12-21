@@ -24,6 +24,14 @@ export const createUtterance = (
     setUtterance(null);
   };
 
+  newUtterance.onpause = () => {
+    setIsPaused(true);
+  };
+
+  newUtterance.onresume = () => {
+    setIsPaused(false);
+  };
+
   newUtterance.onerror = (event) => {
     console.error('Speech synthesis error:', event);
     toast({
@@ -46,6 +54,7 @@ export const speakUtterance = (
   setIsPlaying: (value: boolean) => void,
   setIsPaused: (value: boolean) => void
 ) => {
+  synthesis.cancel(); // Отменяем предыдущее воспроизведение
   setUtterance(newUtterance);
   setIsPlaying(true);
   setIsPaused(false);

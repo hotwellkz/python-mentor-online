@@ -10,6 +10,7 @@ export const useSpeech = () => {
   const [synthesis, setSynthesis] = useState<SpeechSynthesis | null>(null);
   const [utterance, setUtterance] = useState<SpeechSynthesisUtterance | null>(null);
   const [isPaused, setIsPaused] = useState(false);
+  const [currentText, setCurrentText] = useState<string>("");
 
   useEffect(() => {
     if (window.speechSynthesis) {
@@ -17,7 +18,7 @@ export const useSpeech = () => {
     }
 
     return () => {
-      if (synthesis && utterance) {
+      if (synthesis) {
         synthesis.cancel();
       }
     };
@@ -28,6 +29,7 @@ export const useSpeech = () => {
     if (isPremium) {
       await playPremiumVoice(cleanText, setIsPremiumPlaying);
     } else {
+      setCurrentText(cleanText);
       playBrowserVoice(cleanText);
     }
   };
@@ -38,6 +40,7 @@ export const useSpeech = () => {
       setIsPlaying(false);
       setIsPaused(false);
       setUtterance(null);
+      setCurrentText("");
     }
   };
 
@@ -50,6 +53,8 @@ export const useSpeech = () => {
     } else if (isPaused) {
       synthesis.resume();
       setIsPaused(false);
+    } else if (currentText) {
+      playBrowserVoice(currentText);
     }
   };
 
@@ -60,18 +65,6 @@ export const useSpeech = () => {
         title: "Ошибка",
         description: "Синтез речи недоступен в вашем браузере",
       });
-      return;
-    }
-
-    if (isPlaying && !isPaused) {
-      synthesis.pause();
-      setIsPaused(true);
-      return;
-    }
-
-    if (isPaused) {
-      synthesis.resume();
-      setIsPaused(false);
       return;
     }
 

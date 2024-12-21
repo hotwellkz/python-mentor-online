@@ -17,6 +17,12 @@ export const PlaybackControls = ({
 }: PlaybackControlsProps) => {
   if (!onTogglePlayback && !onStopPlayback) return null;
 
+  const getButtonLabel = () => {
+    if (isPlaying && !isPaused) return "Пауза";
+    if (isPaused) return "Продолжить";
+    return "Воспроизвести";
+  };
+
   return (
     <motion.div 
       initial={{ y: 20, opacity: 0 }}
@@ -29,6 +35,7 @@ export const PlaybackControls = ({
           variant="secondary"
           size="lg"
           className="rounded-full shadow-lg hover:shadow-xl transition-shadow duration-200"
+          title={getButtonLabel()}
         >
           {isPlaying && !isPaused ? (
             <Pause className="h-6 w-6" />
@@ -37,12 +44,13 @@ export const PlaybackControls = ({
           )}
         </Button>
       )}
-      {onStopPlayback && (
+      {onStopPlayback && isPlaying && (
         <Button
           onClick={onStopPlayback}
           variant="secondary"
           size="lg"
           className="rounded-full shadow-lg hover:shadow-xl transition-shadow duration-200"
+          title="Остановить"
         >
           <StopCircle className="h-6 w-6" />
         </Button>
