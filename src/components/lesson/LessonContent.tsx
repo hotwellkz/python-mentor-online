@@ -17,43 +17,65 @@ interface LessonContentProps {
 }
 
 const cleanText = (text: string) => {
-  return text
-    .replace(/\*\*(.*?)\*\*/g, '$1') // Bold
-    .replace(/\*(.*?)\*/g, '$1') // Italic
-    .replace(/\[(.*?)\]\(.*?\)/g, '$1') // Links
-    .replace(/#{1,6}\s/g, '') // Headers
-    .replace(/`(.*?)`/g, '$1') // Code
-    .replace(/<[^>]*>/g, '') // HTML tags
-    .replace(/\n\s*[-*+]\s/g, '\n') // Lists
-    .replace(/\n\s*\d+\.\s/g, '\n') // Numbered lists
-    .replace(/\n{2,}/g, '\n') // Multiple newlines
-    .trim();
+  // Заменяем маркеры заголовков на HTML-теги
+  let cleanedText = text
+    .replace(/#{1,6}\s(.*?)(?:\n|$)/g, (_, title) => `<h3 class="text-xl font-semibold my-4">${title}</h3>`)
+    // Заменяем жирный текст
+    .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+    // Заменяем курсив
+    .replace(/\*(.*?)\*/g, '<em>$1</em>')
+    // Заменяем блоки кода
+    .replace(/```(.*?)```/gs, (_, code) => `<pre class="bg-gray-100 dark:bg-gray-800 p-4 rounded-lg my-4 overflow-x-auto"><code>${code}</code></pre>`)
+    // Заменяем инлайн-код
+    .replace(/`(.*?)`/g, '<code class="bg-gray-100 dark:bg-gray-800 px-1 rounded">$1</code>')
+    // Заменяем ссылки
+    .replace(/\[(.*?)\]\((.*?)\)/g, '<a href="$2" class="text-primary hover:underline">$1</a>')
+    // Заменяем маркированные списки
+    .replace(/^\s*[-*+]\s+(.*?)(?:\n|$)/gm, '<li class="ml-4">$1</li>')
+    // Заменяем нумерованные списки
+    .replace(/^\s*\d+\.\s+(.*?)(?:\n|$)/gm, '<li class="ml-4">$1</li>')
+    // Оборачиваем последовательные li в ul или ol
+    .replace(/(<li.*?>.*?<\/li>)\n(<li.*?>.*?<\/li>)/gs, '<ul class="list-disc my-4">$1$2</ul>');
+
+  // Добавляем параграфы для текста, который не обработан другими правилами
+  cleanedText = cleanedText
+    .split('\n\n')
+    .map(paragraph => {
+      if (!paragraph.trim()) return '';
+      if (paragraph.startsWith('<')) return paragraph;
+      return `<p class="my-4">${paragraph}</p>`;
+    })
+    .join('\n');
+
+  return cleanedText;
 };
 
 export const LessonContent = ({
   loading,
   generatedText,
+  userPrompt,
+  onUserPromptChange,
   onShowTest,
   onFinishLesson,
+  topQuestions,
   onTogglePlayback,
   isPlaying,
 }: LessonContentProps) => {
   const { toast } = useToast();
-  const cleanedText = cleanText(generatedText);
 
   const shareToWhatsApp = () => {
-    const text = encodeURIComponent(cleanedText);
+    const text = encodeURIComponent(generatedText);
     window.open(`https://wa.me/?text=${text}`, '_blank');
   };
 
   const shareToTelegram = () => {
-    const text = encodeURIComponent(cleanedText);
+    const text = encodeURIComponent(generatedText);
     window.open(`https://t.me/share/url?url=${window.location.href}&text=${text}`, '_blank');
   };
 
   const copyToClipboard = async () => {
     try {
-      await navigator.clipboard.writeText(cleanedText);
+      await navigator.clipboard.writeText(generatedText);
       toast({
         title: "Успешно скопировано",
         description: "Текст урока скопирован в буфер обмена",
@@ -69,7 +91,7 @@ export const LessonContent = ({
 
   const downloadPDF = () => {
     const element = document.createElement('div');
-    element.innerHTML = cleanedText;
+    element.innerHTML = cleanText(generatedText);
     
     const opt = {
       margin: 1,
@@ -104,14 +126,14 @@ export const LessonContent = ({
         )}
       </AnimatePresence>
 
-      {cleanedText && (
+      {generatedText && (
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           className="space-y-8"
         >
           <div className="prose prose-lg max-w-none dark:prose-invert">
-            <div dangerouslySetInnerHTML={{ __html: cleanedText }} />
+            <div dangerouslySetInnerHTML={{ __html: cleanText(generatedText) }} />
           </div>
 
           <div className="flex flex-wrap gap-4">
