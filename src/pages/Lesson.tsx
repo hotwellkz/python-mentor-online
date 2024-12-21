@@ -1,13 +1,10 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Helmet } from "react-helmet";
-import { Button } from "@/components/ui/button";
-import { Textarea } from "@/components/ui/textarea";
-import { Dialog } from "@/components/ui/dialog";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
-import { Sparkles, Play, Pause, Share2, CheckCircle } from "lucide-react";
-import { motion, AnimatePresence } from "framer-motion";
+import { LessonHeader } from "@/components/lesson/LessonHeader";
+import { LessonContent } from "@/components/lesson/LessonContent";
 
 const Lesson = () => {
   const { lessonId } = useParams();
@@ -18,8 +15,6 @@ const Lesson = () => {
   const [isPlaying, setIsPlaying] = useState(false);
   const [isPremiumPlaying, setIsPremiumPlaying] = useState(false);
   const [showTest, setShowTest] = useState(false);
-  const [currentQuestion, setCurrentQuestion] = useState(0);
-  const [score, setScore] = useState(0);
   const [userPrompt, setUserPrompt] = useState("");
   const [synthesis, setSynthesis] = useState<SpeechSynthesis | null>(null);
   const [utterance, setUtterance] = useState<SpeechSynthesisUtterance | null>(null);
@@ -186,17 +181,6 @@ const Lesson = () => {
     }
   };
 
-  const togglePlayback = () => {
-    if (synthesis) {
-      if (isPlaying) {
-        synthesis.pause();
-      } else {
-        synthesis.resume();
-      }
-      setIsPlaying(!isPlaying);
-    }
-  };
-
   const shareLesson = async () => {
     try {
       await navigator.clipboard.writeText(window.location.href);
@@ -232,123 +216,24 @@ const Lesson = () => {
       </Helmet>
       <div className="container mx-auto px-4 py-8">
         <div className="max-w-4xl mx-auto">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="mb-8"
-          >
-            <h1 className="text-3xl md:text-4xl font-bold mb-4">
-              Урок 1: Переменные и типы данных
-            </h1>
-            <div className="flex flex-wrap gap-4">
-              <Button
-                className="start-lesson-button"
-                onClick={startLesson}
-                disabled={loading}
-              >
-                {loading ? (
-                  <motion.div
-                    animate={{ rotate: 360 }}
-                    transition={{ duration: 1, repeat: Infinity }}
-                  >
-                    <Sparkles className="h-5 w-5 mr-2" />
-                  </motion.div>
-                ) : (
-                  "Начать урок"
-                )}
-              </Button>
-              {generatedText && (
-                <>
-                  <Button
-                    variant="outline"
-                    onClick={() => playText(generatedText)}
-                    disabled={isPlaying || isPremiumPlaying}
-                  >
-                    {isPlaying ? (
-                      <Pause className="h-5 w-5 mr-2" />
-                    ) : (
-                      <Play className="h-5 w-5 mr-2" />
-                    )}
-                    Озвучить бесплатно
-                  </Button>
-                  <Button
-                    variant="secondary"
-                    onClick={() => playText(generatedText, true)}
-                    disabled={isPlaying || isPremiumPlaying}
-                  >
-                    <Sparkles className="h-5 w-5 mr-2" />
-                    Озвучить красивым голосом
-                  </Button>
-                  <Button variant="ghost" onClick={shareLesson}>
-                    <Share2 className="h-5 w-5 mr-2" />
-                    Поделиться
-                  </Button>
-                </>
-              )}
-            </div>
-          </motion.div>
-
-          <AnimatePresence>
-            {loading && (
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                className="text-center py-8"
-              >
-                <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
-                <p className="mt-4 text-lg">Готовлю урок...</p>
-              </motion.div>
-            )}
-          </AnimatePresence>
-
-          {generatedText && (
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              className="prose prose-lg max-w-none"
-              dangerouslySetInnerHTML={{ __html: generatedText }}
-            />
-          )}
-
-          {generatedText && (
-            <div className="mt-8 space-y-4">
-              <h3 className="text-xl font-semibold">Популярные вопросы</h3>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {topQuestions.map((question, index) => (
-                  <Button
-                    key={index}
-                    variant="outline"
-                    className="text-left"
-                    onClick={() => setUserPrompt(question)}
-                  >
-                    {question}
-                  </Button>
-                ))}
-              </div>
-
-              <div className="mt-8">
-                <Textarea
-                  value={userPrompt}
-                  onChange={(e) => setUserPrompt(e.target.value)}
-                  placeholder="Задайте свой вопрос..."
-                  className="min-h-[100px]"
-                />
-              </div>
-
-              <div className="flex justify-between">
-                <Button onClick={() => setShowTest(true)}>
-                  Пройти тест
-                </Button>
-                <Button
-                  variant="destructive"
-                  onClick={() => navigate("/program")}
-                >
-                  Завершить урок
-                </Button>
-              </div>
-            </div>
-          )}
+          <LessonHeader
+            loading={loading}
+            generatedText={generatedText}
+            isPlaying={isPlaying}
+            isPremiumPlaying={isPremiumPlaying}
+            onStartLesson={startLesson}
+            onPlayText={playText}
+            onShare={shareLesson}
+          />
+          <LessonContent
+            loading={loading}
+            generatedText={generatedText}
+            userPrompt={userPrompt}
+            onUserPromptChange={setUserPrompt}
+            onShowTest={() => setShowTest(true)}
+            onFinishLesson={() => navigate("/program")}
+            topQuestions={topQuestions}
+          />
         </div>
       </div>
     </>
