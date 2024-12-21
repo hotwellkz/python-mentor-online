@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Settings, User } from "lucide-react";
+import { Settings2, User } from "lucide-react";
 import { TokenDisplay } from "@/components/TokenDisplay";
 
 interface UserMenuProps {
@@ -17,14 +17,14 @@ export const UserMenu = ({ userEmail, onLogout }: UserMenuProps) => {
           className="text-white hover:text-primary transition-colors"
           title="Настройки аккаунта"
         >
-          <Settings className="h-5 w-5" />
+          <Settings2 className="h-5 w-5" />
         </Link>
       )}
       <Link
         to="/admin"
         className="text-white hover:text-primary transition-colors"
       >
-        <Settings className="h-5 w-5" />
+        <Settings2 className="h-5 w-5" />
       </Link>
       <TokenDisplay />
       {userEmail ? (
