@@ -60,7 +60,7 @@ export const Chat = ({ topQuestions, onAskQuestion }: ChatProps) => {
         .upsert({
           user_id: user.id,
           lesson_id: lessonId,
-          chat_messages: newMessages,
+          chat_messages: newMessages as unknown as Json,
           updated_at: new Date().toISOString()
         });
 
@@ -99,13 +99,14 @@ export const Chat = ({ topQuestions, onAskQuestion }: ChatProps) => {
         return;
       }
 
-      const newMessages = [...messages, { role: 'user', content: text }];
+      const newUserMessage: Message = { role: 'user', content: text };
+      const newMessages = [...messages, newUserMessage];
       setMessages(newMessages);
       await saveChatMessages(newMessages);
 
       const answer = await onAskQuestion(text);
       
-      const updatedMessages = [...newMessages, { role: 'assistant', content: answer }];
+      const updatedMessages = [...newMessages, { role: 'assistant' as const, content: answer }];
       setMessages(updatedMessages);
       await saveChatMessages(updatedMessages);
 
