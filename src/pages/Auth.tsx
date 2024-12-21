@@ -43,33 +43,43 @@ export const Auth = () => {
       }
 
       if (isLogin) {
-        const { error } = await supabase.auth.signInWithPassword({
+        const { data, error } = await supabase.auth.signInWithPassword({
           email: trimmedEmail,
           password: trimmedPassword,
         });
         
         if (error) {
+          console.error("Login error details:", error);
           if (error.message === "Invalid login credentials") {
-            throw new Error("Неверный email или пароль. Пожалуйста, проверьте введенные данные");
+            throw new Error("Пользователь не найден или неверный пароль. Проверьте введенные данные или зарегистрируйтесь");
           }
           throw error;
         }
-        
-        navigate("/program");
+
+        if (data?.user) {
+          navigate("/program");
+        } else {
+          throw new Error("Не удалось получить данные пользователя");
+        }
       } else {
-        const { error } = await supabase.auth.signUp({
+        const { data, error } = await supabase.auth.signUp({
           email: trimmedEmail,
           password: trimmedPassword,
         });
 
         if (error) {
+          console.error("Signup error details:", error);
           if (error.message.includes("already registered")) {
             throw new Error("Этот email уже зарегистрирован. Попробуйте войти в систему");
           }
           throw error;
         }
 
-        setShowGiftModal(true);
+        if (data?.user) {
+          setShowGiftModal(true);
+        } else {
+          throw new Error("Не удалось создать пользователя");
+        }
       }
     } catch (error: any) {
       console.error("Auth error:", error);
