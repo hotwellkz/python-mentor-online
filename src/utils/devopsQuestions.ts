@@ -1,8 +1,11 @@
 import { Question } from '@/types/question';
+import { getModuleOneQuestions } from './questions/moduleOne';
 import { getModuleThreeQuestions } from './questions/moduleThree';
 
 export const getDevOpsQuestions = (moduleIndex: number, topicIndex: number): Question[] => {
   switch (moduleIndex) {
+    case 1:
+      return getModuleOneQuestions(topicIndex);
     case 3:
       return getModuleThreeQuestions(topicIndex);
     default:
