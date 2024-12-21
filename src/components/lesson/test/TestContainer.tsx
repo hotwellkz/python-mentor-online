@@ -26,7 +26,10 @@ export const TestContainer = ({ open, onOpenChange }: TestContainerProps) => {
   const isDevOpsLesson = lessonId?.startsWith('devops-');
   
   let questions = isDevOpsLesson
-    ? getDevOpsQuestions(...(lessonId?.split('-').slice(1).map(Number) || []))
+    ? getDevOpsQuestions(
+        Number(lessonId?.split('-')[1] || 0),
+        Number(lessonId?.split('-')[2] || 0)
+      )
     : getPythonQuestions();
 
   const handleAnswer = (answerIndex: number) => {

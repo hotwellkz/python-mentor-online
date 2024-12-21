@@ -12,7 +12,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { courseBlocks } from "@/data/courseData";
 import { useEffect, useState } from "react";
 import { modules } from "@/components/course/DevOpsCourseProgram";
-import { getDevOpsQuestions } from "@/utils/testQuestions";
+import { getDevOpsQuestions } from '@/utils/devopsQuestions';
 
 const Lesson = () => {
   const { lessonId } = useParams();
@@ -33,7 +33,7 @@ const Lesson = () => {
 
   // Находим текущий урок в зависимости от типа
   let currentLesson;
-  let topQuestions: string[];
+  let topQuestions: string[] = [];
 
   if (isDevOpsLesson) {
     const [, moduleIndex, topicIndex] = (lessonId || "").split("-").map(Number);
