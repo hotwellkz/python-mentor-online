@@ -50,6 +50,11 @@ export const MobileMenu = ({ userEmail, onLogout }: MobileMenuProps) => {
                   DevOps
                 </Link>
               </DropdownMenuItem>
+              <DropdownMenuItem className="rounded hover:bg-gray-100 transition-colors">
+                <Link to="/business-analyst" className="w-full px-3 py-2 text-gray-700 hover:text-primary">
+                  Бизнес-аналитик
+                </Link>
+              </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
           <Link 

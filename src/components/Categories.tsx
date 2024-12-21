@@ -15,7 +15,7 @@ const categories = [
     duration: "8 мес",
     icon: ChartBar,
     bg: "bg-[#D3E4FD]",
-    link: "/program",
+    link: "/business-analyst",
     isHot: true,
   },
   {

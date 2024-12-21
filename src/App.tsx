@@ -16,6 +16,7 @@ import Terms from "./pages/Terms";
 import Admin from "./pages/Admin";
 import Profile from "./pages/Profile";
 import Faq from "./pages/Faq";
+import BusinessAnalyst from "./pages/BusinessAnalyst";
 
 const queryClient = new QueryClient();
 
@@ -31,6 +32,7 @@ const App = () => (
             <Route path="/program" element={<Program />} />
             <Route path="/devops" element={<DevOps />} />
             <Route path="/devops-program" element={<DevOpsProgram />} />
+            <Route path="/business-analyst" element={<BusinessAnalyst />} />
             <Route path="/auth" element={<Auth />} />
             <Route path="/lesson/:lessonId" element={<Lesson />} />
             <Route path="/pricing" element={<Pricing />} />
