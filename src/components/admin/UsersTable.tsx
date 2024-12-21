@@ -1,22 +1,11 @@
-import { useState, useEffect } from "react";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-
-interface UserWithTokens {
-  id: string;
-  email: string;
-  tokens: number;
-}
+import { Table, TableBody } from "@/components/ui/table";
+import { AdminCheck } from "./AdminCheck";
+import { UserRow } from "./UserRow";
+import { UsersTableHeader } from "./UsersTableHeader";
+import { UserWithTokens } from "@/types/admin";
 
 export const UsersTable = () => {
   const [users, setUsers] = useState<UserWithTokens[]>([]);
@@ -24,18 +13,6 @@ export const UsersTable = () => {
 
   const fetchUsers = async () => {
     try {
-      // First check if we're authenticated as admin
-      const { data: adminData, error: adminError } = await supabase
-        .from('admin_users')
-        .select('*')
-        .eq('password', '1888')
-        .limit(1)
-        .maybeSingle();
-
-      if (adminError) throw adminError;
-      if (!adminData) throw new Error('Не авторизован как администратор');
-
-      // Fetch profiles
       const { data: profiles, error: profilesError } = await supabase
         .from('profiles')
         .select('*');
@@ -43,10 +20,9 @@ export const UsersTable = () => {
       if (profilesError) throw profilesError;
 
       if (profiles) {
-        // Transform profiles data to include email placeholder
         const usersList = profiles.map(profile => ({
           id: profile.id,
-          email: 'Email скрыт', // We can't access emails directly anymore
+          email: 'Email скрыт',
           tokens: profile.tokens,
         }));
         
@@ -115,43 +91,31 @@ export const UsersTable = () => {
     }
   };
 
-  useEffect(() => {
-    fetchUsers();
-  }, []);
-
   return (
     <div className="container mx-auto px-4 py-8">
+      <AdminCheck 
+        onAuthorized={fetchUsers}
+        onError={(error) => {
+          toast({
+            variant: "destructive",
+            title: "Ошибка",
+            description: error.message,
+            className: "bg-destructive text-destructive-foreground border-none",
+          });
+        }}
+      />
       <h1 className="text-2xl font-bold mb-6 text-foreground">Управление пользователями</h1>
       <div className="overflow-x-auto bg-card rounded-lg shadow border border-border">
         <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>Email</TableHead>
-              <TableHead>Токены</TableHead>
-              <TableHead>Действия</TableHead>
-            </TableRow>
-          </TableHeader>
+          <UsersTableHeader />
           <TableBody>
             {users.map((user) => (
-              <TableRow key={user.id}>
-                <TableCell>{user.email}</TableCell>
-                <TableCell>
-                  <Input
-                    type="number"
-                    value={user.tokens}
-                    onChange={(e) => updateTokens(user.id, parseInt(e.target.value))}
-                    className="w-24 bg-background text-foreground border-input"
-                  />
-                </TableCell>
-                <TableCell>
-                  <Button
-                    variant="destructive"
-                    onClick={() => deleteUser(user.id)}
-                  >
-                    Удалить
-                  </Button>
-                </TableCell>
-              </TableRow>
+              <UserRow
+                key={user.id}
+                user={user}
+                onUpdateTokens={updateTokens}
+                onDeleteUser={deleteUser}
+              />
             ))}
           </TableBody>
         </Table>
