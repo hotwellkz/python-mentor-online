@@ -25,11 +25,20 @@ const Admin = () => {
   const { toast } = useToast();
 
   const authenticate = async () => {
-    const { data: adminData } = await supabase
+    const { data: adminData, error } = await supabase
       .from('admin_users')
       .select()
       .eq('password', password)
-      .single();
+      .maybeSingle();
+
+    if (error) {
+      toast({
+        variant: "destructive",
+        title: "Ошибка",
+        description: error.message,
+      });
+      return;
+    }
 
     if (adminData) {
       setIsAuthenticated(true);
