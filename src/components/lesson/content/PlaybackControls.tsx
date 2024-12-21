@@ -6,12 +6,14 @@ interface PlaybackControlsProps {
   onTogglePlayback?: () => void;
   onStopPlayback?: () => void;
   isPlaying?: boolean;
+  isPaused?: boolean;
 }
 
 export const PlaybackControls = ({
   onTogglePlayback,
   onStopPlayback,
   isPlaying,
+  isPaused,
 }: PlaybackControlsProps) => {
   if (!onTogglePlayback && !onStopPlayback) return null;
 
@@ -28,7 +30,7 @@ export const PlaybackControls = ({
           size="lg"
           className="rounded-full shadow-lg hover:shadow-xl transition-shadow duration-200"
         >
-          {isPlaying ? (
+          {isPlaying && !isPaused ? (
             <Pause className="h-6 w-6" />
           ) : (
             <Play className="h-6 w-6" />

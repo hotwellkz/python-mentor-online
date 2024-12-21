@@ -14,6 +14,7 @@ interface LessonContentProps {
   onTogglePlayback?: () => void;
   onStopPlayback?: () => void;
   isPlaying?: boolean;
+  isPaused?: boolean;
 }
 
 export const LessonContent = ({
@@ -27,6 +28,7 @@ export const LessonContent = ({
   onTogglePlayback,
   onStopPlayback,
   isPlaying,
+  isPaused,
 }: LessonContentProps) => {
   return (
     <>
@@ -66,6 +68,7 @@ export const LessonContent = ({
         onTogglePlayback={onTogglePlayback}
         onStopPlayback={onStopPlayback}
         isPlaying={isPlaying}
+        isPaused={isPaused}
       />
     </>
   );

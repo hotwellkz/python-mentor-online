@@ -8,6 +8,7 @@ export const useSpeech = () => {
   const [isPremiumPlaying, setIsPremiumPlaying] = useState(false);
   const [synthesis, setSynthesis] = useState<SpeechSynthesis | null>(null);
   const [utterance, setUtterance] = useState<SpeechSynthesisUtterance | null>(null);
+  const [isPaused, setIsPaused] = useState(false);
 
   useEffect(() => {
     if (window.speechSynthesis) {
@@ -37,17 +38,13 @@ export const useSpeech = () => {
 
   const getMaleVoice = () => {
     const voices = window.speechSynthesis.getVoices();
-    // Try to find a Russian male voice
     const russianMaleVoice = voices.find(voice => 
       voice.lang.startsWith('ru') && voice.name.toLowerCase().includes('male')
     );
-    // If no Russian male voice found, try to find any Russian voice
     const russianVoice = voices.find(voice => voice.lang.startsWith('ru'));
-    // If no Russian voice found, try to find any male voice
     const maleVoice = voices.find(voice => 
       voice.name.toLowerCase().includes('male')
     );
-    // Return the first available option or undefined
     return russianMaleVoice || russianVoice || maleVoice || voices[0];
   };
 
@@ -64,7 +61,20 @@ export const useSpeech = () => {
     if (synthesis) {
       synthesis.cancel();
       setIsPlaying(false);
+      setIsPaused(false);
       setUtterance(null);
+    }
+  };
+
+  const togglePlayback = () => {
+    if (!synthesis) return;
+
+    if (isPlaying && !isPaused) {
+      synthesis.pause();
+      setIsPaused(true);
+    } else if (isPaused) {
+      synthesis.resume();
+      setIsPaused(false);
     }
   };
 
@@ -78,14 +88,19 @@ export const useSpeech = () => {
       return;
     }
 
-    if (isPlaying) {
-      synthesis.cancel();
-      setIsPlaying(false);
-      setUtterance(null);
+    if (isPlaying && !isPaused) {
+      synthesis.pause();
+      setIsPaused(true);
       return;
     }
 
-    // Wait for voices to be loaded
+    if (isPaused) {
+      synthesis.resume();
+      setIsPaused(false);
+      return;
+    }
+
+    // Если воспроизведение не запущено, создаем новый utterance
     if (synthesis.getVoices().length === 0) {
       synthesis.addEventListener('voiceschanged', () => {
         const newUtterance = createUtterance(text);
@@ -107,10 +122,11 @@ export const useSpeech = () => {
     
     newUtterance.lang = "ru-RU";
     newUtterance.rate = 0.9;
-    newUtterance.pitch = 0.9; // Slightly lower pitch for more masculine sound
+    newUtterance.pitch = 0.9;
     
     newUtterance.onend = () => {
       setIsPlaying(false);
+      setIsPaused(false);
       setUtterance(null);
     };
 
@@ -122,6 +138,7 @@ export const useSpeech = () => {
         description: "Произошла ошибка при озвучивании текста",
       });
       setIsPlaying(false);
+      setIsPaused(false);
       setUtterance(null);
     };
 
@@ -131,6 +148,7 @@ export const useSpeech = () => {
   const speakUtterance = (newUtterance: SpeechSynthesisUtterance) => {
     setUtterance(newUtterance);
     setIsPlaying(true);
+    setIsPaused(false);
     synthesis?.speak(newUtterance);
   };
 
@@ -192,9 +210,11 @@ export const useSpeech = () => {
   return {
     isPlaying,
     isPremiumPlaying,
+    isPaused,
     synthesis,
     setSynthesis,
     playText,
     stopPlayback,
+    togglePlayback,
   };
 };
