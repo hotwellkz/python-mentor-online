@@ -35,32 +35,34 @@ export const UsersTable = () => {
       if (adminError) throw adminError;
       if (!adminData) throw new Error('Не авторизован как администратор');
 
-      // Now fetch users and their profiles
-      const { data: users, error: usersError } = await supabase
-        .from('auth.users')
-        .select('id, email');
-
-      if (usersError) throw usersError;
-
-      // Fetch profiles to get tokens
+      // Fetch profiles to get tokens and user IDs
       const { data: profiles, error: profilesError } = await supabase
         .from('profiles')
         .select('*');
 
       if (profilesError) throw profilesError;
 
-      if (users && profiles) {
-        // Combine user and profile data
-        const usersList = users.map(user => {
-          const profile = profiles.find(p => p.id === user.id);
-          return {
-            id: user.id,
-            email: user.email,
-            tokens: profile?.tokens || 0,
-          };
-        });
-        
-        setUsers(usersList);
+      if (profiles) {
+        // Get user data from auth.users using service role (this is handled by RLS policy)
+        const { data: authUsers, error: authError } = await supabase
+          .from('users')
+          .select('id, email');
+
+        if (authError) throw authError;
+
+        if (authUsers) {
+          // Combine profile and auth user data
+          const usersList = profiles.map(profile => {
+            const authUser = authUsers.find(u => u.id === profile.id);
+            return {
+              id: profile.id,
+              email: authUser?.email || 'Email не найден',
+              tokens: profile.tokens,
+            };
+          });
+          
+          setUsers(usersList);
+        }
       }
     } catch (error: any) {
       console.error('Error fetching users:', error);
