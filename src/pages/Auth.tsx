@@ -19,38 +19,52 @@ export const Auth = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
 
+  const validateEmail = (email: string) => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
 
+    const trimmedEmail = email.trim();
+    const trimmedPassword = password.trim();
+
     try {
+      // Валидация email
+      if (!validateEmail(trimmedEmail)) {
+        throw new Error("Пожалуйста, введите корректный email адрес");
+      }
+
+      // Валидация пароля
+      if (trimmedPassword.length < 6) {
+        throw new Error("Пароль должен содержать минимум 6 символов");
+      }
+
       if (isLogin) {
         const { error } = await supabase.auth.signInWithPassword({
-          email: email.trim(),
-          password: password.trim(),
+          email: trimmedEmail,
+          password: trimmedPassword,
         });
         
         if (error) {
           if (error.message === "Invalid login credentials") {
-            throw new Error("Неверный email или пароль");
+            throw new Error("Неверный email или пароль. Пожалуйста, проверьте введенные данные");
           }
           throw error;
         }
         
         navigate("/program");
       } else {
-        if (password.length < 6) {
-          throw new Error("Пароль должен содержать минимум 6 символов");
-        }
-
         const { error } = await supabase.auth.signUp({
-          email: email.trim(),
-          password: password.trim(),
+          email: trimmedEmail,
+          password: trimmedPassword,
         });
 
         if (error) {
           if (error.message.includes("already registered")) {
-            throw new Error("Этот email уже зарегистрирован");
+            throw new Error("Этот email уже зарегистрирован. Попробуйте войти в систему");
           }
           throw error;
         }
@@ -58,10 +72,11 @@ export const Auth = () => {
         setShowGiftModal(true);
       }
     } catch (error: any) {
+      console.error("Auth error:", error);
       toast({
         variant: "destructive",
         title: "Ошибка",
-        description: error.message || "Произошла ошибка при авторизации",
+        description: error.message || "Произошла ошибка при авторизации. Пожалуйста, попробуйте позже",
       });
     } finally {
       setLoading(false);
@@ -101,6 +116,7 @@ export const Auth = () => {
                 onChange={(e) => setEmail(e.target.value)}
                 required
                 placeholder="example@mail.com"
+                className="w-full"
               />
             </div>
             <div className="space-y-2">
@@ -113,6 +129,7 @@ export const Auth = () => {
                   onChange={(e) => setPassword(e.target.value)}
                   required
                   placeholder={isLogin ? "Введите пароль" : "Минимум 6 символов"}
+                  className="w-full pr-10"
                 />
                 <button
                   type="button"
