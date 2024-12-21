@@ -1,13 +1,33 @@
-// Update this page (the content is just a fallback if you fail to update the page)
+import { Helmet } from "react-helmet";
+import { Hero } from "@/components/Hero";
+import { Benefits } from "@/components/Benefits";
 
 const Index = () => {
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100">
-      <div className="text-center">
-        <h1 className="text-4xl font-bold mb-4">Welcome to Your Blank App</h1>
-        <p className="text-xl text-gray-600">Start building your amazing project here!</p>
-      </div>
-    </div>
+    <>
+      <Helmet>
+        <title>Курс Python Бесплатно | Изучайте Python с ИИ-учителем</title>
+        <meta
+          name="description"
+          content="Бесплатный курс Python с персональным ИИ-учителем. Начните изучать программирование прямо сейчас! Индивидуальный подход, практические задания и поддержка 24/7."
+        />
+        <meta
+          name="keywords"
+          content="курс Python бесплатно, изучение Python, программирование, ИИ учитель, обучение Python"
+        />
+        <meta property="og:title" content="Курс Python Бесплатно | Изучайте Python с ИИ-учителем" />
+        <meta
+          property="og:description"
+          content="Бесплатный курс Python с персональным ИИ-учителем. Начните изучать программирование прямо сейчас!"
+        />
+        <meta property="og:type" content="website" />
+        <link rel="canonical" href="https://your-domain.com" />
+      </Helmet>
+      <main className="min-h-screen bg-gray-900">
+        <Hero />
+        <Benefits />
+      </main>
+    </>
   );
 };
 
