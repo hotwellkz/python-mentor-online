@@ -1,14 +1,9 @@
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from "@/components/ui/accordion";
+import { Accordion } from "@/components/ui/accordion";
 import { supabase } from "@/integrations/supabase/client";
-import { Check, BookOpen, Code2, Server, Shield, Cloud, Container, GitBranch, Workflow, Activity } from "lucide-react";
+import { BookOpen, Code2, Server, Shield, Cloud, Container, GitBranch, Workflow, Activity } from "lucide-react";
 import { motion } from "framer-motion";
+import { DevOpsModule } from "./devops/DevOpsModule";
 
 const modules = [
   {
@@ -170,57 +165,22 @@ export const DevOpsCourseProgram = () => {
   return (
     <div className="mb-12">
       <Accordion type="single" collapsible className="w-full">
-        {modules.map((module, moduleIndex) => {
-          const ModuleIcon = module.icon;
-          return (
-            <motion.div
-              key={moduleIndex}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.3, delay: moduleIndex * 0.1 }}
-            >
-              <AccordionItem value={`module-${moduleIndex}`}>
-                <AccordionTrigger className="text-lg font-semibold">
-                  <div className="flex items-center gap-3">
-                    <div className="bg-primary/10 p-2 rounded-lg">
-                      <ModuleIcon className="h-5 w-5 text-primary" />
-                    </div>
-                    {module.title}
-                  </div>
-                </AccordionTrigger>
-                <AccordionContent>
-                  <div className="space-y-4 pl-4">
-                    <div className="border-l-2 border-gray-200 pl-4">
-                      <ul className="list-disc list-inside space-y-2 text-gray-600">
-                        {module.topics.map((topic, topicIndex) => {
-                          const lessonId = `devops-${moduleIndex + 1}-${topicIndex + 1}`;
-                          const isCompleted = completedLessons.includes(lessonId);
-
-                          return (
-                            <li
-                              key={topicIndex}
-                              className="flex items-start gap-2 group hover:text-primary transition-colors"
-                            >
-                              <Link
-                                to={`/lesson/${lessonId}`}
-                                className="flex-grow hover:text-primary transition-colors"
-                              >
-                                {topic}
-                              </Link>
-                              {isCompleted && (
-                                <Check className="h-5 w-5 text-green-500 flex-shrink-0" />
-                              )}
-                            </li>
-                          );
-                        })}
-                      </ul>
-                    </div>
-                  </div>
-                </AccordionContent>
-              </AccordionItem>
-            </motion.div>
-          );
-        })}
+        {modules.map((module, moduleIndex) => (
+          <motion.div
+            key={moduleIndex}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.3, delay: moduleIndex * 0.1 }}
+          >
+            <DevOpsModule
+              title={module.title}
+              topics={module.topics}
+              icon={module.icon}
+              moduleIndex={moduleIndex}
+              completedLessons={completedLessons}
+            />
+          </motion.div>
+        ))}
       </Accordion>
     </div>
   );
