@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -9,27 +9,37 @@ export const useSpeech = () => {
   const [synthesis, setSynthesis] = useState<SpeechSynthesis | null>(null);
   const [utterance, setUtterance] = useState<SpeechSynthesisUtterance | null>(null);
 
-  const playText = (text: string, isPremium = false) => {
+  useEffect(() => {
+    setSynthesis(window.speechSynthesis);
+  }, []);
+
+  const playText = async (text: string, isPremium = false) => {
     if (isPremium) {
-      playPremiumVoice(text);
+      await playPremiumVoice(text);
     } else {
       playBrowserVoice(text);
     }
   };
 
   const playBrowserVoice = (text: string) => {
-    if (synthesis && !isPlaying) {
+    if (!synthesis) {
+      setSynthesis(window.speechSynthesis);
+      return;
+    }
+
+    if (!isPlaying) {
       const utterance = new SpeechSynthesisUtterance(text);
       utterance.lang = "ru-RU";
       utterance.rate = 0.9;
       setUtterance(utterance);
       setIsPlaying(true);
-      synthesis.speak(utterance);
 
       utterance.onend = () => {
         setIsPlaying(false);
         setUtterance(null);
       };
+
+      synthesis.speak(utterance);
     }
   };
 
@@ -61,26 +71,15 @@ export const useSpeech = () => {
       }
 
       setIsPremiumPlaying(true);
-      const response = await fetch("/functions/v1/text-to-speech", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${(await supabase.auth.getSession()).data.session?.access_token}`,
-        },
-        body: JSON.stringify({ text }),
+      const response = await supabase.functions.invoke('text-to-speech', {
+        body: { text },
       });
 
-      if (!response.ok) throw new Error("Ошибка при генерации аудио");
+      if (response.error) throw new Error(response.error.message);
 
-      const audioBlob = await response.blob();
-      const audioUrl = URL.createObjectURL(audioBlob);
+      const audioUrl = response.data.audioUrl;
       const audio = new Audio(audioUrl);
       
-      const downloadLink = document.createElement('a');
-      downloadLink.href = audioUrl;
-      downloadLink.download = 'lesson-audio.mp3';
-      downloadLink.click();
-
       audio.play();
 
       await supabase

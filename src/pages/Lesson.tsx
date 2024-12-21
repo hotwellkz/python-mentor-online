@@ -8,6 +8,7 @@ import { AuthCheck } from "@/components/AuthCheck";
 import { useLesson } from "@/hooks/useLesson";
 import { useSpeech } from "@/hooks/useSpeech";
 import { useToast } from "@/hooks/use-toast";
+import { supabase } from "@/integrations/supabase/client";
 
 const Lesson = () => {
   const { lessonId } = useParams();
@@ -27,6 +28,8 @@ const Lesson = () => {
   const {
     isPlaying,
     isPremiumPlaying,
+    synthesis,
+    setSynthesis,
     playText,
   } = useSpeech();
 
@@ -39,7 +42,21 @@ const Lesson = () => {
   ];
 
   const handleAskQuestion = async (question: string) => {
-    console.log("Question asked:", question);
+    try {
+      const response = await supabase.functions.invoke('generate-lesson', {
+        body: { prompt: question },
+      });
+
+      if (response.error) throw new Error(response.error.message);
+      
+      return response.data.text;
+    } catch (error: any) {
+      toast({
+        variant: "destructive",
+        title: "Ошибка",
+        description: error.message,
+      });
+    }
   };
 
   const shareLesson = async () => {
