@@ -70,6 +70,11 @@ export const useLesson = (lessonId: string | undefined) => {
       if (error) throw error;
     } catch (error) {
       console.error('Error saving lesson progress:', error);
+      toast({
+        variant: "destructive",
+        title: "Ошибка",
+        description: "Не удалось сохранить прогресс урока",
+      });
     }
   };
 
