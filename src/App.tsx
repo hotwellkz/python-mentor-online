@@ -7,6 +7,7 @@ import { Layout } from "./components/Layout";
 import Index from "./pages/Index";
 import Program from "./pages/Program";
 import { Auth } from "./pages/Auth";
+import Lesson from "./pages/Lesson";
 
 const queryClient = new QueryClient();
 
@@ -21,6 +22,7 @@ const App = () => (
             <Route path="/" element={<Index />} />
             <Route path="/program" element={<Program />} />
             <Route path="/auth" element={<Auth />} />
+            <Route path="/lesson/:lessonId" element={<Lesson />} />
             <Route
               path="/privacy"
               element={
