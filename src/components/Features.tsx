@@ -57,7 +57,7 @@ export const Features = () => {
                 Ответы на самые популярные вопросы о курсе и обучении программированию
               </p>
               <Link to="/faq">
-                <Button variant="outline" className="text-white border-white hover:bg-white/10">
+                <Button variant="secondary" className="text-white hover:bg-secondary/90">
                   Смотреть все вопросы
                   <ListOrdered className="ml-2 w-4 h-4" />
                 </Button>

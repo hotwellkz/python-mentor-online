@@ -20,7 +20,7 @@ export const Hero = () => {
             </Button>
           </Link>
           <Link to="/program">
-            <Button size="lg" variant="outline" className="border-white text-white hover:bg-white/10">
+            <Button size="lg" variant="secondary" className="text-white hover:bg-secondary/90">
               Узнать больше
               <Code className="ml-2" />
             </Button>
