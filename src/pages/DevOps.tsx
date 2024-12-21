@@ -47,7 +47,7 @@ const DevOps = () => {
                   Освойте современные DevOps практики и инструменты под руководством ИИ-наставника
                 </p>
                 <div className="flex flex-wrap gap-4">
-                  <Link to="/auth">
+                  <Link to="/devops-program">
                     <Button size="lg" className="bg-primary hover:bg-primary/90">
                       Начать обучение
                       <ArrowRight className="ml-2 h-5 w-5" />
