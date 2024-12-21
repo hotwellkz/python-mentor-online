@@ -39,7 +39,7 @@ export const useLesson = (lessonId: string | undefined) => {
         .select('*')
         .eq('lesson_id', lessonId)
         .eq('user_id', user.id)
-        .single();
+        .maybeSingle();
 
       if (progress?.generated_text) {
         setGeneratedText(progress.generated_text);
