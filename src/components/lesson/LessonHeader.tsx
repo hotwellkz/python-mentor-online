@@ -1,7 +1,8 @@
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
-import { Sparkles, Play, Pause, Share2, MessageCircle, Send } from "lucide-react";
+import { Sparkles, Play, Pause, Share2, MessageCircle, Send, Copy } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 interface LessonHeaderProps {
   loading: boolean;
@@ -23,6 +24,7 @@ export const LessonHeader = ({
   onShare,
 }: LessonHeaderProps) => {
   const { toast } = useToast();
+  const isMobile = useIsMobile();
 
   const shareToWhatsApp = () => {
     const text = encodeURIComponent(generatedText);
@@ -42,7 +44,7 @@ export const LessonHeader = ({
       animate={{ opacity: 1, y: 0 }}
       className="mb-8 space-y-6"
     >
-      <h1 className="text-3xl md:text-4xl font-bold">
+      <h1 className="text-2xl md:text-4xl font-bold">
         Урок 1: Переменные и типы данных
       </h1>
       
@@ -105,16 +107,22 @@ export const LessonHeader = ({
             
             <div className="flex gap-2 w-full md:w-auto">
               <Button variant="outline" onClick={shareToWhatsApp}>
-                <MessageCircle className="h-5 w-5 mr-2" />
-                WhatsApp
+                <MessageCircle className="h-5 w-5" />
+                <span className="hidden sm:inline ml-2">WhatsApp</span>
               </Button>
               <Button variant="outline" onClick={shareToTelegram}>
-                <Send className="h-5 w-5 mr-2" />
-                Telegram
+                <Send className="h-5 w-5" />
+                <span className="hidden sm:inline ml-2">Telegram</span>
               </Button>
               <Button variant="ghost" onClick={onShare}>
-                <Share2 className="h-5 w-5 mr-2" />
-                Копировать ссылку
+                {isMobile ? (
+                  <Copy className="h-5 w-5" />
+                ) : (
+                  <>
+                    <Share2 className="h-5 w-5 mr-2" />
+                    Копировать ссылку
+                  </>
+                )}
               </Button>
             </div>
           </div>

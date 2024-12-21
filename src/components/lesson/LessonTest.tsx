@@ -84,7 +84,7 @@ export const LessonTest = ({ open, onOpenChange }: LessonTestProps) => {
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[500px]">
+      <DialogContent className="w-[95vw] max-w-[500px] p-4 sm:p-6">
         <DialogHeader>
           <DialogTitle>
             {showScore ? "Результаты теста" : "Тест по теме урока"}
@@ -95,32 +95,32 @@ export const LessonTest = ({ open, onOpenChange }: LessonTestProps) => {
           <motion.div
             initial={{ scale: 0 }}
             animate={{ scale: 1 }}
-            className="text-center p-6"
+            className="text-center p-4 sm:p-6"
           >
-            <h3 className="text-2xl font-bold mb-4">
+            <h3 className="text-xl sm:text-2xl font-bold mb-4">
               Ваш результат: {Math.round((score / questions.length) * 10)}/10
             </h3>
             <Button onClick={handleReset}>Закрыть</Button>
           </motion.div>
         ) : (
-          <div className="p-4">
-            <h3 className="text-lg font-semibold mb-4">
+          <div className="p-2 sm:p-4">
+            <h3 className="text-base sm:text-lg font-semibold mb-4">
               Вопрос {currentQuestion + 1} из {questions.length}
             </h3>
-            <p className="mb-4">{questions[currentQuestion].question}</p>
+            <p className="mb-4 text-sm sm:text-base">{questions[currentQuestion].question}</p>
             <div className="space-y-2">
               {questions[currentQuestion].options.map((option, index) => (
                 <Button
                   key={index}
                   variant={selectedAnswer === index ? "default" : "outline"}
-                  className="w-full justify-start"
+                  className="w-full justify-start text-sm sm:text-base py-2 px-3 sm:px-4"
                   onClick={() => handleAnswer(index)}
                 >
                   {option}
                 </Button>
               ))}
             </div>
-            <div className="mt-6 flex justify-end">
+            <div className="mt-4 sm:mt-6 flex justify-end">
               <Button
                 onClick={handleNext}
                 disabled={selectedAnswer === null}
