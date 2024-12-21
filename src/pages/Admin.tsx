@@ -119,14 +119,14 @@ const Admin = () => {
   if (!isAuthenticated) {
     return (
       <div className="container mx-auto px-4 py-8">
-        <div className="max-w-md mx-auto space-y-4 bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700">
-          <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Панель администратора</h1>
+        <div className="max-w-md mx-auto space-y-4 bg-card p-6 rounded-lg shadow-lg border border-border">
+          <h1 className="text-2xl font-bold text-card-foreground">Панель администратора</h1>
           <Input
             type="password"
             placeholder="Введите пароль"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            className="bg-white dark:bg-gray-900 text-gray-900 dark:text-white"
+            className="bg-background text-foreground border-input"
             onKeyDown={(e) => {
               if (e.key === 'Enter') {
                 authenticate();
@@ -143,8 +143,8 @@ const Admin = () => {
 
   return (
     <div className="container mx-auto px-4 py-8">
-      <h1 className="text-2xl font-bold mb-6">Управление пользователями</h1>
-      <div className="overflow-x-auto bg-white dark:bg-gray-800 rounded-lg shadow">
+      <h1 className="text-2xl font-bold mb-6 text-foreground">Управление пользователями</h1>
+      <div className="overflow-x-auto bg-card rounded-lg shadow border border-border">
         <Table>
           <TableHeader>
             <TableRow>
@@ -162,7 +162,7 @@ const Admin = () => {
                     type="number"
                     value={user.tokens}
                     onChange={(e) => updateTokens(user.id, parseInt(e.target.value))}
-                    className="w-24 bg-white dark:bg-gray-900"
+                    className="w-24 bg-background text-foreground border-input"
                   />
                 </TableCell>
                 <TableCell>
