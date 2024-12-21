@@ -1,25 +1,80 @@
-import { useState } from 'react';
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
-import { Textarea } from "@/components/ui/textarea";
-import { MessageList } from "@/components/chat/MessageList";
-import { supabase } from "@/integrations/supabase/client";
+import { Input } from "@/components/ui/input";
+import { Send } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { supabase } from "@/integrations/supabase/client";
 
 interface ChatProps {
   topQuestions: string[];
-  onAskQuestion: (question: string) => Promise<void>;
+  onAskQuestion: (question: string) => Promise<string>;
+}
+
+interface Message {
+  role: 'user' | 'assistant';
+  content: string;
 }
 
 export const Chat = ({ topQuestions, onAskQuestion }: ChatProps) => {
-  const [userPrompt, setUserPrompt] = useState("");
+  const [question, setQuestion] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [messages, setMessages] = useState<Message[]>([]);
   const { toast } = useToast();
-  const [messages, setMessages] = useState<Array<{ role: 'user' | 'assistant', content: string }>>([]);
+  const lessonId = window.location.pathname.split('/').pop();
 
-  const handleQuestionSubmit = async () => {
-    if (!userPrompt.trim()) return;
+  useEffect(() => {
+    loadChatMessages();
+  }, []);
+
+  const loadChatMessages = async () => {
+    if (!lessonId) return;
 
     try {
       const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return;
+
+      const { data: progress } = await supabase
+        .from('lesson_progress')
+        .select('chat_messages')
+        .eq('lesson_id', lessonId)
+        .eq('user_id', user.id)
+        .single();
+
+      if (progress?.chat_messages) {
+        setMessages(progress.chat_messages as Message[]);
+      }
+    } catch (error) {
+      console.error('Error loading chat messages:', error);
+    }
+  };
+
+  const saveChatMessages = async (newMessages: Message[]) => {
+    if (!lessonId) return;
+
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return;
+
+      const { error } = await supabase
+        .from('lesson_progress')
+        .upsert({
+          user_id: user.id,
+          lesson_id: lessonId,
+          chat_messages: newMessages,
+          updated_at: new Date().toISOString()
+        });
+
+      if (error) throw error;
+    } catch (error) {
+      console.error('Error saving chat messages:', error);
+    }
+  };
+
+  const handleAskQuestion = async (text: string) => {
+    try {
+      setLoading(true);
+      const { data: { user } } = await supabase.auth.getUser();
+      
       if (!user) {
         toast({
           variant: "destructive",
@@ -30,9 +85,9 @@ export const Chat = ({ topQuestions, onAskQuestion }: ChatProps) => {
       }
 
       const { data: profile } = await supabase
-        .from("profiles")
-        .select("tokens")
-        .eq("id", user.id)
+        .from('profiles')
+        .select('tokens')
+        .eq('id', user.id)
         .single();
 
       if (!profile || profile.tokens < 5) {
@@ -44,63 +99,77 @@ export const Chat = ({ topQuestions, onAskQuestion }: ChatProps) => {
         return;
       }
 
-      setMessages(prev => [...prev, { role: 'user', content: userPrompt }]);
-      
-      const { data, error } = await supabase.functions.invoke('chat', {
-        body: { message: userPrompt, model: 'openai' }
-      });
+      const newMessages = [...messages, { role: 'user', content: text }];
+      setMessages(newMessages);
+      await saveChatMessages(newMessages);
 
-      if (error) throw error;
-
-      setMessages(prev => [...prev, { role: 'assistant', content: data.text }]);
+      const answer = await onAskQuestion(text);
       
+      const updatedMessages = [...newMessages, { role: 'assistant', content: answer }];
+      setMessages(updatedMessages);
+      await saveChatMessages(updatedMessages);
+
       await supabase
-        .from("profiles")
+        .from('profiles')
         .update({ tokens: profile.tokens - 5 })
-        .eq("id", user.id);
+        .eq('id', user.id);
 
-      setUserPrompt("");
-
+      setQuestion("");
     } catch (error: any) {
       toast({
         variant: "destructive",
         title: "Ошибка",
         description: error.message,
       });
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
-    <div className="mt-8">
-      <h3 className="text-xl font-semibold mb-4">Задайте вопрос по теме урока</h3>
+    <div className="mt-8 space-y-4">
+      <h2 className="text-xl font-semibold mb-4">Часто задаваемые вопросы</h2>
       
-      <div className="space-y-4">
-        <MessageList messages={messages} />
-        
-        <div className="flex gap-2">
-          <Textarea
-            value={userPrompt}
-            onChange={(e) => setUserPrompt(e.target.value)}
-            placeholder="Задайте свой вопрос..."
-            className="flex-grow"
-          />
-          <Button onClick={handleQuestionSubmit}>
-            Отправить
+      <div className="grid grid-cols-1 gap-2">
+        {topQuestions.map((q, i) => (
+          <Button
+            key={i}
+            variant="outline"
+            className="whitespace-normal h-auto text-left py-2"
+            onClick={() => handleAskQuestion(q)}
+            disabled={loading}
+          >
+            {q}
           </Button>
-        </div>
+        ))}
+      </div>
 
-        <div className="grid grid-cols-1 gap-4 mt-6">
-          {topQuestions.map((question, index) => (
-            <Button
-              key={index}
-              variant="outline"
-              className="text-left whitespace-normal h-auto py-2"
-              onClick={() => setUserPrompt(question)}
-            >
-              {question}
-            </Button>
-          ))}
-        </div>
+      <div className="space-y-4 mt-8">
+        {messages.map((msg, i) => (
+          <div
+            key={i}
+            className={`p-4 rounded-lg ${
+              msg.role === 'user'
+                ? 'bg-primary text-primary-foreground ml-8'
+                : 'bg-muted mr-8'
+            }`}
+          >
+            {msg.content}
+          </div>
+        ))}
+      </div>
+
+      <div className="flex gap-2">
+        <Input
+          value={question}
+          onChange={(e) => setQuestion(e.target.value)}
+          placeholder="Задайте свой вопрос..."
+          onKeyPress={(e) => e.key === 'Enter' && handleAskQuestion(question)}
+          disabled={loading}
+        />
+        <Button onClick={() => handleAskQuestion(question)} disabled={loading || !question.trim()}>
+          <Send className="h-4 w-4" />
+        </Button>
       </div>
     </div>
   );

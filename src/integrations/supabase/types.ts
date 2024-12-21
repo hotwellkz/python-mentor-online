@@ -45,6 +45,36 @@ export type Database = {
         }
         Relationships: []
       }
+      lesson_progress: {
+        Row: {
+          chat_messages: Json | null
+          created_at: string
+          generated_text: string | null
+          id: string
+          lesson_id: string
+          updated_at: string
+          user_id: string | null
+        }
+        Insert: {
+          chat_messages?: Json | null
+          created_at?: string
+          generated_text?: string | null
+          id?: string
+          lesson_id: string
+          updated_at?: string
+          user_id?: string | null
+        }
+        Update: {
+          chat_messages?: Json | null
+          created_at?: string
+          generated_text?: string | null
+          id?: string
+          lesson_id?: string
+          updated_at?: string
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           created_at: string
