@@ -76,6 +76,10 @@ export const Auth = () => {
         }
 
         if (data?.user) {
+          toast({
+            title: "Регистрация успешна",
+            description: "Пожалуйста, проверьте вашу почту и подтвердите email для доступа к урокам",
+          });
           setShowGiftModal(true);
         } else {
           throw new Error("Не удалось создать пользователя");
