@@ -44,8 +44,21 @@ export const Chat = ({ topQuestions, onAskQuestion }: ChatProps) => {
         return;
       }
 
-      setMessages([...messages, { role: 'user', content: userPrompt }]);
-      await onAskQuestion(userPrompt);
+      setMessages(prev => [...prev, { role: 'user', content: userPrompt }]);
+      
+      const response = await supabase.functions.invoke('chat', {
+        body: { message: userPrompt, model: 'openai' }
+      });
+
+      if (response.error) throw new Error(response.error.message);
+
+      setMessages(prev => [...prev, { role: 'assistant', content: response.data.text }]);
+      
+      await supabase
+        .from("profiles")
+        .update({ tokens: profile.tokens - 5 })
+        .eq("id", user.id);
+
       setUserPrompt("");
 
     } catch (error: any) {

@@ -10,7 +10,9 @@ export const useSpeech = () => {
   const [utterance, setUtterance] = useState<SpeechSynthesisUtterance | null>(null);
 
   useEffect(() => {
-    setSynthesis(window.speechSynthesis);
+    if (window.speechSynthesis) {
+      setSynthesis(window.speechSynthesis);
+    }
   }, []);
 
   const playText = async (text: string, isPremium = false) => {
@@ -23,24 +25,44 @@ export const useSpeech = () => {
 
   const playBrowserVoice = (text: string) => {
     if (!synthesis) {
-      setSynthesis(window.speechSynthesis);
+      toast({
+        variant: "destructive",
+        title: "Ошибка",
+        description: "Синтез речи недоступен в вашем браузере",
+      });
       return;
     }
 
-    if (!isPlaying) {
-      const utterance = new SpeechSynthesisUtterance(text);
-      utterance.lang = "ru-RU";
-      utterance.rate = 0.9;
-      setUtterance(utterance);
-      setIsPlaying(true);
-
-      utterance.onend = () => {
-        setIsPlaying(false);
-        setUtterance(null);
-      };
-
-      synthesis.speak(utterance);
+    if (isPlaying) {
+      synthesis.cancel();
+      setIsPlaying(false);
+      setUtterance(null);
+      return;
     }
+
+    const newUtterance = new SpeechSynthesisUtterance(text);
+    newUtterance.lang = "ru-RU";
+    newUtterance.rate = 0.9;
+    
+    newUtterance.onend = () => {
+      setIsPlaying(false);
+      setUtterance(null);
+    };
+
+    newUtterance.onerror = (event) => {
+      console.error('Speech synthesis error:', event);
+      toast({
+        variant: "destructive",
+        title: "Ошибка",
+        description: "Произошла ошибка при озвучивании текста",
+      });
+      setIsPlaying(false);
+      setUtterance(null);
+    };
+
+    setUtterance(newUtterance);
+    setIsPlaying(true);
+    synthesis.speak(newUtterance);
   };
 
   const playPremiumVoice = async (text: string) => {
