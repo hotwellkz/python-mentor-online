@@ -7,7 +7,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { getDevOpsQuestions } from '@/utils/testQuestions';
-import { getPythonQuestions } from '@/utils/testQuestions';
+import { getBusinessAnalystQuestions } from '@/utils/questions/businessAnalyst';
 import { TestScore } from './TestScore';
 import { TestQuestion } from './TestQuestion';
 
@@ -24,13 +24,19 @@ export const TestContainer = ({ open, onOpenChange }: TestContainerProps) => {
   const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null);
 
   const isDevOpsLesson = lessonId?.startsWith('devops-');
+  const isBusinessAnalystLesson = lessonId?.startsWith('ba-');
   
-  let questions = isDevOpsLesson
-    ? getDevOpsQuestions(
-        Number(lessonId?.split('-')[1] || 0),
-        Number(lessonId?.split('-')[2] || 0)
-      )
-    : getPythonQuestions();
+  let questions = [];
+
+  if (isBusinessAnalystLesson) {
+    const [, blockIndex, lessonIndex] = (lessonId || "").split("-").map(Number);
+    questions = getBusinessAnalystQuestions(blockIndex, lessonIndex);
+  } else if (isDevOpsLesson) {
+    const [, moduleIndex, topicIndex] = (lessonId || "").split("-").map(Number);
+    questions = getDevOpsQuestions(moduleIndex, topicIndex);
+  } else {
+    questions = getDevOpsQuestions(1, 1); // fallback
+  }
 
   const handleAnswer = (answerIndex: number) => {
     setSelectedAnswer(answerIndex);

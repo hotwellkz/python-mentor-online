@@ -58,18 +58,26 @@ export const useLesson = (lessonId: string | undefined) => {
 
       const { error } = await supabase
         .from('lesson_progress')
-        .upsert({
-          user_id: user.id,
-          lesson_id: lessonId,
-          generated_text: text,
-          updated_at: new Date().toISOString()
-        }, {
-          onConflict: 'user_id,lesson_id'
-        });
+        .upsert(
+          {
+            user_id: user.id,
+            lesson_id: lessonId,
+            generated_text: text,
+            updated_at: new Date().toISOString()
+          },
+          {
+            onConflict: 'user_id,lesson_id'
+          }
+        );
 
       if (error) throw error;
     } catch (error) {
       console.error('Error saving lesson progress:', error);
+      toast({
+        variant: "destructive",
+        title: "Ошибка",
+        description: "Не удалось сохранить прогресс урока",
+      });
     }
   };
 
