@@ -28,6 +28,7 @@ export const useSpeech = () => {
       .replace(/\[(.*?)\]\(.*?\)/g, '$1') // Links
       .replace(/#{1,6}\s/g, '') // Headers
       .replace(/`(.*?)`/g, '$1') // Code
+      .replace(/<[^>]*>/g, '') // HTML tags
       .replace(/\n\s*[-*+]\s/g, '\n') // Lists
       .replace(/\n\s*\d+\.\s/g, '\n') // Numbered lists
       .replace(/\n{2,}/g, '\n') // Multiple newlines
