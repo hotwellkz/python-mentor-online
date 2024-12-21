@@ -6,7 +6,7 @@ import { Button } from "./ui/button";
 import { TokenDisplay } from "./TokenDisplay";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
-import { Menu } from "lucide-react";
+import { Menu, Settings } from "lucide-react";
 import {
   Sheet,
   SheetContent,
@@ -57,6 +57,12 @@ export const Layout = () => {
               >
                 Тарифы
               </Link>
+              <Link
+                to="/admin"
+                className="text-white hover:text-primary transition-colors"
+              >
+                <Settings className="h-5 w-5" />
+              </Link>
               <TokenDisplay />
               <div className="flex items-center gap-2">
                 <Button
@@ -86,6 +92,12 @@ export const Layout = () => {
                     className="text-foreground hover:text-primary transition-colors"
                   >
                     Тарифы
+                  </Link>
+                  <Link
+                    to="/admin"
+                    className="text-foreground hover:text-primary transition-colors"
+                  >
+                    Администратор
                   </Link>
                   <TokenDisplay />
                   <Link to="/auth" className="w-full">

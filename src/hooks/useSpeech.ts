@@ -21,11 +21,25 @@ export const useSpeech = () => {
     };
   }, []);
 
+  const cleanMarkdown = (text: string) => {
+    return text
+      .replace(/\*\*(.*?)\*\*/g, '$1') // Bold
+      .replace(/\*(.*?)\*/g, '$1') // Italic
+      .replace(/\[(.*?)\]\(.*?\)/g, '$1') // Links
+      .replace(/#{1,6}\s/g, '') // Headers
+      .replace(/`(.*?)`/g, '$1') // Code
+      .replace(/\n\s*[-*+]\s/g, '\n') // Lists
+      .replace(/\n\s*\d+\.\s/g, '\n') // Numbered lists
+      .replace(/\n{2,}/g, '\n') // Multiple newlines
+      .trim();
+  };
+
   const playText = async (text: string, isPremium = false) => {
+    const cleanText = cleanMarkdown(text);
     if (isPremium) {
-      await playPremiumVoice(text);
+      await playPremiumVoice(cleanText);
     } else {
-      playBrowserVoice(text);
+      playBrowserVoice(cleanText);
     }
   };
 
