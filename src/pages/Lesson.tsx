@@ -34,11 +34,11 @@ const Lesson = () => {
   } = useSpeech();
 
   const topQuestions = [
-    "Как создать переменную в Python и присвоить ей значение?",
-    "В чем разница между типами данных int и float?",
-    "Как преобразовать один тип данных в другой?",
-    "Какие операции можно выполнять с булевыми значениями?",
-    "Как узнать тип переменной в Python?"
+    "Как установить Python на Windows 10?",
+    "Как добавить Python в переменную PATH?",
+    "Какую версию Python лучше выбрать для начала?",
+    "Как проверить успешность установки Python?",
+    "Как установить Python на MacOS?"
   ];
 
   const handleAskQuestion = async (question: string) => {
@@ -86,11 +86,12 @@ const Lesson = () => {
   return (
     <>
       <Helmet>
-        <title>Урок 1: Переменные и типы данных | Python с ИИ-учителем</title>
+        <title>Урок 2: Установка Python | Python с ИИ-учителем</title>
         <meta
           name="description"
-          content="Изучите переменные и типы данных в Python: int, float, str, bool. Практические примеры и интерактивное обучение с ИИ-учителем."
+          content="Научитесь устанавливать Python на Windows, macOS и Linux. Пошаговое руководство по настройке Python и переменных среды. Интерактивное обучение с ИИ-учителем."
         />
+        <meta name="keywords" content="установка python, python установка windows, python установка mac, python path, python для начинающих" />
       </Helmet>
       <div className="container mx-auto px-4 py-8">
         <div className="max-w-4xl mx-auto">
@@ -111,6 +112,16 @@ const Lesson = () => {
             onShowTest={() => setShowTest(true)}
             onFinishLesson={finishLesson}
             topQuestions={topQuestions}
+            onTogglePlayback={() => {
+              if (synthesis) {
+                if (isPlaying) {
+                  synthesis.pause();
+                } else {
+                  synthesis.resume();
+                }
+              }
+            }}
+            isPlaying={isPlaying}
           />
           <Chat
             topQuestions={topQuestions}
