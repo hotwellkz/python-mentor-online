@@ -17,37 +17,24 @@ interface LessonContentProps {
 }
 
 const cleanText = (text: string) => {
-  // Заменяем маркеры заголовков на HTML-теги
-  let cleanedText = text
+  return text
     .replace(/#{1,6}\s(.*?)(?:\n|$)/g, (_, title) => `<h3 class="text-xl font-semibold my-4">${title}</h3>`)
-    // Заменяем жирный текст
     .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
-    // Заменяем курсив
     .replace(/\*(.*?)\*/g, '<em>$1</em>')
-    // Заменяем блоки кода
     .replace(/```(.*?)```/gs, (_, code) => `<pre class="bg-gray-100 dark:bg-gray-800 p-4 rounded-lg my-4 overflow-x-auto"><code>${code}</code></pre>`)
-    // Заменяем инлайн-код
     .replace(/`(.*?)`/g, '<code class="bg-gray-100 dark:bg-gray-800 px-1 rounded">$1</code>')
-    // Заменяем ссылки
     .replace(/\[(.*?)\]\((.*?)\)/g, '<a href="$2" class="text-primary hover:underline">$1</a>')
-    // Заменяем маркированные списки
     .replace(/^\s*[-*+]\s+(.*?)(?:\n|$)/gm, '<li class="ml-4">$1</li>')
-    // Заменяем нумерованные списки
     .replace(/^\s*\d+\.\s+(.*?)(?:\n|$)/gm, '<li class="ml-4">$1</li>')
-    // Оборачиваем последовательные li в ul или ol
-    .replace(/(<li.*?>.*?<\/li>)\n(<li.*?>.*?<\/li>)/gs, '<ul class="list-disc my-4">$1$2</ul>');
-
-  // Добавляем параграфы для текста, который не обработан другими правилами
-  cleanedText = cleanedText
+    .replace(/(<li.*?>.*?<\/li>)\n(<li.*?>.*?<\/li>)/gs, '<ul class="list-disc my-4">$1$2</ul>')
     .split('\n\n')
     .map(paragraph => {
       if (!paragraph.trim()) return '';
       if (paragraph.startsWith('<')) return paragraph;
       return `<p class="my-4">${paragraph}</p>`;
     })
-    .join('\n');
-
-  return cleanedText;
+    .join('\n')
+    .trim();
 };
 
 export const LessonContent = ({
@@ -132,12 +119,11 @@ export const LessonContent = ({
           animate={{ opacity: 1 }}
           className="space-y-8"
         >
-          <div className="prose prose-lg max-w-none dark:prose-invert">
+          <div className="prose prose-lg max-w-none dark:prose-invert prose-headings:text-xl prose-headings:font-semibold prose-p:my-4 prose-pre:bg-gray-100 dark:prose-pre:bg-gray-800 prose-pre:p-4 prose-pre:rounded-lg prose-code:bg-gray-100 dark:prose-code:bg-gray-800 prose-code:px-1 prose-code:rounded prose-a:text-primary hover:prose-a:underline prose-li:ml-4 prose-ul:list-disc prose-ul:my-4">
             <div dangerouslySetInnerHTML={{ __html: cleanText(generatedText) }} />
           </div>
 
           <div className="flex flex-col gap-4">
-            {/* Share buttons group */}
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
               <Button variant="outline" onClick={shareToWhatsApp} className="w-full">
                 <MessageCircle className="h-5 w-5 mr-2" />
@@ -157,7 +143,6 @@ export const LessonContent = ({
               </Button>
             </div>
 
-            {/* Control buttons group */}
             <div className="flex flex-col sm:flex-row justify-between gap-2">
               {onTogglePlayback && (
                 <Button 
