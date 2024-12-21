@@ -71,6 +71,8 @@ export const Chat = ({ topQuestions, onAskQuestion }: ChatProps) => {
           lesson_id: lessonId,
           chat_messages: newMessages as unknown as Json,
           updated_at: new Date().toISOString()
+        }, {
+          onConflict: 'user_id,lesson_id'
         });
 
       if (error) throw error;

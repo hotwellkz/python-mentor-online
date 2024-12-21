@@ -63,6 +63,8 @@ export const useLesson = (lessonId: string | undefined) => {
           lesson_id: lessonId,
           generated_text: text,
           updated_at: new Date().toISOString()
+        }, {
+          onConflict: 'user_id,lesson_id'
         });
 
       if (error) throw error;
