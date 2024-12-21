@@ -16,6 +16,7 @@ serve(async (req) => {
 
   try {
     const { message, model } = await req.json();
+    console.log('Processing chat request:', { model });
 
     if (model === 'openai') {
       const response = await fetch('https://api.openai.com/v1/chat/completions', {
@@ -25,7 +26,7 @@ serve(async (req) => {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          model: 'gpt-4',
+          model: 'gpt-4o',
           messages: [
             {
               role: 'system',
@@ -37,6 +38,8 @@ serve(async (req) => {
       });
 
       const data = await response.json();
+      console.log('OpenAI response received');
+      
       return new Response(JSON.stringify({ 
         text: data.choices[0].message.content 
       }), {
@@ -63,6 +66,8 @@ serve(async (req) => {
       });
 
       const data = await response.json();
+      console.log('Anthropic response received');
+      
       return new Response(JSON.stringify({ 
         text: data.content[0].text 
       }), {
@@ -72,7 +77,7 @@ serve(async (req) => {
 
     throw new Error('Неподдерживаемая модель');
   } catch (error) {
-    console.error('Ошибка в функции chat:', error);
+    console.error('Error in chat function:', error);
     return new Response(JSON.stringify({ error: error.message }), {
       status: 500,
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
