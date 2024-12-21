@@ -50,13 +50,7 @@ const Lesson = () => {
     const [blockIndex, lessonIndex] = (lessonId || "").split("-").map(Number);
     const currentBlock = courseBlocks[blockIndex - 1];
     currentLesson = currentBlock?.lessons[lessonIndex - 1];
-    topQuestions = currentLesson?.topics || [
-      "Как установить VS Code для Python?",
-      "Какие расширения нужны для Python в VS Code?",
-      "Как настроить PyCharm для Python?",
-      "Как установить Jupyter Notebook?",
-      "Какой редактор лучше выбрать для начинающего Python разработчика?"
-    ];
+    topQuestions = currentLesson?.topics || [];
   }
 
   const {
