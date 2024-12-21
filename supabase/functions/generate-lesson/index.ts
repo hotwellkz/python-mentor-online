@@ -9,6 +9,9 @@ const corsHeaders = {
 };
 
 serve(async (req) => {
+  console.log('Function called with method:', req.method);
+  
+  // Handle CORS preflight requests
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
   }
@@ -16,6 +19,11 @@ serve(async (req) => {
   try {
     const { lessonId } = await req.json();
     console.log('Generating lesson for:', lessonId);
+
+    if (!openAIApiKey) {
+      console.error('OpenAI API key not found');
+      throw new Error('OpenAI API key not configured');
+    }
 
     const response = await fetch('https://api.openai.com/v1/chat/completions', {
       method: 'POST',
@@ -37,6 +45,11 @@ serve(async (req) => {
         ],
       }),
     });
+
+    if (!response.ok) {
+      console.error('OpenAI API error:', response.status, response.statusText);
+      throw new Error('Error calling OpenAI API');
+    }
 
     const data = await response.json();
     console.log('OpenAI response received');
