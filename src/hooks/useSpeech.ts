@@ -33,8 +33,10 @@ export const useSpeech = () => {
       return;
     }
 
+    // Stop any currently playing speech
+    synthesis.cancel();
+    
     if (isPlaying) {
-      synthesis.cancel();
       setIsPlaying(false);
       setUtterance(null);
       return;

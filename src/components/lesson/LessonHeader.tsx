@@ -1,6 +1,6 @@
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
-import { Sparkles, Play, Pause, Share2 } from "lucide-react";
+import { Sparkles, Play, Pause, Share2, MessageCircle, Send } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
 interface LessonHeaderProps {
@@ -22,6 +22,20 @@ export const LessonHeader = ({
   onPlayText,
   onShare,
 }: LessonHeaderProps) => {
+  const { toast } = useToast();
+
+  const shareToWhatsApp = () => {
+    const text = encodeURIComponent(generatedText);
+    const url = `https://wa.me/?text=${text}`;
+    window.open(url, '_blank');
+  };
+
+  const shareToTelegram = () => {
+    const text = encodeURIComponent(generatedText);
+    const url = `https://t.me/share/url?url=${window.location.href}&text=${text}`;
+    window.open(url, '_blank');
+  };
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -83,10 +97,20 @@ export const LessonHeader = ({
               <Sparkles className="h-5 w-5 mr-2" />
               Озвучить красивым голосом
             </Button>
-            <Button variant="ghost" onClick={onShare}>
-              <Share2 className="h-5 w-5 mr-2" />
-              Поделиться
-            </Button>
+            <div className="flex gap-2">
+              <Button variant="outline" onClick={shareToWhatsApp}>
+                <MessageCircle className="h-5 w-5 mr-2" />
+                WhatsApp
+              </Button>
+              <Button variant="outline" onClick={shareToTelegram}>
+                <Send className="h-5 w-5 mr-2" />
+                Telegram
+              </Button>
+              <Button variant="ghost" onClick={onShare}>
+                <Share2 className="h-5 w-5 mr-2" />
+                Копировать ссылку
+              </Button>
+            </div>
           </>
         )}
       </div>
