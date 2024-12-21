@@ -29,7 +29,7 @@ export const AdminLogin = ({ onAuthenticated }: AdminLoginProps) => {
       const { data: adminData, error } = await supabase
         .from('admin_users')
         .select()
-        .eq('password', password)
+        .eq('password', '1888')
         .maybeSingle();
 
       if (error) throw error;
