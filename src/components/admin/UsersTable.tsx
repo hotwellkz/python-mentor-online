@@ -67,21 +67,32 @@ export const UsersTable = () => {
 
   const deleteUser = async (userId: string) => {
     try {
-      const { error: profileError } = await supabase
-        .from('profiles')
-        .delete()
-        .eq('id', userId);
-      
-      if (profileError) throw profileError;
+      // Сначала удаляем пользователя из auth.users через Edge Function
+      const response = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/delete-user`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ userId }),
+      });
+
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.error || 'Ошибка при удалении пользователя');
+      }
+
+      // Профиль пользователя будет удален автоматически благодаря каскадному удалению
       
       toast({
         title: "Успешно",
-        description: "Пользователь удален",
+        description: "Пользователь полностью удален",
         className: "bg-background text-foreground border border-border",
       });
       
       fetchUsers();
     } catch (error: any) {
+      console.error('Error deleting user:', error);
       toast({
         variant: "destructive",
         title: "Ошибка",
