@@ -43,22 +43,30 @@ const Settings = () => {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user?.email) throw new Error("Email не найден");
 
+      console.log("Отправка письма для подтверждения на:", user.email);
+
       const { error } = await supabase.auth.resend({
         type: 'signup',
         email: user.email,
       });
 
-      if (error) throw error;
+      if (error) {
+        console.error("Ошибка при отправке письма:", error);
+        throw error;
+      }
+
+      console.log("Письмо успешно отправлено");
 
       toast({
-        title: "Успешно",
-        description: "Письмо для подтверждения отправлено",
+        title: "Письмо отправлено",
+        description: "Проверьте папку 'Входящие' и 'Спам'. Письмо должно прийти в течение нескольких минут.",
       });
     } catch (error: any) {
+      console.error("Ошибка в handleResendEmail:", error);
       toast({
         variant: "destructive",
-        title: "Ошибка",
-        description: error.message,
+        title: "Ошибка при отправке письма",
+        description: error.message || "Попробуйте позже или обратитесь в поддержку",
       });
     } finally {
       setLoading(false);
@@ -101,13 +109,17 @@ const Settings = () => {
 
           <div className="space-y-4">
             <h2 className="text-xl font-semibold">Подтверждение email</h2>
+            <p className="text-sm text-muted-foreground">
+              Если вы не получили письмо для подтверждения email, нажмите кнопку ниже.
+              Проверьте папку "Спам" после отправки.
+            </p>
             <Button
               variant="outline"
               className="w-full"
               onClick={handleResendEmail}
               disabled={loading}
             >
-              {loading ? "Загрузка..." : "Отправить письмо повторно"}
+              {loading ? "Отправка..." : "Отправить письмо повторно"}
             </Button>
           </div>
         </div>
