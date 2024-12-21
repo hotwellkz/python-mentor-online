@@ -61,7 +61,7 @@ export const Layout = () => {
               to="/"
               className="text-2xl font-bold hover:text-primary transition-colors"
             >
-              Python с ИИ-учителем
+              Курсы с ИИ-учителем
             </Link>
             
             {/* Desktop Navigation */}

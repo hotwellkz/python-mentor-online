@@ -12,7 +12,7 @@ export const Footer = () => {
       <div className="container mx-auto px-4">
         <div className="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
           <div className="text-sm">
-            © {new Date().getFullYear()} Python с ИИ-учителем. Все права защищены.
+            © {new Date().getFullYear()} Курсы с ИИ-учителем. Все права защищены.
           </div>
           <nav className="flex flex-col md:flex-row items-center space-y-2 md:space-y-0 md:space-x-6">
             <DropdownMenu>
