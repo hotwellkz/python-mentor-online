@@ -39,7 +39,7 @@ export const Chat = ({ topQuestions, onAskQuestion }: ChatProps) => {
         .select('chat_messages')
         .eq('lesson_id', lessonId)
         .eq('user_id', user.id)
-        .single();
+        .maybeSingle();
 
       if (progress?.chat_messages) {
         const loadedMessages = progress.chat_messages as unknown as Message[];
