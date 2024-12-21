@@ -1,6 +1,7 @@
 import { Helmet } from "react-helmet";
 import { Hero } from "@/components/Hero";
 import { Benefits } from "@/components/Benefits";
+import { Features } from "@/components/Features";
 
 const Index = () => {
   return (
@@ -25,6 +26,7 @@ const Index = () => {
       </Helmet>
       <main className="min-h-screen bg-gray-900">
         <Hero />
+        <Features />
         <Benefits />
       </main>
     </>
