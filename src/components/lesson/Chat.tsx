@@ -46,13 +46,13 @@ export const Chat = ({ topQuestions, onAskQuestion }: ChatProps) => {
 
       setMessages(prev => [...prev, { role: 'user', content: userPrompt }]);
       
-      const response = await supabase.functions.invoke('chat', {
+      const { data, error } = await supabase.functions.invoke('chat', {
         body: { message: userPrompt, model: 'openai' }
       });
 
-      if (response.error) throw new Error(response.error.message);
+      if (error) throw error;
 
-      setMessages(prev => [...prev, { role: 'assistant', content: response.data.text }]);
+      setMessages(prev => [...prev, { role: 'assistant', content: data.text }]);
       
       await supabase
         .from("profiles")

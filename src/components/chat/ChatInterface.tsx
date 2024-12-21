@@ -52,21 +52,11 @@ export const ChatInterface = () => {
 
       setMessages(prev => [...prev, { role: 'user', content: message }]);
       
-      const response = await fetch('/functions/v1/chat', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${(await supabase.auth.getSession()).data.session?.access_token}`,
-        },
-        body: JSON.stringify({
-          message,
-          model: selectedModel,
-        }),
+      const { data, error } = await supabase.functions.invoke('chat', {
+        body: { message, model: selectedModel }
       });
 
-      if (!response.ok) throw new Error('Ошибка при получении ответа');
-      
-      const data = await response.json();
+      if (error) throw error;
       
       setMessages(prev => [...prev, { role: 'assistant', content: data.text }]);
       
@@ -77,6 +67,7 @@ export const ChatInterface = () => {
 
       setMessage("");
     } catch (error: any) {
+      console.error('Chat error:', error);
       toast({
         variant: "destructive",
         title: "Ошибка",
