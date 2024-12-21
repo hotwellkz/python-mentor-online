@@ -7,9 +7,11 @@ import { Chat } from "@/components/lesson/Chat";
 import { AuthCheck } from "@/components/AuthCheck";
 import { useLesson } from "@/hooks/useLesson";
 import { useSpeech } from "@/hooks/useSpeech";
+import { useToast } from "@/hooks/use-toast";
 
 const Lesson = () => {
   const { lessonId } = useParams();
+  const { toast } = useToast();
   const {
     loading,
     generatedText,
