@@ -3,7 +3,7 @@ import { Helmet } from "react-helmet";
 import { LessonHeader } from "@/components/lesson/LessonHeader";
 import { LessonContent } from "@/components/lesson/LessonContent";
 import { LessonTest } from "@/components/lesson/LessonTest";
-import { Chat } from "@/components/lesson/Chat";
+import { Chat } from "@/components/chat/Chat";
 import { AuthCheck } from "@/components/AuthCheck";
 import { useLesson } from "@/hooks/useLesson";
 import { useSpeech } from "@/hooks/useSpeech";
@@ -34,11 +34,11 @@ const Lesson = () => {
   } = useSpeech();
 
   const topQuestions = [
-    "Как установить Python на Windows 10?",
-    "Как добавить Python в переменную PATH?",
-    "Какую версию Python лучше выбрать для начала?",
-    "Как проверить успешность установки Python?",
-    "Как установить Python на MacOS?"
+    "Как установить VS Code для Python?",
+    "Какие расширения нужны для Python в VS Code?",
+    "Как настроить PyCharm для Python?",
+    "Как установить Jupyter Notebook?",
+    "Какой редактор лучше выбрать для начинающего Python разработчика?"
   ];
 
   const handleAskQuestion = async (question: string) => {
@@ -86,12 +86,12 @@ const Lesson = () => {
   return (
     <>
       <Helmet>
-        <title>Урок 2: Установка Python | Python с ИИ-учителем</title>
+        <title>Урок 3: Настройка редактора кода | Python с ИИ-учителем</title>
         <meta
           name="description"
-          content="Научитесь устанавливать Python на Windows, macOS и Linux. Пошаговое руководство по настройке Python и переменных среды. Интерактивное обучение с ИИ-учителем."
+          content="Научитесь настраивать популярные редакторы кода для Python: VS Code, PyCharm и Jupyter Notebook. Пошаговое руководство по установке и настройке. Интерактивное обучение с ИИ-учителем."
         />
-        <meta name="keywords" content="установка python, python установка windows, python установка mac, python path, python для начинающих" />
+        <meta name="keywords" content="настройка редактора кода python, vs code python, pycharm настройка, jupyter notebook установка, python ide" />
       </Helmet>
       <div className="container mx-auto px-4 py-8">
         <div className="max-w-4xl mx-auto">

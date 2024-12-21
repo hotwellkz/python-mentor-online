@@ -10,15 +10,15 @@ const corsHeaders = {
 
 const cleanMarkdown = (text: string) => {
   return text
-    .replace(/\*\*(.*?)\*\*/g, '$1') // Bold
-    .replace(/\*(.*?)\*/g, '$1') // Italic
-    .replace(/\[(.*?)\]\(.*?\)/g, '$1') // Links
-    .replace(/#{1,6}\s/g, '') // Headers
-    .replace(/`(.*?)`/g, '$1') // Code
-    .replace(/<[^>]*>/g, '') // HTML tags
-    .replace(/\n\s*[-*+]\s/g, '\n') // Lists
-    .replace(/\n\s*\d+\.\s/g, '\n') // Numbered lists
-    .replace(/\n{2,}/g, '\n') // Multiple newlines
+    .replace(/\*\*(.*?)\*\*/g, '$1')
+    .replace(/\*(.*?)\*/g, '$1')
+    .replace(/\[(.*?)\]\(.*?\)/g, '$1')
+    .replace(/#{1,6}\s/g, '')
+    .replace(/`(.*?)`/g, '$1')
+    .replace(/<[^>]*>/g, '')
+    .replace(/\n\s*[-*+]\s/g, '\n')
+    .replace(/\n\s*\d+\.\s/g, '\n')
+    .replace(/\n{2,}/g, '\n')
     .trim();
 };
 
@@ -55,7 +55,7 @@ serve(async (req) => {
         },
         {
           role: 'user',
-          content: 'Расскажи подробно как будто ты преподаватель и преподаешь Курс Python урок на тему: "Установка Python Где скачать Python (сайт Python.org), Установка Python на Windows, macOS, Linux, Настройка переменных среды для корректной работы." Используй много примеров.'
+          content: 'Расскажи подробно как будто ты преподаватель и преподаешь Курс Python урок на тему: "Настройка редактора кода Установка и настройка редакторов: VS Code, PyCharm, Jupyter Notebook." Используй много примеров.'
         }
       ];
     }
