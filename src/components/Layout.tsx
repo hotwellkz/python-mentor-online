@@ -51,6 +51,12 @@ export const Layout = () => {
             
             {/* Desktop Navigation */}
             <div className="hidden md:flex items-center gap-4">
+              <Link 
+                to="/pricing"
+                className="text-white hover:text-primary transition-colors"
+              >
+                Тарифы
+              </Link>
               <TokenDisplay />
               <div className="flex items-center gap-2">
                 <Button
@@ -75,6 +81,12 @@ export const Layout = () => {
               </SheetTrigger>
               <SheetContent>
                 <div className="flex flex-col gap-4">
+                  <Link 
+                    to="/pricing"
+                    className="text-foreground hover:text-primary transition-colors"
+                  >
+                    Тарифы
+                  </Link>
                   <TokenDisplay />
                   <Link to="/auth" className="w-full">
                     <Button className="w-full">Войти</Button>

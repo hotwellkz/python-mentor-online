@@ -4,7 +4,8 @@ import { ChevronRight } from "lucide-react";
 const routes: { [key: string]: string } = {
   "/program": "Программа курса",
   "/privacy": "Политика конфиденциальности",
-  "/terms": "Публичная оферта"
+  "/terms": "Публичная оферта",
+  "/pricing": "Тарифы"
 };
 
 export const Breadcrumbs = () => {

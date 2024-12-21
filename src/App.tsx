@@ -8,6 +8,7 @@ import Index from "./pages/Index";
 import Program from "./pages/Program";
 import { Auth } from "./pages/Auth";
 import Lesson from "./pages/Lesson";
+import Pricing from "./pages/Pricing";
 
 const queryClient = new QueryClient();
 
@@ -23,6 +24,7 @@ const App = () => (
             <Route path="/program" element={<Program />} />
             <Route path="/auth" element={<Auth />} />
             <Route path="/lesson/:lessonId" element={<Lesson />} />
+            <Route path="/pricing" element={<Pricing />} />
             <Route
               path="/privacy"
               element={

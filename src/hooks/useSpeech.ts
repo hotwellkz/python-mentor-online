@@ -13,6 +13,12 @@ export const useSpeech = () => {
     if (window.speechSynthesis) {
       setSynthesis(window.speechSynthesis);
     }
+
+    return () => {
+      if (synthesis && utterance) {
+        synthesis.cancel();
+      }
+    };
   }, []);
 
   const playText = async (text: string, isPremium = false) => {
@@ -33,10 +39,8 @@ export const useSpeech = () => {
       return;
     }
 
-    // Stop any currently playing speech
-    synthesis.cancel();
-    
     if (isPlaying) {
+      synthesis.cancel();
       setIsPlaying(false);
       setUtterance(null);
       return;
