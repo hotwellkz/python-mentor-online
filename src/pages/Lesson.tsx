@@ -71,6 +71,7 @@ const Lesson = () => {
     synthesis,
     setSynthesis,
     playText,
+    stopPlayback,
   } = useSpeech();
 
   const handleAskQuestion = async (question: string) => {
@@ -165,6 +166,11 @@ const Lesson = () => {
                 } else {
                   synthesis.resume();
                 }
+              }
+            }}
+            onStopPlayback={() => {
+              if (synthesis && stopPlayback) {
+                stopPlayback();
               }
             }}
             isPlaying={isPlaying}

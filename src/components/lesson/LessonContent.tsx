@@ -1,6 +1,6 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
-import { Pause, Play, Share2, MessageCircle, Send, Copy, FileDown } from "lucide-react";
+import { Pause, Play, Share2, MessageCircle, Send, Copy, FileDown, StopCircle } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import html2pdf from 'html2pdf.js';
 
@@ -13,6 +13,7 @@ interface LessonContentProps {
   onFinishLesson: () => void;
   topQuestions: string[];
   onTogglePlayback?: () => void;
+  onStopPlayback?: () => void;
   isPlaying?: boolean;
 }
 
@@ -46,6 +47,7 @@ export const LessonContent = ({
   onFinishLesson,
   topQuestions,
   onTogglePlayback,
+  onStopPlayback,
   isPlaying,
 }: LessonContentProps) => {
   const { toast } = useToast();
@@ -144,16 +146,6 @@ export const LessonContent = ({
             </div>
 
             <div className="flex flex-col sm:flex-row justify-between gap-2">
-              {onTogglePlayback && (
-                <Button 
-                  onClick={onTogglePlayback}
-                  variant="outline"
-                  className="w-full sm:w-auto"
-                >
-                  {isPlaying ? <Pause className="h-4 w-4 mr-2" /> : <Play className="h-4 w-4 mr-2" />}
-                  {isPlaying ? "Пауза" : "Продолжить"}
-                </Button>
-              )}
               <Button 
                 onClick={onShowTest}
                 className="w-full sm:w-auto"
@@ -169,6 +161,40 @@ export const LessonContent = ({
               </Button>
             </div>
           </div>
+        </motion.div>
+      )}
+
+      {/* Floating playback controls */}
+      {generatedText && (onTogglePlayback || onStopPlayback) && (
+        <motion.div 
+          initial={{ y: 20, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          className="fixed bottom-4 left-1/2 transform -translate-x-1/2 flex gap-2 z-50"
+        >
+          {onTogglePlayback && (
+            <Button
+              onClick={onTogglePlayback}
+              variant="secondary"
+              size="lg"
+              className="rounded-full shadow-lg hover:shadow-xl transition-shadow duration-200"
+            >
+              {isPlaying ? (
+                <Pause className="h-6 w-6" />
+              ) : (
+                <Play className="h-6 w-6" />
+              )}
+            </Button>
+          )}
+          {onStopPlayback && (
+            <Button
+              onClick={onStopPlayback}
+              variant="secondary"
+              size="lg"
+              className="rounded-full shadow-lg hover:shadow-xl transition-shadow duration-200"
+            >
+              <StopCircle className="h-6 w-6" />
+            </Button>
+          )}
         </motion.div>
       )}
     </>

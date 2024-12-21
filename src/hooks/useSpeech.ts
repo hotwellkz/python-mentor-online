@@ -60,6 +60,14 @@ export const useSpeech = () => {
     }
   };
 
+  const stopPlayback = () => {
+    if (synthesis) {
+      synthesis.cancel();
+      setIsPlaying(false);
+      setUtterance(null);
+    }
+  };
+
   const playBrowserVoice = (text: string) => {
     if (!synthesis) {
       toast({
@@ -187,5 +195,6 @@ export const useSpeech = () => {
     synthesis,
     setSynthesis,
     playText,
+    stopPlayback,
   };
 };
