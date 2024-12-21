@@ -67,6 +67,9 @@ export const Auth = () => {
           if (error.message.includes("already registered")) {
             throw new Error("Этот email уже зарегистрирован. Попробуйте войти в систему");
           }
+          if (error.message.includes("rate limit exceeded") || error.message.includes("over_email_send_rate_limit")) {
+            throw new Error("Превышен лимит отправки писем. Пожалуйста, подождите несколько минут и попробуйте снова, или используйте другой email адрес");
+          }
           throw error;
         }
 
