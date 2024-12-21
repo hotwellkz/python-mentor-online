@@ -74,19 +74,6 @@ export const Chat = ({ topQuestions, onAskQuestion }: ChatProps) => {
     <div className="mt-8">
       <h3 className="text-xl font-semibold mb-4">Задайте вопрос по теме урока</h3>
       
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-        {topQuestions.map((question, index) => (
-          <Button
-            key={index}
-            variant="outline"
-            className="text-left"
-            onClick={() => setUserPrompt(question)}
-          >
-            {question}
-          </Button>
-        ))}
-      </div>
-
       <div className="space-y-4">
         <MessageList messages={messages} />
         
@@ -100,6 +87,19 @@ export const Chat = ({ topQuestions, onAskQuestion }: ChatProps) => {
           <Button onClick={handleQuestionSubmit}>
             Отправить
           </Button>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
+          {topQuestions.map((question, index) => (
+            <Button
+              key={index}
+              variant="outline"
+              className="text-left"
+              onClick={() => setUserPrompt(question)}
+            >
+              {question}
+            </Button>
+          ))}
         </div>
       </div>
     </div>
