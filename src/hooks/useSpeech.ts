@@ -23,16 +23,32 @@ export const useSpeech = () => {
 
   const cleanMarkdown = (text: string) => {
     return text
-      .replace(/\*\*(.*?)\*\*/g, '$1') // Bold
-      .replace(/\*(.*?)\*/g, '$1') // Italic
-      .replace(/\[(.*?)\]\(.*?\)/g, '$1') // Links
-      .replace(/#{1,6}\s/g, '') // Headers
-      .replace(/`(.*?)`/g, '$1') // Code
-      .replace(/<[^>]*>/g, '') // HTML tags
-      .replace(/\n\s*[-*+]\s/g, '\n') // Lists
-      .replace(/\n\s*\d+\.\s/g, '\n') // Numbered lists
-      .replace(/\n{2,}/g, '\n') // Multiple newlines
+      .replace(/\*\*(.*?)\*\*/g, '$1')
+      .replace(/\*(.*?)\*/g, '$1')
+      .replace(/\[(.*?)\]\(.*?\)/g, '$1')
+      .replace(/#{1,6}\s/g, '')
+      .replace(/`(.*?)`/g, '$1')
+      .replace(/<[^>]*>/g, '')
+      .replace(/\n\s*[-*+]\s/g, '\n')
+      .replace(/\n\s*\d+\.\s/g, '\n')
+      .replace(/\n{2,}/g, '\n')
       .trim();
+  };
+
+  const getMaleVoice = () => {
+    const voices = window.speechSynthesis.getVoices();
+    // Try to find a Russian male voice
+    const russianMaleVoice = voices.find(voice => 
+      voice.lang.startsWith('ru') && voice.name.toLowerCase().includes('male')
+    );
+    // If no Russian male voice found, try to find any Russian voice
+    const russianVoice = voices.find(voice => voice.lang.startsWith('ru'));
+    // If no Russian voice found, try to find any male voice
+    const maleVoice = voices.find(voice => 
+      voice.name.toLowerCase().includes('male')
+    );
+    // Return the first available option or undefined
+    return russianMaleVoice || russianVoice || maleVoice || voices[0];
   };
 
   const playText = async (text: string, isPremium = false) => {
@@ -61,9 +77,29 @@ export const useSpeech = () => {
       return;
     }
 
+    // Wait for voices to be loaded
+    if (synthesis.getVoices().length === 0) {
+      synthesis.addEventListener('voiceschanged', () => {
+        const newUtterance = createUtterance(text);
+        speakUtterance(newUtterance);
+      }, { once: true });
+    } else {
+      const newUtterance = createUtterance(text);
+      speakUtterance(newUtterance);
+    }
+  };
+
+  const createUtterance = (text: string) => {
     const newUtterance = new SpeechSynthesisUtterance(text);
+    const selectedVoice = getMaleVoice();
+    
+    if (selectedVoice) {
+      newUtterance.voice = selectedVoice;
+    }
+    
     newUtterance.lang = "ru-RU";
     newUtterance.rate = 0.9;
+    newUtterance.pitch = 0.9; // Slightly lower pitch for more masculine sound
     
     newUtterance.onend = () => {
       setIsPlaying(false);
@@ -81,9 +117,13 @@ export const useSpeech = () => {
       setUtterance(null);
     };
 
+    return newUtterance;
+  };
+
+  const speakUtterance = (newUtterance: SpeechSynthesisUtterance) => {
     setUtterance(newUtterance);
     setIsPlaying(true);
-    synthesis.speak(newUtterance);
+    synthesis?.speak(newUtterance);
   };
 
   const playPremiumVoice = async (text: string) => {
