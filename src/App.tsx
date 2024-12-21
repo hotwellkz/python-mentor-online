@@ -10,6 +10,7 @@ import { Auth } from "./pages/Auth";
 import Lesson from "./pages/Lesson";
 import Pricing from "./pages/Pricing";
 import Privacy from "./pages/Privacy";
+import Terms from "./pages/Terms";
 
 const queryClient = new QueryClient();
 
@@ -27,7 +28,7 @@ const App = () => (
             <Route path="/lesson/:lessonId" element={<Lesson />} />
             <Route path="/pricing" element={<Pricing />} />
             <Route path="/privacy" element={<Privacy />} />
-            <Route path="/terms" element={<div className="container mx-auto px-4 py-8">Публичная оферта (в разработке)</div>} />
+            <Route path="/terms" element={<Terms />} />
           </Route>
         </Routes>
       </BrowserRouter>
