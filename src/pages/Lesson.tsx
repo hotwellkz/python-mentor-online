@@ -19,7 +19,6 @@ const Lesson = () => {
   const [showTest, setShowTest] = useState(false);
   const [synthesis, setSynthesis] = useState<SpeechSynthesis | null>(null);
   const [utterance, setUtterance] = useState<SpeechSynthesisUtterance | null>(null);
-  const [userPrompt, setUserPrompt] = useState("");
 
   const topQuestions = [
     "Как создать переменную в Python и присвоить ей значение?",
@@ -31,7 +30,15 @@ const Lesson = () => {
 
   useEffect(() => {
     setSynthesis(window.speechSynthesis);
+    checkAuth();
   }, []);
+
+  const checkAuth = async () => {
+    const { data: { session } } = await supabase.auth.getSession();
+    if (!session) {
+      navigate("/program");
+    }
+  };
 
   const startLesson = async () => {
     try {
@@ -192,17 +199,37 @@ const Lesson = () => {
   };
 
   const handleAskQuestion = async (question: string) => {
-    // Implement question handling logic here
     console.log("Question asked:", question);
+  };
+
+  const finishLesson = async () => {
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return;
+
+      await supabase
+        .from('completed_lessons')
+        .insert([
+          { user_id: user.id, lesson_id: lessonId }
+        ]);
+
+      navigate("/program");
+    } catch (error: any) {
+      toast({
+        variant: "destructive",
+        title: "Ошибка",
+        description: error.message,
+      });
+    }
   };
 
   return (
     <>
       <Helmet>
-        <title>Кто такой бизнес-аналитик? | Курс по бизнес-анализу</title>
+        <title>Урок 1: Переменные и типы данных | Python с ИИ-учителем</title>
         <meta
           name="description"
-          content="Узнайте, кто такой бизнес-аналитик, какие у него обязанности, необходимые навыки и инструменты. Практические примеры и реальные задачи."
+          content="Изучите переменные и типы данных в Python: int, float, str, bool. Практические примеры и интерактивное обучение с ИИ-учителем."
         />
       </Helmet>
       <div className="container mx-auto px-4 py-8">
@@ -219,10 +246,8 @@ const Lesson = () => {
           <LessonContent
             loading={loading}
             generatedText={generatedText}
-            userPrompt={userPrompt}
-            onUserPromptChange={setUserPrompt}
             onShowTest={() => setShowTest(true)}
-            onFinishLesson={() => navigate("/program")}
+            onFinishLesson={finishLesson}
             topQuestions={topQuestions}
           />
           <Chat

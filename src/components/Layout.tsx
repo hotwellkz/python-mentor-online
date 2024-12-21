@@ -31,7 +31,9 @@ export const Layout = () => {
         description: error.message,
       });
     } else {
-      navigate("/");
+      if (pathname.startsWith('/lesson/')) {
+        navigate("/program");
+      }
     }
   };
 
