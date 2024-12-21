@@ -83,6 +83,12 @@ export const Layout = () => {
               >
                 Тарифы
               </Link>
+              <Link 
+                to="/program"
+                className="text-white hover:text-primary transition-colors"
+              >
+                Курсы
+              </Link>
               <Link
                 to="/admin"
                 className="text-white hover:text-primary transition-colors"
@@ -134,6 +140,12 @@ export const Layout = () => {
                     className="text-foreground hover:text-primary transition-colors"
                   >
                     Тарифы
+                  </Link>
+                  <Link 
+                    to="/program"
+                    className="text-foreground hover:text-primary transition-colors"
+                  >
+                    Курсы
                   </Link>
                   <Link
                     to="/admin"
