@@ -27,34 +27,34 @@ export const LessonTest = ({ open, onOpenChange }: LessonTestProps) => {
 
   const questions: Question[] = [
     {
-      question: "Какой тип данных используется для целых чисел в Python?",
+      question: "Какой редактор кода рекомендуется для начинающих Python разработчиков?",
       options: [
-        "int",
-        "float",
-        "str",
-        "bool"
+        "VS Code",
+        "Блокнот Windows",
+        "Notepad++",
+        "Word"
       ],
       correctAnswer: 0
     },
     {
-      question: "Какой тип данных используется для чисел с плавающей точкой?",
+      question: "Какое расширение необходимо установить в VS Code для работы с Python?",
       options: [
-        "int",
-        "float",
-        "str",
-        "decimal"
+        "JavaScript",
+        "Python",
+        "Java",
+        "C++"
       ],
       correctAnswer: 1
     },
     {
-      question: "Как объявить строковую переменную в Python?",
+      question: "Какая среда разработки является специализированной для Python?",
       options: [
-        "number = 42",
-        'text = "Hello"',
-        "value = True",
-        "data = 3.14"
+        "VS Code",
+        "Sublime Text",
+        "PyCharm",
+        "Atom"
       ],
-      correctAnswer: 1
+      correctAnswer: 2
     }
   ];
 

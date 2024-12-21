@@ -1,8 +1,9 @@
-import { motion } from "framer-motion";
+import { motion, useAnimation } from "framer-motion";
 import { Button } from "@/components/ui/button";
-import { Sparkles, Play, Pause, Share2, MessageCircle, Send, Copy } from "lucide-react";
+import { Sparkles, Play, Pause, Share2, MessageCircle, Send, Copy, FileDown } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { useEffect } from "react";
 
 interface LessonHeaderProps {
   loading: boolean;
@@ -25,6 +26,18 @@ export const LessonHeader = ({
 }: LessonHeaderProps) => {
   const { toast } = useToast();
   const isMobile = useIsMobile();
+  const controls = useAnimation();
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      controls.start({
+        scale: [1, 1.1, 1],
+        transition: { duration: 1 }
+      });
+    }, 15000);
+
+    return () => clearInterval(interval);
+  }, [controls]);
 
   const shareToWhatsApp = () => {
     const text = encodeURIComponent(generatedText);
@@ -44,22 +57,11 @@ export const LessonHeader = ({
       animate={{ opacity: 1, y: 0 }}
       className="mb-8 space-y-6"
     >
-      <h1 className="text-2xl md:text-4xl font-bold">
-        Урок 1: Переменные и типы данных
-      </h1>
-      
       <div className="flex flex-wrap gap-4">
         <motion.div
+          animate={controls}
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
-          animate={{ 
-            boxShadow: ['0 0 0 0 rgba(59, 130, 246, 0)', '0 0 0 15px rgba(59, 130, 246, 0)'],
-          }}
-          transition={{ 
-            duration: 2,
-            repeat: Infinity,
-            repeatDelay: 13
-          }}
         >
           <Button
             className="start-lesson-button"

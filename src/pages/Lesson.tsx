@@ -3,16 +3,23 @@ import { Helmet } from "react-helmet";
 import { LessonHeader } from "@/components/lesson/LessonHeader";
 import { LessonContent } from "@/components/lesson/LessonContent";
 import { LessonTest } from "@/components/lesson/LessonTest";
-import { Chat } from "@/components/lesson/Chat";
+import { Chat } from "@/components/chat/Chat";
 import { AuthCheck } from "@/components/AuthCheck";
 import { useLesson } from "@/hooks/useLesson";
 import { useSpeech } from "@/hooks/useSpeech";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
+import { courseBlocks } from "@/data/courseData";
 
 const Lesson = () => {
   const { lessonId } = useParams();
   const { toast } = useToast();
+
+  // Находим текущий урок в courseData
+  const [blockIndex, lessonIndex] = (lessonId || "").split("-").map(Number);
+  const currentBlock = courseBlocks[blockIndex - 1];
+  const currentLesson = currentBlock?.lessons[lessonIndex - 1];
+
   const {
     loading,
     generatedText,
@@ -33,12 +40,12 @@ const Lesson = () => {
     playText,
   } = useSpeech();
 
-  const topQuestions = [
-    "Как создать переменную в Python и присвоить ей значение?",
-    "В чем разница между типами данных int и float?",
-    "Как преобразовать один тип данных в другой?",
-    "Какие операции можно выполнять с булевыми значениями?",
-    "Как узнать тип переменной в Python?"
+  const topQuestions = currentLesson?.topics || [
+    "Как установить VS Code для Python?",
+    "Какие расширения нужны для Python в VS Code?",
+    "Как настроить PyCharm для Python?",
+    "Как установить Jupyter Notebook?",
+    "Какой редактор лучше выбрать для начинающего Python разработчика?"
   ];
 
   const handleAskQuestion = async (question: string) => {
@@ -83,17 +90,32 @@ const Lesson = () => {
     return <AuthCheck />;
   }
 
+  if (!currentLesson) {
+    return (
+      <div className="container mx-auto px-4 py-8">
+        <h1 className="text-2xl font-bold text-center">Урок не найден</h1>
+      </div>
+    );
+  }
+
   return (
     <>
       <Helmet>
-        <title>Урок 1: Переменные и типы данных | Python с ИИ-учителем</title>
+        <title>{currentLesson.title} | Python с ИИ-учителем</title>
         <meta
           name="description"
-          content="Изучите переменные и типы данных в Python: int, float, str, bool. Практические примеры и интерактивное обучение с ИИ-учителем."
+          content={`${currentLesson.title}. ${currentLesson.topics.join(". ")}. Интерактивное обучение с ИИ-учителем.`}
         />
+        <meta 
+          name="keywords" 
+          content={`${currentLesson.topics.join(", ")}, проверка установки python, python cli, версия python, python обучение, курсы программирования`} 
+        />
+        <meta name="robots" content="index, follow" />
+        <link rel="canonical" href={window.location.href} />
       </Helmet>
       <div className="container mx-auto px-4 py-8">
         <div className="max-w-4xl mx-auto">
+          <h1 className="text-3xl font-bold mb-6">{currentLesson.title}</h1>
           <LessonHeader
             loading={loading}
             generatedText={generatedText}
@@ -111,6 +133,16 @@ const Lesson = () => {
             onShowTest={() => setShowTest(true)}
             onFinishLesson={finishLesson}
             topQuestions={topQuestions}
+            onTogglePlayback={() => {
+              if (synthesis) {
+                if (isPlaying) {
+                  synthesis.pause();
+                } else {
+                  synthesis.resume();
+                }
+              }
+            }}
+            isPlaying={isPlaying}
           />
           <Chat
             topQuestions={topQuestions}

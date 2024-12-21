@@ -33,6 +33,10 @@ serve(async (req) => {
       }),
     });
 
+    if (!response.ok) {
+      throw new Error('Failed to generate speech');
+    }
+
     const audioBuffer = await response.arrayBuffer();
     return new Response(audioBuffer, {
       headers: {
