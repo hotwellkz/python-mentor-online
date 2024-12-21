@@ -12,6 +12,12 @@ import {
   SheetContent,
   SheetTrigger,
 } from "@/components/ui/sheet";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 export const Layout = () => {
   const { pathname } = useLocation();
@@ -71,23 +77,23 @@ export const Layout = () => {
             
             {/* Desktop Navigation */}
             <div className="hidden md:flex items-center gap-4">
-              <Link 
-                to="/program"
-                className="text-white hover:text-primary transition-colors"
-              >
-                Программа курса
-              </Link>
+              <DropdownMenu>
+                <DropdownMenuTrigger className="text-white hover:text-primary transition-colors">
+                  Курсы
+                </DropdownMenuTrigger>
+                <DropdownMenuContent>
+                  <DropdownMenuItem>
+                    <Link to="/program" className="w-full">
+                      Python
+                    </Link>
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
               <Link 
                 to="/pricing"
                 className="text-white hover:text-primary transition-colors"
               >
                 Тарифы
-              </Link>
-              <Link 
-                to="/program"
-                className="text-white hover:text-primary transition-colors"
-              >
-                Курсы
               </Link>
               <Link
                 to="/admin"
@@ -129,23 +135,23 @@ export const Layout = () => {
               </SheetTrigger>
               <SheetContent>
                 <div className="flex flex-col gap-4">
-                  <Link 
-                    to="/program"
-                    className="text-foreground hover:text-primary transition-colors flex items-center gap-2"
-                  >
-                    Программа курса
-                  </Link>
+                  <DropdownMenu>
+                    <DropdownMenuTrigger className="text-foreground hover:text-primary transition-colors text-left">
+                      Курсы
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent>
+                      <DropdownMenuItem>
+                        <Link to="/program" className="w-full">
+                          Python
+                        </Link>
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
                   <Link 
                     to="/pricing"
                     className="text-foreground hover:text-primary transition-colors"
                   >
                     Тарифы
-                  </Link>
-                  <Link 
-                    to="/program"
-                    className="text-foreground hover:text-primary transition-colors"
-                  >
-                    Курсы
                   </Link>
                   <Link
                     to="/admin"

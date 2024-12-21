@@ -1,4 +1,10 @@
 import { Link } from "react-router-dom";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 export const Footer = () => {
   return (
@@ -9,14 +15,20 @@ export const Footer = () => {
             © {new Date().getFullYear()} Python с ИИ-учителем. Все права защищены.
           </div>
           <nav className="flex flex-col md:flex-row items-center space-y-2 md:space-y-0 md:space-x-6">
-            <Link to="/program" className="hover:text-primary transition-colors">
-              Программа курса
-            </Link>
+            <DropdownMenu>
+              <DropdownMenuTrigger className="hover:text-primary transition-colors">
+                Курсы
+              </DropdownMenuTrigger>
+              <DropdownMenuContent>
+                <DropdownMenuItem>
+                  <Link to="/program" className="w-full">
+                    Python
+                  </Link>
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
             <Link to="/pricing" className="hover:text-primary transition-colors">
               Тарифы
-            </Link>
-            <Link to="/program" className="hover:text-primary transition-colors">
-              Курсы
             </Link>
             <Link to="/privacy" className="hover:text-primary transition-colors">
               Политика конфиденциальности
