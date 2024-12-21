@@ -23,8 +23,20 @@ const Admin = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [users, setUsers] = useState<User[]>([]);
   const { toast } = useToast();
+  const [isLoading, setIsLoading] = useState(false);
 
   const authenticate = async () => {
+    if (!password) {
+      toast({
+        variant: "destructive",
+        title: "Ошибка",
+        description: "Введите пароль",
+        className: "bg-destructive text-destructive-foreground border-none",
+      });
+      return;
+    }
+
+    setIsLoading(true);
     try {
       const { data: adminData, error } = await supabase
         .from('admin_users')
@@ -37,6 +49,7 @@ const Admin = () => {
           variant: "destructive",
           title: "Ошибка",
           description: error.message,
+          className: "bg-destructive text-destructive-foreground border-none",
         });
         return;
       }
@@ -44,11 +57,17 @@ const Admin = () => {
       if (adminData) {
         setIsAuthenticated(true);
         fetchUsers();
+        toast({
+          title: "Успешно",
+          description: "Вы вошли в панель администратора",
+          className: "bg-background text-foreground border border-border",
+        });
       } else {
         toast({
           variant: "destructive",
           title: "Ошибка",
           description: "Неверный пароль",
+          className: "bg-destructive text-destructive-foreground border-none",
         });
       }
     } catch (error: any) {
@@ -56,21 +75,33 @@ const Admin = () => {
         variant: "destructive",
         title: "Ошибка",
         description: error.message,
+        className: "bg-destructive text-destructive-foreground border-none",
       });
+    } finally {
+      setIsLoading(false);
     }
   };
 
   const fetchUsers = async () => {
-    const { data: { users: authUsers } } = await supabase.auth.admin.listUsers();
-    const { data: profiles } = await supabase.from('profiles').select('*');
+    try {
+      const { data: { users: authUsers } } = await supabase.auth.admin.listUsers();
+      const { data: profiles } = await supabase.from('profiles').select('*');
 
-    if (authUsers && profiles) {
-      const combinedUsers = authUsers.map(authUser => ({
-        id: authUser.id,
-        email: authUser.email || '',
-        tokens: profiles.find(p => p.id === authUser.id)?.tokens || 0,
-      }));
-      setUsers(combinedUsers);
+      if (authUsers && profiles) {
+        const combinedUsers = authUsers.map(authUser => ({
+          id: authUser.id,
+          email: authUser.email || '',
+          tokens: profiles.find(p => p.id === authUser.id)?.tokens || 0,
+        }));
+        setUsers(combinedUsers);
+      }
+    } catch (error: any) {
+      toast({
+        variant: "destructive",
+        title: "Ошибка",
+        description: error.message,
+        className: "bg-destructive text-destructive-foreground border-none",
+      });
     }
   };
 
@@ -84,6 +115,7 @@ const Admin = () => {
       toast({
         title: "Успешно",
         description: "Количество токенов обновлено",
+        className: "bg-background text-foreground border border-border",
       });
       
       fetchUsers();
@@ -92,6 +124,7 @@ const Admin = () => {
         variant: "destructive",
         title: "Ошибка",
         description: error.message,
+        className: "bg-destructive text-destructive-foreground border-none",
       });
     }
   };
@@ -104,6 +137,7 @@ const Admin = () => {
       toast({
         title: "Успешно",
         description: "Пользователь удален",
+        className: "bg-background text-foreground border border-border",
       });
       
       fetchUsers();
@@ -112,6 +146,7 @@ const Admin = () => {
         variant: "destructive",
         title: "Ошибка",
         description: error.message,
+        className: "bg-destructive text-destructive-foreground border-none",
       });
     }
   };
@@ -133,8 +168,12 @@ const Admin = () => {
               }
             }}
           />
-          <Button onClick={authenticate} className="w-full">
-            Войти
+          <Button 
+            onClick={authenticate} 
+            className="w-full"
+            disabled={isLoading}
+          >
+            {isLoading ? "Вход..." : "Войти"}
           </Button>
         </div>
       </div>
