@@ -3,6 +3,7 @@ import { DevOpsCourseProgram } from "@/components/course/DevOpsCourseProgram";
 import { ChatInterface } from "@/components/chat/ChatInterface";
 import { AuthCheck } from "@/components/AuthCheck";
 import { motion } from "framer-motion";
+import { FavoriteButton } from "@/components/course/FavoriteButton";
 
 const DevOpsProgram = () => {
   return (
@@ -20,7 +21,8 @@ const DevOpsProgram = () => {
         <link rel="canonical" href={window.location.origin + "/devops-program"} />
       </Helmet>
       <AuthCheck />
-      <div className="container mx-auto px-4 py-8">
+      <div className="container mx-auto px-4 py-8 relative">
+        <FavoriteButton courseType="devops" />
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}

@@ -5,6 +5,7 @@ import { ProgramHeader } from "@/components/program/ProgramHeader";
 import { CourseProgress } from "@/components/program/CourseProgress";
 import { ChatInterface } from "@/components/chat/ChatInterface";
 import { courseBlocks } from "@/data/courseData";
+import { FavoriteButton } from "@/components/course/FavoriteButton";
 
 const Program = () => {
   return (
@@ -31,7 +32,8 @@ const Program = () => {
         animate={{ opacity: 1 }}
         className="min-h-screen bg-gray-50 dark:bg-gray-900"
       >
-        <div className="container mx-auto px-4 py-12">
+        <div className="container mx-auto px-4 py-12 relative">
+          <FavoriteButton courseType="python" />
           <ProgramHeader />
           <CourseProgress />
           
