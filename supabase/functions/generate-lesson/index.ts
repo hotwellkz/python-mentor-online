@@ -1,8 +1,5 @@
 import "https://deno.land/x/xhr@0.1.0/mod.ts";
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
-import { getPythonLessonPrompt } from "./prompts/python.ts";
-import { getDevOpsLessonPrompt } from "./prompts/devops.ts";
-import { getBusinessAnalystLessonPrompt } from "./prompts/business-analyst.ts";
 
 const openAIApiKey = Deno.env.get('OPENAI_API_KEY');
 
@@ -10,6 +7,26 @@ const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
+
+const blocks = [
+  {
+    title: "Введение в программирование и установка Python",
+    lessons: [
+      {
+        title: "Знакомство с Python",
+        prompt: `Расскажи подробно о языке Python:
+          - Почему Python считается лучшим для начинающих
+          - Какие компании используют Python
+          - Сколько времени нужно на освоение базового Python
+          - Средняя зарплата Python-разработчика в России
+          - Какие направления разработки доступны
+          Используй конкретные примеры и статистику.`
+      },
+      // ... остальные уроки блока 1
+    ]
+  },
+  // ... остальные блоки
+];
 
 serve(async (req) => {
   console.log('Function called with method:', req.method);
@@ -24,44 +41,30 @@ serve(async (req) => {
       throw new Error('OpenAI API key not configured');
     }
 
-    const { lessonId, prompt } = await req.json();
-    console.log('Processing request for:', { lessonId, hasPrompt: !!prompt });
+    const { lessonId } = await req.json();
+    console.log('Processing request for lesson:', lessonId);
 
-    let messages = [];
-    let lessonPrompt;
+    // Parse lesson ID (format: "1-1" means block 1, lesson 1)
+    const [blockIndex, lessonIndex] = lessonId.split("-").map(Number);
+    
+    // Get the lesson prompt
+    const block = blocks[blockIndex - 1];
+    const lesson = block?.lessons[lessonIndex - 1];
 
-    try {
-      if (lessonId.startsWith('ba-')) {
-        lessonPrompt = getBusinessAnalystLessonPrompt(lessonId);
-      } else if (lessonId.startsWith('devops-')) {
-        lessonPrompt = getDevOpsLessonPrompt(lessonId);
-      } else {
-        lessonPrompt = getPythonLessonPrompt(lessonId);
-      }
-
-      if (!lessonPrompt) {
-        console.error('No prompt generated for lesson:', lessonId);
-        throw new Error(`Не удалось сгенерировать промпт для урока ${lessonId}`);
-      }
-
-      console.log('Successfully generated prompt for lesson:', lessonId);
-      
-      messages = [
-        {
-          role: 'system',
-          content: 'Вы - опытный преподаватель. Ваша задача - подробно объяснить тему урока, используя примеры и понятные объяснения. Используйте маркдаун для форматирования текста.'
-        },
-        { role: 'user', content: lessonPrompt }
-      ];
-    } catch (error) {
-      console.error('Error generating lesson prompt:', error);
-      return new Response(JSON.stringify({ 
-        error: `Урок ${lessonId} не найден или произошла ошибка при генерации промпта. Пожалуйста, проверьте правильность ID урока.` 
-      }), {
-        status: 404,
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-      });
+    if (!block || !lesson) {
+      console.error('Lesson not found:', lessonId);
+      throw new Error(`Урок ${lessonId} не найден`);
     }
+
+    console.log('Found lesson:', lesson.title);
+    
+    const messages = [
+      {
+        role: 'system',
+        content: 'Вы - опытный преподаватель. Ваша задача - подробно объяснить тему урока, используя примеры и понятные объяснения. Используйте маркдаун для форматирования текста.'
+      },
+      { role: 'user', content: lesson.prompt }
+    ];
 
     console.log('Making request to OpenAI API...');
     const response = await fetch('https://api.openai.com/v1/chat/completions', {
@@ -80,13 +83,7 @@ serve(async (req) => {
     if (!response.ok) {
       const errorData = await response.json();
       console.error('OpenAI API error:', response.status, response.statusText, errorData);
-      
-      return new Response(JSON.stringify({ 
-        error: `Ошибка при генерации урока: ${errorData.error?.message || 'Неизвестная ошибка'}` 
-      }), {
-        status: 500,
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-      });
+      throw new Error(`Ошибка при генерации урока: ${errorData.error?.message || 'Неизвестная ошибка'}`);
     }
 
     const data = await response.json();
