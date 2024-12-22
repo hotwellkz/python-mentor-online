@@ -11,6 +11,7 @@ import { getBusinessAnalystQuestions } from '@/utils/questions/businessAnalyst';
 import { getPythonQuestions } from '@/utils/questions/pythonQuestions';
 import { TestScore } from './TestScore';
 import { TestQuestion } from './TestQuestion';
+import { useToast } from '@/hooks/use-toast';
 
 interface TestContainerProps {
   open: boolean;
@@ -23,21 +24,43 @@ export const TestContainer = ({ open, onOpenChange }: TestContainerProps) => {
   const [score, setScore] = useState(0);
   const [showScore, setShowScore] = useState(false);
   const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null);
+  const { toast } = useToast();
 
   const isDevOpsLesson = lessonId?.startsWith('devops-');
   const isBusinessAnalystLesson = lessonId?.startsWith('ba-');
   
   let questions = [];
 
-  if (isBusinessAnalystLesson) {
-    const [, blockIndex, lessonIndex] = (lessonId || "").split("-").map(Number);
-    questions = getBusinessAnalystQuestions(blockIndex, lessonIndex);
-  } else if (isDevOpsLesson) {
-    const [, moduleIndex, topicIndex] = (lessonId || "").split("-").map(Number);
-    questions = getDevOpsQuestions(moduleIndex, topicIndex);
-  } else {
-    const [blockIndex, lessonIndex] = (lessonId || "").split("-").map(Number);
-    questions = getPythonQuestions(blockIndex, lessonIndex);
+  try {
+    if (isBusinessAnalystLesson) {
+      const [, blockIndex, lessonIndex] = (lessonId || "").split("-").map(Number);
+      questions = getBusinessAnalystQuestions(blockIndex, lessonIndex);
+    } else if (isDevOpsLesson) {
+      const [, moduleIndex, topicIndex] = (lessonId || "").split("-").map(Number);
+      questions = getDevOpsQuestions(moduleIndex, topicIndex);
+    } else {
+      const [blockIndex, lessonIndex] = (lessonId || "").split("-").map(Number);
+      questions = getPythonQuestions(blockIndex, lessonIndex);
+    }
+
+    if (!questions || questions.length === 0) {
+      toast({
+        variant: "destructive",
+        title: "Ошибка",
+        description: "Тестовые вопросы для этого урока не найдены",
+      });
+      onOpenChange(false);
+      return null;
+    }
+  } catch (error) {
+    console.error('Error loading questions:', error);
+    toast({
+      variant: "destructive",
+      title: "Ошибка",
+      description: "Не удалось загрузить тестовые вопросы",
+    });
+    onOpenChange(false);
+    return null;
   }
 
   const handleAnswer = (answerIndex: number) => {

@@ -23,6 +23,7 @@ export const Layout = () => {
         if (error) {
           if (error.message.includes('session_not_found') || error.status === 403) {
             await supabase.auth.signOut();
+            setUserEmail(null);
             if (pathname.startsWith('/lesson/')) {
               navigate('/auth', { state: { from: pathname } });
             }
