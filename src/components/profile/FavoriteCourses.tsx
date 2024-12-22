@@ -3,6 +3,7 @@ import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { Star, StarOff } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Link } from "react-router-dom";
 
 interface FavoriteCoursesProps {
   userId: string | undefined;
@@ -118,7 +119,12 @@ export const FavoriteCourses = ({ userId }: FavoriteCoursesProps) => {
             key={course.id}
             className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-700 rounded-lg"
           >
-            <span className="text-gray-900 dark:text-gray-100">{course.title}</span>
+            <Link 
+              to={course.path}
+              className="text-gray-900 dark:text-gray-100 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
+            >
+              {course.title}
+            </Link>
             <Button
               variant="ghost"
               size="icon"
