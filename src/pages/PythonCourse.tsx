@@ -2,6 +2,7 @@ import { Helmet } from "react-helmet";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import { ArrowRight, Code, Brain, Star, Users, Clock, CheckCircle } from "lucide-react";
+import { Features } from "@/components/Features";
 
 const PythonCourse = () => {
   return (
@@ -46,30 +47,7 @@ const PythonCourse = () => {
         </section>
 
         {/* Features Section */}
-        <section className="py-20 bg-gray-50">
-          <div className="container mx-auto px-4">
-            <h2 className="text-3xl md:text-4xl font-bold text-center mb-12">
-              Почему стоит учиться у нас?
-            </h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-              <div className="bg-white p-6 rounded-xl shadow-lg hover:shadow-xl transition-shadow">
-                <Brain className="h-12 w-12 text-blue-600 mb-4" />
-                <h3 className="text-xl font-semibold mb-2">Персональный ИИ-учитель</h3>
-                <p className="text-gray-600">Доступен 24/7, отвечает на любые вопросы и помогает решать задачи</p>
-              </div>
-              <div className="bg-white p-6 rounded-xl shadow-lg hover:shadow-xl transition-shadow">
-                <Code className="h-12 w-12 text-blue-600 mb-4" />
-                <h3 className="text-xl font-semibold mb-2">Практические задания</h3>
-                <p className="text-gray-600">Более 100 практических заданий с проверкой решений</p>
-              </div>
-              <div className="bg-white p-6 rounded-xl shadow-lg hover:shadow-xl transition-shadow">
-                <Star className="h-12 w-12 text-blue-600 mb-4" />
-                <h3 className="text-xl font-semibold mb-2">Современная программа</h3>
-                <p className="text-gray-600">Актуальные технологии и реальные проекты</p>
-              </div>
-            </div>
-          </div>
-        </section>
+        <Features />
 
         {/* Course Info Section */}
         <section className="py-20">
