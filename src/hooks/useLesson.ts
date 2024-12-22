@@ -82,6 +82,15 @@ export const useLesson = (lessonId: string | undefined) => {
   };
 
   const startLesson = async () => {
+    if (!lessonId) {
+      toast({
+        variant: "destructive",
+        title: "Ошибка",
+        description: "ID урока не указан",
+      });
+      return;
+    }
+
     try {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) {
@@ -109,6 +118,8 @@ export const useLesson = (lessonId: string | undefined) => {
       }
 
       setLoading(true);
+      console.log('Calling generate-lesson with lessonId:', lessonId);
+      
       const response = await supabase.functions.invoke('generate-lesson', {
         body: { lessonId },
       });
@@ -124,6 +135,7 @@ export const useLesson = (lessonId: string | undefined) => {
         .eq("id", user.id);
 
     } catch (error: any) {
+      console.error('Error in startLesson:', error);
       toast({
         variant: "destructive",
         title: "Ошибка",
@@ -137,7 +149,7 @@ export const useLesson = (lessonId: string | undefined) => {
   const finishLesson = async () => {
     try {
       const { data: { user } } = await supabase.auth.getUser();
-      if (!user) return;
+      if (!user || !lessonId) return;
 
       // Delete lesson progress
       await supabase

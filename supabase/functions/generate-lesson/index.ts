@@ -25,12 +25,13 @@ serve(async (req) => {
     }
 
     const { lessonId } = await req.json();
+    console.log('Received lessonId:', lessonId);
+    
     if (!lessonId) {
+      console.error('No lessonId provided in request');
       throw new Error('Не указан ID урока');
     }
     
-    console.log('Processing request for lesson:', lessonId);
-
     let prompt: string;
     try {
       if (lessonId.startsWith('ba-')) {
@@ -40,6 +41,7 @@ serve(async (req) => {
       } else {
         prompt = getPythonLessonPrompt(lessonId);
       }
+      console.log('Generated prompt for lesson:', lessonId);
     } catch (error) {
       console.error('Error getting lesson prompt:', error);
       throw new Error(`Урок ${lessonId} не найден`);
