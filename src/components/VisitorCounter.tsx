@@ -46,7 +46,7 @@ export const VisitorCounter = () => {
           table: 'visitors'
         },
         (payload) => {
-          if (payload.new) {
+          if (payload.new && 'visitor_count' in payload.new) {
             setVisitorCount(payload.new.visitor_count || 0);
             setDailyCount(payload.new.daily_count || 0);
           }
