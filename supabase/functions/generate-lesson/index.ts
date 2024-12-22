@@ -1,123 +1,101 @@
 import "https://deno.land/x/xhr@0.1.0/mod.ts";
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
-import { getPrompt } from "./prompts/index.ts";
-
-const openAIApiKey = Deno.env.get('OPENAI_API_KEY');
-const anthropicApiKey = Deno.env.get('ANTHROPIC_API_KEY');
+import { getPromptForLesson } from "./prompts/index.ts";
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Methods': 'POST, OPTIONS',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
-  'Access-Control-Max-Age': '86400',
 };
 
 serve(async (req) => {
-  console.log('Function called with method:', req.method);
-  
+  console.log('Function invoked with request:', {
+    method: req.method,
+    url: req.url,
+    headers: Object.fromEntries(req.headers.entries()),
+  });
+
   // Handle CORS preflight requests
   if (req.method === 'OPTIONS') {
-    return new Response('ok', { 
-      status: 204, 
+    console.log('Handling OPTIONS request');
+    return new Response(null, { 
       headers: corsHeaders 
     });
   }
 
   try {
-    const { lessonId, customPrompt } = await req.json();
-    console.log('Generating lesson for:', lessonId);
-    
-    // Use custom prompt if provided, otherwise get default prompt
-    const prompt = customPrompt || await getPrompt(lessonId);
-    
-    if (!prompt) {
-      throw new Error('Failed to get prompt for lesson');
+    const { lessonId } = await req.json();
+    console.log('Received lessonId:', lessonId);
+
+    if (!lessonId) {
+      throw new Error('No lessonId provided');
     }
 
-    // Try OpenAI first
-    try {
-      console.log('Attempting to use OpenAI...');
-      const response = await fetch('https://api.openai.com/v1/chat/completions', {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${openAIApiKey}`,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          model: 'gpt-4',
-          messages: [
-            {
-              role: 'system',
-              content: 'You are an experienced teacher creating detailed, engaging lessons.'
-            },
-            { role: 'user', content: prompt }
-          ],
-          temperature: 0.7,
-          max_tokens: 2500,
-        }),
-      });
+    const prompt = getPromptForLesson(lessonId);
+    console.log('Generated prompt:', prompt);
 
-      if (!response.ok) {
-        const errorText = await response.text();
-        console.error('OpenAI error:', response.status, errorText);
-        throw new Error(`OpenAI API error: ${response.status}`);
-      }
+    const openaiApiKey = Deno.env.get('OPENAI_API_KEY');
+    if (!openaiApiKey) {
+      throw new Error('OpenAI API key not configured');
+    }
 
-      const data = await response.json();
-      console.log('OpenAI response received successfully');
-      
-      return new Response(
-        JSON.stringify({ text: data.choices[0].message.content }),
-        { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-      );
-
-    } catch (openAIError) {
-      console.error('OpenAI error, falling back to Anthropic:', openAIError);
-      
-      // Fallback to Anthropic
-      console.log('Attempting to use Anthropic...');
-      const response = await fetch('https://api.anthropic.com/v1/messages', {
-        method: 'POST',
-        headers: {
-          'x-api-key': anthropicApiKey,
-          'anthropic-version': '2023-06-01',
-          'content-type': 'application/json',
-        },
-        body: JSON.stringify({
-          model: 'claude-3-opus-20240229',
-          max_tokens: 4096,
-          messages: [{
+    console.log('Calling OpenAI API...');
+    const openaiResponse = await fetch('https://api.openai.com/v1/chat/completions', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${openaiApiKey}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        model: 'gpt-4o',
+        messages: [
+          {
+            role: 'system',
+            content: 'You are an AI teacher that generates detailed, well-structured lessons.'
+          },
+          {
             role: 'user',
             content: prompt
-          }],
-          temperature: 0.7,
-        }),
-      });
+          }
+        ],
+        temperature: 0.7,
+      }),
+    });
 
-      if (!response.ok) {
-        const errorText = await response.text();
-        console.error('Anthropic error:', response.status, errorText);
-        throw new Error(`Anthropic API error: ${response.status}`);
-      }
-
-      const data = await response.json();
-      console.log('Anthropic response received successfully');
-      
-      return new Response(
-        JSON.stringify({ text: data.content[0].text }),
-        { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-      );
+    if (!openaiResponse.ok) {
+      const errorData = await openaiResponse.json();
+      console.error('OpenAI API error:', errorData);
+      throw new Error(`OpenAI API error: ${errorData.error?.message || 'Unknown error'}`);
     }
+
+    const data = await openaiResponse.json();
+    console.log('OpenAI response received');
+
+    const generatedText = data.choices[0].message.content;
+    console.log('Generated text length:', generatedText.length);
+
+    return new Response(
+      JSON.stringify({ text: generatedText }),
+      { 
+        headers: { 
+          ...corsHeaders,
+          'Content-Type': 'application/json'
+        } 
+      }
+    );
+
   } catch (error) {
     console.error('Error in generate-lesson function:', error);
     return new Response(
       JSON.stringify({ 
         error: error.message,
-        details: error.stack 
+        details: error.stack
       }),
-      {
+      { 
         status: 500,
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+        headers: { 
+          ...corsHeaders,
+          'Content-Type': 'application/json'
+        }
       }
     );
   }
