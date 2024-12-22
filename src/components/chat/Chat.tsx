@@ -1,10 +1,10 @@
 import { useState, useEffect } from "react";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Send } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { Json } from "@/integrations/supabase/types";
+import { TopQuestions } from "./TopQuestions";
+import { MessageBubble } from "./MessageBubble";
+import { ChatInput } from "./ChatInput";
 
 interface ChatProps {
   topQuestions: string[];
@@ -81,47 +81,6 @@ export const Chat = ({ topQuestions, onAskQuestion }: ChatProps) => {
     }
   };
 
-  const formatMessage = (content: string | undefined) => {
-    if (!content) return '';
-    
-    return content
-      .split('\n\n')
-      .map((paragraph, index) => {
-        // Обработка заголовков
-        if (paragraph.startsWith('#')) {
-          return `<h3 class="text-xl font-semibold my-4">${paragraph.replace(/^#+\s/, '')}</h3>`;
-        }
-        
-        // Обработка списков
-        if (paragraph.includes('\n- ')) {
-          const items = paragraph.split('\n- ').filter(Boolean);
-          return `<ul class="list-disc pl-6 my-4 space-y-2">
-            ${items.map(item => `<li>${item}</li>`).join('')}
-          </ul>`;
-        }
-
-        // Обработка нумерованных списков
-        if (paragraph.match(/^\d+\./)) {
-          const items = paragraph.split('\n').filter(Boolean);
-          return `<ol class="list-decimal pl-6 my-4 space-y-2">
-            ${items.map(item => `<li>${item.replace(/^\d+\.\s/, '')}</li>`).join('')}
-          </ol>`;
-        }
-
-        // Обработка кода
-        if (paragraph.includes('```')) {
-          return paragraph
-            .replace(/```(.*?)```/gs, (_, code) => 
-              `<pre class="bg-gray-100 dark:bg-gray-800 p-4 rounded-lg my-4 overflow-x-auto"><code>${code.trim()}</code></pre>`
-            );
-        }
-
-        // Обычные параграфы
-        return `<p class="my-4">${paragraph}</p>`;
-      })
-      .join('');
-  };
-
   const handleAskQuestion = async (text: string) => {
     try {
       setLoading(true);
@@ -183,54 +142,24 @@ export const Chat = ({ topQuestions, onAskQuestion }: ChatProps) => {
     <div className="mt-8 space-y-4">
       <h2 className="text-xl font-semibold mb-4">Часто задаваемые вопросы</h2>
       
-      <div className="grid grid-cols-1 gap-2">
-        {topQuestions.map((q, i) => (
-          <Button
-            key={i}
-            variant="outline"
-            className="whitespace-normal h-auto text-left py-2"
-            onClick={() => handleAskQuestion(q)}
-            disabled={loading}
-          >
-            {q}
-          </Button>
-        ))}
-      </div>
+      <TopQuestions 
+        questions={topQuestions}
+        onAskQuestion={handleAskQuestion}
+        loading={loading}
+      />
 
       <div className="space-y-4 mt-8">
         {messages.map((msg, i) => (
-          <div
-            key={i}
-            className={`p-4 rounded-lg ${
-              msg.role === 'user'
-                ? 'bg-primary text-primary-foreground ml-8'
-                : 'bg-muted mr-8'
-            }`}
-          >
-            {msg.role === 'assistant' ? (
-              <div 
-                className="prose prose-sm dark:prose-invert max-w-none"
-                dangerouslySetInnerHTML={{ __html: formatMessage(msg.content) }}
-              />
-            ) : (
-              msg.content
-            )}
-          </div>
+          <MessageBubble key={i} role={msg.role} content={msg.content} />
         ))}
       </div>
 
-      <div className="flex gap-2">
-        <Input
-          value={question}
-          onChange={(e) => setQuestion(e.target.value)}
-          placeholder="Задайте свой вопрос..."
-          onKeyPress={(e) => e.key === 'Enter' && handleAskQuestion(question)}
-          disabled={loading}
-        />
-        <Button onClick={() => handleAskQuestion(question)} disabled={loading || !question.trim()}>
-          <Send className="h-4 w-4" />
-        </Button>
-      </div>
+      <ChatInput
+        value={question}
+        onChange={setQuestion}
+        onSubmit={() => handleAskQuestion(question)}
+        loading={loading}
+      />
     </div>
   );
 };
