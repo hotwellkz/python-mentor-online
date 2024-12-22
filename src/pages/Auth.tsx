@@ -1,7 +1,10 @@
+import { useState } from "react";
 import { Helmet } from "react-helmet";
 import { AuthForm } from "@/components/auth/AuthForm";
 
 const Auth = () => {
+  const [showGiftModal, setShowGiftModal] = useState(false);
+
   return (
     <>
       <Helmet>
@@ -20,7 +23,7 @@ const Auth = () => {
               Продолжите обучение с персональным ИИ-учителем
             </p>
           </div>
-          <AuthForm />
+          <AuthForm setShowGiftModal={setShowGiftModal} />
         </div>
       </div>
     </>

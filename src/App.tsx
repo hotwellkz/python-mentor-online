@@ -9,7 +9,7 @@ import Program from "./pages/Program";
 import DevOps from "./pages/DevOps";
 import DevOpsProgram from "./pages/DevOpsProgram";
 import DevOpsFaq from "./pages/DevOpsFaq";
-import { Auth } from "./pages/Auth";
+import Auth from "./pages/Auth";
 import Lesson from "./pages/Lesson";
 import Pricing from "./pages/Pricing";
 import Privacy from "./pages/Privacy";
