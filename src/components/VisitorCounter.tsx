@@ -51,22 +51,17 @@ export const VisitorCounter = () => {
 
     // Update visitor count when component mounts
     const updateVisitorCount = async () => {
-      const { error } = await supabase
-        .from('visitors')
-        .update({ 
-          visitor_count: supabase.sql`visitor_count + 1`,
-          daily_count: supabase.sql`CASE 
-            WHEN date = CURRENT_DATE THEN daily_count + 1
-            ELSE 1
-          END`,
-          date: supabase.sql`CASE 
-            WHEN date = CURRENT_DATE THEN date
-            ELSE CURRENT_DATE
-          END`
-        })
-        .eq('id', '1');
+      const { data, error } = await supabase.rpc('increment_visitor_count');
 
-      if (error) console.error('Error updating visitor count:', error);
+      if (error) {
+        console.error('Error updating visitor count:', error);
+        return;
+      }
+
+      if (data) {
+        setVisitorCount(data.visitor_count || 0);
+        setDailyCount(data.daily_count || 0);
+      }
     };
 
     updateVisitorCount();
@@ -74,10 +69,7 @@ export const VisitorCounter = () => {
     // Cleanup subscription and decrement count when component unmounts
     return () => {
       const cleanup = async () => {
-        const { error } = await supabase
-          .from('visitors')
-          .update({ visitor_count: supabase.sql`GREATEST(visitor_count - 1, 0)` })
-          .eq('id', '1');
+        const { error } = await supabase.rpc('decrement_visitor_count');
         
         if (error) console.error('Error decrementing visitor count:', error);
         supabase.removeChannel(channel);
