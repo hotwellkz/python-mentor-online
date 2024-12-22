@@ -20,6 +20,7 @@ import {
   getQuestionsForLesson3_4,
   getQuestionsForLesson3_5
 } from './blocks/block3';
+import { getBlock4Questions } from './blocks/block4';
 
 export const getPythonQuestions = (blockIndex: number, lessonIndex: number): Question[] => {
   switch (blockIndex) {
@@ -325,6 +326,8 @@ export const getPythonQuestions = (blockIndex: number, lessonIndex: number): Que
         default:
           return [];
       }
+    case 4:
+      return getBlock4Questions(lessonIndex);
     case 7:
       return getBlock7Questions(lessonIndex);
     case 8:
