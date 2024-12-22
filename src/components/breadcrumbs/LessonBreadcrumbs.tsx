@@ -26,6 +26,11 @@ export const LessonBreadcrumbs = ({ lessonId }: LessonBreadcrumbsProps) => {
     coursePath = "/data-science-program";
     parentTitle = "Изучайте Data Science";
     parentPath = "/data-science";
+  } else if (lessonId.startsWith('pm-')) {
+    courseTitle = "Программа курса Продукт-менеджмент";
+    coursePath = "/product-management-program";
+    parentTitle = "Изучайте Продукт-менеджмент";
+    parentPath = "/product-management";
   }
 
   return (
