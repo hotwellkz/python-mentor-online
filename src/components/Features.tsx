@@ -1,8 +1,10 @@
 import { GraduationCap, BookOpen, ListOrdered, ArrowRight } from "lucide-react";
 import { Button } from "./ui/button";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 export const Features = () => {
+  const navigate = useNavigate();
+  
   const scrollToCategories = (e: React.MouseEvent) => {
     e.preventDefault();
     const categoriesSection = document.querySelector('#categories-section');
@@ -81,12 +83,14 @@ export const Features = () => {
               <p className="text-lg opacity-90">
                 Ответы на самые популярные вопросы о курсах и обучении с ИИ-учителем
               </p>
-              <Link to="/faq">
-                <Button variant="secondary" className="text-white hover:bg-secondary/90">
-                  Смотреть все вопросы
-                  <ListOrdered className="ml-2 w-4 h-4" />
-                </Button>
-              </Link>
+              <Button 
+                variant="secondary" 
+                className="text-white hover:bg-secondary/90"
+                onClick={() => navigate('/faq')}
+              >
+                Смотреть все вопросы
+                <ListOrdered className="ml-2 w-4 h-4" />
+              </Button>
             </div>
             <div className="grid grid-cols-2 gap-4">
               {questions.map((item) => (
@@ -94,6 +98,7 @@ export const Features = () => {
                   key={item.id}
                   className="bg-white/10 p-4 rounded-lg backdrop-blur-sm hover:bg-white/20 transition-colors cursor-pointer animate-fade-up"
                   style={{ animationDelay: `${item.id * 100}ms` }}
+                  onClick={() => navigate('/faq')}
                 >
                   <span className="text-2xl font-bold">#{item.id}</span>
                   <p className="text-sm mt-2 opacity-80">{item.question}</p>
