@@ -17,7 +17,12 @@ serve(async (req) => {
   
   // Handle CORS preflight requests
   if (req.method === 'OPTIONS') {
-    return new Response('ok', { headers: corsHeaders });
+    return new Response('ok', { 
+      headers: {
+        ...corsHeaders,
+        'Content-Type': 'text/plain'
+      } 
+    });
   }
 
   try {
@@ -41,7 +46,7 @@ serve(async (req) => {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          model: 'gpt-4o',
+          model: 'gpt-4',
           messages: [
             {
               role: 'system',
@@ -54,22 +59,25 @@ serve(async (req) => {
 
       if (!response.ok) {
         console.error('OpenAI error status:', response.status);
-        throw new Error('OpenAI API returned an error');
+        const errorText = await response.text();
+        console.error('OpenAI error response:', errorText);
+        throw new Error(`OpenAI API returned error ${response.status}: ${errorText}`);
       }
 
       const data = await response.json();
+      console.log('OpenAI response received successfully');
       
-      if (data.error) {
-        console.error('OpenAI error:', data.error);
-        throw new Error(data.error.message);
-      }
-
       return new Response(
         JSON.stringify({ text: data.choices[0].message.content }),
-        { headers: { ...corsHeaders, 'Content-Type': 'application/json' } },
+        { 
+          headers: { 
+            ...corsHeaders, 
+            'Content-Type': 'application/json' 
+          } 
+        },
       );
-    } catch (error) {
-      console.error('OpenAI error, falling back to Anthropic:', error);
+    } catch (openAIError) {
+      console.error('OpenAI error, falling back to Anthropic:', openAIError);
       
       // Fallback to Anthropic if OpenAI fails
       console.log('Attempting to use Anthropic...');
@@ -92,28 +100,37 @@ serve(async (req) => {
 
       if (!response.ok) {
         console.error('Anthropic error status:', response.status);
-        throw new Error('Anthropic API returned an error');
+        const errorText = await response.text();
+        console.error('Anthropic error response:', errorText);
+        throw new Error(`Anthropic API returned error ${response.status}: ${errorText}`);
       }
 
       const data = await response.json();
+      console.log('Anthropic response received successfully');
       
-      if (data.error) {
-        console.error('Anthropic error:', data.error);
-        throw new Error(data.error.message);
-      }
-
       return new Response(
         JSON.stringify({ text: data.content[0].text }),
-        { headers: { ...corsHeaders, 'Content-Type': 'application/json' } },
+        { 
+          headers: { 
+            ...corsHeaders, 
+            'Content-Type': 'application/json' 
+          } 
+        },
       );
     }
   } catch (error) {
     console.error('Error in generate-lesson function:', error);
     return new Response(
-      JSON.stringify({ error: error.message }),
+      JSON.stringify({ 
+        error: error.message,
+        details: error.stack 
+      }),
       {
         status: 500,
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        headers: { 
+          ...corsHeaders, 
+          'Content-Type': 'application/json' 
+        },
       },
     );
   }
