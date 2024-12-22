@@ -117,6 +117,27 @@ export type Database = {
         }
         Relationships: []
       }
+      favorite_courses: {
+        Row: {
+          course_type: string
+          created_at: string
+          id: string
+          user_id: string
+        }
+        Insert: {
+          course_type: string
+          created_at?: string
+          id?: string
+          user_id: string
+        }
+        Update: {
+          course_type?: string
+          created_at?: string
+          id?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       lesson_progress: {
         Row: {
           chat_messages: Json | null
