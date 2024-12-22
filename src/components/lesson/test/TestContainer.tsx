@@ -121,6 +121,7 @@ export const TestContainer = ({ open, onOpenChange }: TestContainerProps) => {
             onAnswer={handleAnswer}
             onNext={handleNext}
             isLastQuestion={currentQuestion === questions.length - 1}
+            correctAnswer={questions[currentQuestion].correctAnswer}
           />
         )}
       </DialogContent>
