@@ -1,3 +1,4 @@
+import { Question } from "@/types/question";
 import { getQuestionsForLesson2_1 } from "./lesson2_1";
 import { getQuestionsForLesson2_2 } from "./lesson2_2";
 

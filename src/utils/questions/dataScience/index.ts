@@ -1,3 +1,4 @@
+import { Question } from "@/types/question";
 import { getModuleOneQuestions } from "./module1";
 import { getModuleTwoQuestions } from "./module2";
 
