@@ -25,13 +25,14 @@ export const FavoriteButton = ({ courseType }: FavoriteButtonProps) => {
         return;
       }
 
-      const { data } = await supabase
+      const { data, error } = await supabase
         .from('favorite_courses')
         .select('*')
         .eq('user_id', user.id)
         .eq('course_type', courseType)
-        .single();
+        .maybeSingle();
 
+      if (error) throw error;
       setIsFavorite(!!data);
     } catch (error) {
       console.error('Error checking favorite status:', error);
