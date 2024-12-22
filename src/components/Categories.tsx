@@ -7,7 +7,7 @@ const categories = [
     duration: "10 мес",
     icon: Code,
     bg: "bg-[#E5DEFF]",
-    link: "/program",
+    link: "/python-course",
     isHot: true,
   },
   {

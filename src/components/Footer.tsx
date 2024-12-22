@@ -31,7 +31,7 @@ export const Footer = () => {
               </DropdownMenuTrigger>
               <DropdownMenuContent className="animate-scale-in bg-white rounded-lg shadow-lg border border-gray-200 p-1 min-w-[150px]">
                 <DropdownMenuItem className="rounded hover:bg-gray-100 transition-colors">
-                  <Link to="/program" className="w-full px-3 py-2 text-gray-700 hover:text-primary">
+                  <Link to="/python-course" className="w-full px-3 py-2 text-gray-700 hover:text-primary">
                     Python
                   </Link>
                 </DropdownMenuItem>
