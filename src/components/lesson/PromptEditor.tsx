@@ -87,11 +87,16 @@ export const PromptEditor = ({ lessonId }: PromptEditorProps) => {
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
-        <Button variant="ghost" size="icon" className="absolute top-4 right-4">
+        <Button 
+          variant="ghost" 
+          size="icon" 
+          className="md:absolute md:top-4 md:right-4 w-8 h-8 p-0"
+        >
           <Lock className="h-4 w-4" />
+          <span className="sr-only">Редактировать промпт</span>
         </Button>
       </DialogTrigger>
-      <DialogContent>
+      <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
           <DialogTitle>
             {isAuthenticated ? "Редактирование промпта" : "Введите пароль"}
@@ -104,6 +109,7 @@ export const PromptEditor = ({ lessonId }: PromptEditorProps) => {
               placeholder="Пароль"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
+              className="w-full"
             />
             <Button onClick={handleAuth} className="w-full">
               Войти
@@ -115,7 +121,7 @@ export const PromptEditor = ({ lessonId }: PromptEditorProps) => {
               placeholder="Промпт урока"
               value={prompt}
               onChange={(e) => setPrompt(e.target.value)}
-              className="min-h-[200px]"
+              className="min-h-[200px] w-full"
             />
             <Button onClick={handleSave} className="w-full">
               Сохранить

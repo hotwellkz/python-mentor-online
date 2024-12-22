@@ -115,9 +115,13 @@ export const Chat = ({ topQuestions, onAskQuestion }: ChatProps) => {
       setMessages(newMessages);
       await saveChatMessages(newMessages);
 
-      const answer = await onAskQuestion(text);
+      const response = await supabase.functions.invoke('chat', {
+        body: { message: text, model: 'openai' }
+      });
+
+      if (response.error) throw response.error;
       
-      const updatedMessages = [...newMessages, { role: 'assistant' as const, content: answer }];
+      const updatedMessages = [...newMessages, { role: 'assistant' as const, content: response.data.text }];
       setMessages(updatedMessages);
       await saveChatMessages(updatedMessages);
 
