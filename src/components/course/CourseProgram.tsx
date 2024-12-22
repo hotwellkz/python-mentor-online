@@ -36,7 +36,6 @@ export const CourseProgram = ({ courseType = 'python' }: CourseProgramProps) => 
       }
     });
 
-    // Подписываемся на изменения в таблице completed_lessons
     const channel = supabase
       .channel('completed_lessons_changes')
       .on(
@@ -111,22 +110,32 @@ export const CourseProgram = ({ courseType = 'python' }: CourseProgramProps) => 
 
                   return (
                     <div key={lessonIndex} className="border-l-2 border-gray-200 pl-4">
-                      <div className="flex items-center gap-2">
+                      <div className="flex items-center gap-2 group">
                         <Link
                           to={`/lesson/${lessonId}`}
-                          className={`font-medium hover:text-primary/80 transition-colors mb-2 flex-grow ${
-                            isCompleted ? 'text-green-500' : 'text-primary'
+                          className={`font-medium transition-colors mb-2 flex-grow ${
+                            isCompleted 
+                              ? 'text-green-500 hover:text-green-600' 
+                              : 'text-primary hover:text-primary/80'
                           }`}
                         >
                           {lesson.title}
                         </Link>
                         {isCompleted && (
-                          <Check className="h-5 w-5 text-green-500" />
+                          <div className="bg-green-100 dark:bg-green-900/20 p-1 rounded-full">
+                            <Check className="h-5 w-5 text-green-500" />
+                          </div>
                         )}
                       </div>
-                      <ul className="list-disc list-inside space-y-1 text-gray-600">
+                      <ul className={`list-disc list-inside space-y-1 ${
+                        isCompleted ? 'text-gray-500' : 'text-gray-600'
+                      }`}>
                         {lesson.topics.map((topic, topicIndex) => (
-                          <li key={topicIndex}>{topic}</li>
+                          <li key={topicIndex} className={`${
+                            isCompleted ? 'line-through opacity-70' : ''
+                          }`}>
+                            {topic}
+                          </li>
                         ))}
                       </ul>
                     </div>
