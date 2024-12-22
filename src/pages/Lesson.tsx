@@ -143,8 +143,12 @@ const Lesson = () => {
       </Helmet>
       <div className="container mx-auto px-4 py-8">
         <div className="max-w-4xl mx-auto relative">
-          <PromptEditor lessonId={lessonId || ""} />
-          <h1 className="text-3xl font-bold mb-6">{currentLesson.title}</h1>
+          <div className="flex flex-col md:flex-row justify-between items-start mb-6">
+            <h1 className="text-2xl md:text-3xl font-bold">{currentLesson.title}</h1>
+            <div className="mt-4 md:mt-0">
+              <PromptEditor lessonId={lessonId || ""} />
+            </div>
+          </div>
           <LessonHeader
             loading={loading}
             generatedText={generatedText}
