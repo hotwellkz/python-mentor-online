@@ -1,44 +1,43 @@
 import { Question } from '@/types/question';
-import { businessAnalystBlocks } from './businessAnalyst';
-import { block1 } from './course/block1';
-import { block2 } from './course/block2';
-import { block3 } from './course/block3';
-import { block4 } from './course/block4';
-import { block5 } from './course/block5';
-import { block6 } from './course/block6';
-import { block7 } from './course/block7';
+import { getBlock1Questions } from './blocks/block1';
+import { getBlock2Questions } from './blocks/block2';
+import { getBlock3Questions } from './blocks/block3';
+import { getBlock4Questions } from './blocks/block4';
+import { getBlock5Questions } from './blocks/block5';
+import { getBlock6Questions } from './blocks/block6';
+import { getBlock7Questions } from './blocks/block7';
 import { getBlock8Questions } from './blocks/block8';
 import { getBlock9Questions } from './blocks/block9';
-import { block10 } from './course/block10';
-import { block11 } from './course/block11';
-import { block12 } from './course/block12';
+import { getBlock10Questions } from './blocks/block10';
+import { getBlock11Questions } from './blocks/block11';
+import { getBlock12Questions } from './blocks/block12';
 
 export const getPythonQuestions = (blockIndex: number, lessonIndex: number): Question[] => {
   switch (blockIndex) {
     case 1:
-      return block1[lessonIndex] || [];
+      return getBlock1Questions(lessonIndex);
     case 2:
-      return block2[lessonIndex] || [];
+      return getBlock2Questions(lessonIndex);
     case 3:
-      return block3[lessonIndex] || [];
+      return getBlock3Questions(lessonIndex);
     case 4:
-      return block4[lessonIndex] || [];
+      return getBlock4Questions(lessonIndex);
     case 5:
-      return block5[lessonIndex] || [];
+      return getBlock5Questions(lessonIndex);
     case 6:
-      return block6[lessonIndex] || [];
+      return getBlock6Questions(lessonIndex);
     case 7:
-      return block7[lessonIndex] || [];
+      return getBlock7Questions(lessonIndex);
     case 8:
       return getBlock8Questions(lessonIndex);
     case 9:
       return getBlock9Questions(lessonIndex);
     case 10:
-      return block10[lessonIndex] || [];
+      return getBlock10Questions(lessonIndex);
     case 11:
-      return block11[lessonIndex] || [];
+      return getBlock11Questions(lessonIndex);
     case 12:
-      return block12[lessonIndex] || [];
+      return getBlock12Questions(lessonIndex);
     default:
       return [];
   }
