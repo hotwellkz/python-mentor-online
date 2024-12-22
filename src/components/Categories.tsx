@@ -165,7 +165,7 @@ const categories = [
 
 export const Categories = () => {
   return (
-    <div className="py-16 px-4">
+    <div id="categories-section" className="py-16 px-4">
       <div className="max-w-7xl mx-auto">
         <h2 className="text-3xl md:text-4xl font-bold text-center mb-12">
           Выберите свою профессию
