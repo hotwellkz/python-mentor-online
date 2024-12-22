@@ -31,7 +31,7 @@ serve(async (req) => {
     console.log('Received lessonId:', lessonId);
     
     if (!lessonId) {
-      console.error('No lessonId provided in request');
+      console.error('No lessonId provided in request body:', body);
       throw new Error('Не указан ID урока');
     }
     
