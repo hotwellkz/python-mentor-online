@@ -1,96 +1,23 @@
 import { Question } from '@/types/question';
+import { getQuestionsForLesson3_1 } from './lesson3_1';
+import { getQuestionsForLesson3_2 } from './lesson3_2';
+import { getQuestionsForLesson3_3 } from './lesson3_3';
+import { getQuestionsForLesson3_4 } from './lesson3_4';
+import { getQuestionsForLesson3_5 } from './lesson3_5';
 
 export const getBlock3Questions = (lessonIndex: number): Question[] => {
-  const questions: { [key: number]: Question[] } = {
-    1: [
-      {
-        question: "Что такое классы и объекты?",
-        options: [
-          "Шаблоны для создания объектов и их экземпляры",
-          "Типы данных",
-          "Функции",
-          "Переменные"
-        ],
-        correctAnswer: 0
-      },
-      {
-        question: "Атрибуты и методы класса.",
-        options: [
-          "Атрибуты - это переменные, методы - функции",
-          "Атрибуты - это функции, методы - переменные",
-          "Атрибуты и методы - это одно и то же",
-          "Атрибуты - это только публичные переменные"
-        ],
-        correctAnswer: 0
-      }
-    ],
-    2: [
-      {
-        question: "Создание объектов с использованием конструктора.",
-        options: [
-          "Объекты создаются с помощью класса",
-          "Объекты создаются с помощью функции",
-          "Объекты создаются с помощью переменных",
-          "Объекты создаются с помощью методов"
-        ],
-        correctAnswer: 0
-      }
-    ],
-    3: [
-      {
-        question: "Инкапсуляция, наследование и полиморфизм.",
-        options: [
-          "Основные принципы ООП",
-          "Типы данных",
-          "Функции",
-          "Переменные"
-        ],
-        correctAnswer: 0
-      },
-      {
-        question: "Пример работы с абстракцией.",
-        options: [
-          "Создание абстрактного класса",
-          "Создание объекта",
-          "Создание метода",
-          "Создание переменной"
-        ],
-        correctAnswer: 0
-      }
-    ],
-    4: [
-      {
-        question: "Статические методы и атрибуты.",
-        options: [
-          "Методы и атрибуты, которые принадлежат классу, а не экземпляру",
-          "Методы и атрибуты, которые принадлежат экземпляру, а не классу",
-          "Методы и атрибуты, которые нельзя изменить",
-          "Методы и атрибуты, которые нельзя вызвать"
-        ],
-        correctAnswer: 0
-      },
-      {
-        question: "Магические методы (__str__, __repr__, __len__).",
-        options: [
-          "Методы, которые имеют специальные названия и используются для переопределения поведения объектов",
-          "Методы, которые нельзя переопределить",
-          "Методы, которые используются только в классах",
-          "Методы, которые используются только в функциях"
-        ],
-        correctAnswer: 0
-      },
-      {
-        question: "Пример наследования классов.",
-        options: [
-          "Создание нового класса на основе существующего",
-          "Создание нового метода",
-          "Создание новой функции",
-          "Создание новой переменной"
-        ],
-        correctAnswer: 0
-      }
-    ]
-  };
-
-  return questions[lessonIndex] || [];
+  switch (lessonIndex) {
+    case 1:
+      return getQuestionsForLesson3_1();
+    case 2:
+      return getQuestionsForLesson3_2();
+    case 3:
+      return getQuestionsForLesson3_3();
+    case 4:
+      return getQuestionsForLesson3_4();
+    case 5:
+      return getQuestionsForLesson3_5();
+    default:
+      return [];
+  }
 };
