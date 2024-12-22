@@ -1,6 +1,6 @@
 import { Question } from '@/types/question';
 import { getBlock1Questions } from './blocks/block1';
-import { getBlock2Questions } from './blocks/block2';
+import { getBlock2Questions } from './blocks/block2/index';
 import { getBlock3Questions } from './blocks/block3';
 import { getBlock4Questions } from './blocks/block4';
 import { getBlock5Questions } from './blocks/block5';
