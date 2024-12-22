@@ -13,7 +13,7 @@ export const Breadcrumbs = () => {
     const lessonId = location.pathname.split('/').pop();
     return (
       <div className="bg-gray-100 dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">
-        <div className="container mx-auto px-4 py-2">
+        <div className="container mx-auto px-3 md:px-4 py-2">
           <LessonBreadcrumbs lessonId={lessonId || ''} />
         </div>
       </div>
@@ -22,7 +22,7 @@ export const Breadcrumbs = () => {
 
   return (
     <div className="bg-gray-100 dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">
-      <div className="container mx-auto px-4 py-2">
+      <div className="container mx-auto px-3 md:px-4 py-2">
         <RouteBreadcrumbs currentPath={location.pathname} />
       </div>
     </div>
