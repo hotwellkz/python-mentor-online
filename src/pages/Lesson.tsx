@@ -27,7 +27,13 @@ const Lesson = () => {
     setIsEmailVerified(user?.email_confirmed_at !== null);
   };
 
-  const { lessonTitle, topQuestions, isDevOpsLesson } = useLessonContent(lessonId);
+  const { 
+    lessonTitle, 
+    topQuestions, 
+    isDevOpsLesson, 
+    isDataScienceLesson,
+    isProductManagementLesson 
+  } = useLessonContent(lessonId);
 
   const {
     loading,
@@ -106,6 +112,8 @@ const Lesson = () => {
         lessonTitle={lessonTitle}
         topQuestions={topQuestions}
         isDevOpsLesson={isDevOpsLesson}
+        isDataScienceLesson={isDataScienceLesson}
+        isProductManagementLesson={isProductManagementLesson}
       />
 
       <div className="container mx-auto px-4 py-8">
