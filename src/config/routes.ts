@@ -1,6 +1,7 @@
 export const routes: { [key: string]: { title: string; parent?: string } } = {
   "/program": { title: "Программа курса Python", parent: "/python-course" },
   "/python-course": { title: "Изучайте Python" },
+  "/data-science": { title: "Изучайте Data Science" },
   "/devops": { title: "DevOps-инженер" },
   "/devops-program": { title: "Программа курса DevOps", parent: "/devops" },
   "/devops-faq": { title: "Часто задаваемые вопросы", parent: "/devops" },

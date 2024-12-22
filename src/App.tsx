@@ -21,6 +21,7 @@ import BusinessAnalyst from "./pages/BusinessAnalyst";
 import BusinessAnalystProgram from "./pages/BusinessAnalystProgram";
 import Settings from "./pages/Settings";
 import PythonCourse from "./pages/PythonCourse";
+import DataScience from "./pages/DataScience";
 
 const queryClient = new QueryClient();
 
@@ -35,6 +36,7 @@ const App = () => (
             <Route path="/" element={<Index />} />
             <Route path="/program" element={<Program />} />
             <Route path="/python-course" element={<PythonCourse />} />
+            <Route path="/data-science" element={<DataScience />} />
             <Route path="/devops" element={<DevOps />} />
             <Route path="/devops-program" element={<DevOpsProgram />} />
             <Route path="/devops-faq" element={<DevOpsFaq />} />

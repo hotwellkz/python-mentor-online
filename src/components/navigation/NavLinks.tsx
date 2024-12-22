@@ -38,6 +38,15 @@ export const NavLinks = () => {
           </DropdownMenuItem>
           <DropdownMenuItem className="rounded hover:bg-gray-100 transition-colors">
             <Link 
+              to="/data-science" 
+              className="w-full px-3 py-2 text-gray-700 hover:text-primary"
+              onClick={() => setIsOpen(false)}
+            >
+              Data Science
+            </Link>
+          </DropdownMenuItem>
+          <DropdownMenuItem className="rounded hover:bg-gray-100 transition-colors">
+            <Link 
               to="/devops" 
               className="w-full px-3 py-2 text-gray-700 hover:text-primary"
               onClick={() => setIsOpen(false)}
