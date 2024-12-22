@@ -6,12 +6,12 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
-import { courseBlocks, businessAnalystBlocks, dataScienceBlocks } from "@/data/courseData";
+import { courseBlocks, businessAnalystBlocks, dataScienceBlocks, productManagementBlocks } from "@/data/courseData";
 import { supabase } from "@/integrations/supabase/client";
 import { Check } from "lucide-react";
 
 interface CourseProgramProps {
-  courseType?: 'python' | 'business-analyst' | 'data-science';
+  courseType?: 'python' | 'business-analyst' | 'data-science' | 'product-management';
 }
 
 export const CourseProgram = ({ courseType = 'python' }: CourseProgramProps) => {
@@ -22,6 +22,8 @@ export const CourseProgram = ({ courseType = 'python' }: CourseProgramProps) => 
     ? businessAnalystBlocks 
     : courseType === 'data-science'
     ? dataScienceBlocks
+    : courseType === 'product-management'
+    ? productManagementBlocks
     : courseBlocks;
 
   const calculateProgress = (completedCount: number) => {
@@ -52,6 +54,8 @@ export const CourseProgram = ({ courseType = 'python' }: CourseProgramProps) => 
             ? 'business_analyst_progress' 
             : courseType === 'data-science'
             ? 'data_science_progress'
+            : courseType === 'product-management'
+            ? 'product_management_progress'
             : 'completed_lessons',
         },
         () => {
@@ -78,6 +82,8 @@ export const CourseProgram = ({ courseType = 'python' }: CourseProgramProps) => 
       ? 'business_analyst_progress' 
       : courseType === 'data-science'
       ? 'data_science_progress'
+      : courseType === 'product-management'
+      ? 'product_management_progress'
       : 'completed_lessons';
 
     const { data } = await supabase
@@ -121,6 +127,8 @@ export const CourseProgram = ({ courseType = 'python' }: CourseProgramProps) => 
                     ? `ba-${blockIndex + 1}-${lessonIndex + 1}`
                     : courseType === 'data-science'
                     ? `ds-${blockIndex + 1}-${lessonIndex + 1}`
+                    : courseType === 'product-management'
+                    ? `pm-${blockIndex + 1}-${lessonIndex + 1}`
                     : `${blockIndex + 1}-${lessonIndex + 1}`;
                   const isCompleted = completedLessons.includes(lessonId);
 

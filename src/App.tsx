@@ -24,6 +24,7 @@ import PythonCourse from "./pages/PythonCourse";
 import DataScience from "./pages/DataScience";
 import DataScienceProgram from "./pages/DataScienceProgram";
 import ProductManagement from "./pages/ProductManagement";
+import ProductManagementProgram from "./pages/ProductManagementProgram";
 
 const queryClient = new QueryClient();
 
@@ -46,6 +47,7 @@ const App = () => (
             <Route path="/business-analyst" element={<BusinessAnalyst />} />
             <Route path="/business-analyst-program" element={<BusinessAnalystProgram />} />
             <Route path="/product-management" element={<ProductManagement />} />
+            <Route path="/product-management-program" element={<ProductManagementProgram />} />
             <Route path="/auth" element={<Auth />} />
             <Route path="/lesson/:lessonId" element={<Lesson />} />
             <Route path="/pricing" element={<Pricing />} />

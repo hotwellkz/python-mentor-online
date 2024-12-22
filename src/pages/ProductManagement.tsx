@@ -7,6 +7,7 @@ import { supabase } from "@/integrations/supabase/client";
 
 const ProductManagement = () => {
   const navigate = useNavigate();
+  const location = useLocation();
 
   const handleStartLearning = async () => {
     const { data: { user } } = await supabase.auth.getUser();
