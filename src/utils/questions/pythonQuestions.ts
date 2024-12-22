@@ -15,7 +15,10 @@ import {
 } from './blocks/block2';
 import {
   getQuestionsForLesson3_1,
-  getQuestionsForLesson3_2
+  getQuestionsForLesson3_2,
+  getQuestionsForLesson3_3,
+  getQuestionsForLesson3_4,
+  getQuestionsForLesson3_5
 } from './blocks/block3';
 
 export const getPythonQuestions = (blockIndex: number, lessonIndex: number): Question[] => {
@@ -313,6 +316,12 @@ export const getPythonQuestions = (blockIndex: number, lessonIndex: number): Que
           return getQuestionsForLesson3_1();
         case 2:
           return getQuestionsForLesson3_2();
+        case 3:
+          return getQuestionsForLesson3_3();
+        case 4:
+          return getQuestionsForLesson3_4();
+        case 5:
+          return getQuestionsForLesson3_5();
         default:
           return [];
       }
