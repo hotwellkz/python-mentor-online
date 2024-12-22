@@ -1,15 +1,13 @@
 import { GraduationCap } from "lucide-react";
 import { Button } from "./ui/button";
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 
 export const StartLearning = () => {
-  const scrollToCategories = (e: React.MouseEvent) => {
-    e.preventDefault();
-    const categoriesSection = document.querySelector('#categories-section');
-    if (categoriesSection) {
-      categoriesSection.scrollIntoView({ behavior: 'smooth' });
-    }
+  const navigate = useNavigate();
+
+  const handleStartLearning = () => {
+    navigate('/program');
   };
 
   return (
@@ -36,7 +34,7 @@ export const StartLearning = () => {
             <Button 
               size="lg" 
               className="bg-primary hover:bg-primary/90 text-lg px-8 py-6"
-              onClick={scrollToCategories}
+              onClick={handleStartLearning}
             >
               Начать бесплатно
               <GraduationCap className="ml-2 h-6 w-6" />
