@@ -40,8 +40,8 @@ export const LessonContent = ({
             exit={{ opacity: 0 }}
             className="text-center py-8"
           >
-            <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-primary" />
-            <p className="mt-4 text-lg">Готовлю урок...</p>
+            <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-[#333333]" />
+            <p className="mt-4 text-lg text-[#333333] dark:text-gray-200">Готовлю урок...</p>
           </motion.div>
         )}
       </AnimatePresence>

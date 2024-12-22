@@ -10,8 +10,8 @@ export const MessageBubble = ({ role, content }: MessageBubbleProps) => {
     <div
       className={`p-4 rounded-lg ${
         role === 'user'
-          ? 'bg-primary text-primary-foreground ml-8'
-          : 'bg-gray-50 dark:bg-gray-900 mr-8'
+          ? 'bg-[#333333] text-gray-100 ml-8'
+          : 'bg-[#F6F6F7] dark:bg-[#222222] mr-8'
       }`}
     >
       {role === 'assistant' ? (
