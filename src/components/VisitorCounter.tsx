@@ -56,7 +56,7 @@ export const VisitorCounter = () => {
 
     // Update visitor count when component mounts
     const updateVisitorCount = async () => {
-      const { data, error } = await supabase.rpc<VisitorResponse>('increment_visitor_count');
+      const { data, error } = await supabase.rpc<VisitorResponse, void>('increment_visitor_count');
 
       if (error) {
         console.error('Error updating visitor count:', error);
