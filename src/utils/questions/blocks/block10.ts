@@ -157,6 +157,58 @@ export const getBlock10Questions = (lessonIndex: number): Question[] => {
         ],
         correctAnswer: 1
       }
+    ],
+    4: [ // Паттерны проектирования
+      {
+        question: "Что такое паттерн проектирования?",
+        options: [
+          "Набор готовых решений для стандартных задач разработки",
+          "Инструмент для тестирования кода",
+          "Спецификация языка программирования",
+          "Библиотека для работы с шаблонами"
+        ],
+        correctAnswer: 0
+      },
+      {
+        question: "Какой из следующих шаблонов ограничивает создание объекта одним экземпляром?",
+        options: [
+          "Singleton",
+          "Factory",
+          "Observer",
+          "Builder"
+        ],
+        correctAnswer: 0
+      },
+      {
+        question: "Какой паттерн проектирования используется для создания объектов без указания их точного класса?",
+        options: [
+          "Factory",
+          "Singleton",
+          "Decorator",
+          "Adapter"
+        ],
+        correctAnswer: 0
+      },
+      {
+        question: "Какой результат выполнения кода Singleton с _instance?",
+        options: [
+          "True",
+          "False",
+          "Ошибка",
+          "None"
+        ],
+        correctAnswer: 0
+      },
+      {
+        question: "Какой паттерн подходит для динамического изменения поведения объекта?",
+        options: [
+          "Decorator",
+          "Factory",
+          "Singleton",
+          "Strategy"
+        ],
+        correctAnswer: 0
+      }
     ]
   };
 
