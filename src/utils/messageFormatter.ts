@@ -2,8 +2,10 @@ export const formatMessage = (content: string | undefined) => {
   if (!content) return '';
   
   return content
+    .replace(/\*\*(.*?)\*\*/g, '$1') // Remove bold markers
+    .replace(/\*(.*?)\*/g, '$1') // Remove italic markers
     .split('\n\n')
-    .map((paragraph, index) => {
+    .map((paragraph) => {
       // Headers
       if (paragraph.startsWith('#')) {
         return `<h3 class="text-xl font-semibold my-4">${paragraph.replace(/^#+\s/, '')}</h3>`;
