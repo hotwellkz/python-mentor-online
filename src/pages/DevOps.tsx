@@ -8,7 +8,6 @@ import { motion } from "framer-motion";
 import { DevOpsFeatures } from "@/components/devops/DevOpsFeatures";
 import { DevOpsTargetAudience } from "@/components/devops/DevOpsTargetAudience";
 import { DevOpsReviews } from "@/components/devops/DevOpsReviews";
-import { StartLearning } from "@/components/StartLearning";
 
 const DevOps = () => {
   const navigate = useNavigate();
@@ -96,7 +95,6 @@ const DevOps = () => {
 
         <DevOpsFeatures />
         <DevOpsTargetAudience />
-        <StartLearning />
         <DevOpsReviews />
       </main>
     </>

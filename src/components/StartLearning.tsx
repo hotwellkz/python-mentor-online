@@ -7,7 +7,7 @@ export const StartLearning = () => {
   const navigate = useNavigate();
 
   const handleStartLearning = () => {
-    navigate('/devops-program');
+    navigate('/program');
   };
 
   return (
