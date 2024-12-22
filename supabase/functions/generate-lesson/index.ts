@@ -11,6 +11,7 @@ const corsHeaders = {
 };
 
 serve(async (req) => {
+  // Handle CORS preflight requests
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
   }
@@ -28,6 +29,7 @@ serve(async (req) => {
 
     // Try OpenAI first
     try {
+      console.log('Attempting to use OpenAI...');
       const response = await fetch('https://api.openai.com/v1/chat/completions', {
         method: 'POST',
         headers: {
@@ -49,6 +51,7 @@ serve(async (req) => {
       const data = await response.json();
       
       if (data.error) {
+        console.error('OpenAI error:', data.error);
         throw new Error(data.error.message);
       }
 
@@ -60,6 +63,7 @@ serve(async (req) => {
       console.error('OpenAI error, falling back to Anthropic:', error);
       
       // Fallback to Anthropic if OpenAI fails
+      console.log('Attempting to use Anthropic...');
       const response = await fetch('https://api.anthropic.com/v1/messages', {
         method: 'POST',
         headers: {
@@ -80,6 +84,7 @@ serve(async (req) => {
       const data = await response.json();
       
       if (data.error) {
+        console.error('Anthropic error:', data.error);
         throw new Error(data.error.message);
       }
 
