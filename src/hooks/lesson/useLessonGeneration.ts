@@ -12,7 +12,19 @@ export const useLessonGeneration = () => {
         body: { lessonId },
       });
 
-      if (response.error) throw new Error(response.error.message);
+      if (response.error) {
+        console.error('Error from generate-lesson:', response.error);
+        // Try again with a direct prompt if lessonId approach fails
+        const fallbackResponse = await supabase.functions.invoke('generate-lesson', {
+          body: { 
+            prompt: `Расскажи подробно про урок ${lessonId}, используя практические примеры и понятные объяснения.` 
+          },
+        });
+
+        if (fallbackResponse.error) throw new Error(fallbackResponse.error.message);
+        return fallbackResponse.data.text;
+      }
+
       return response.data.text;
     } catch (error: any) {
       console.error('Error in generateLesson:', error);

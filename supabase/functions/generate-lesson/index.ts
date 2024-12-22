@@ -27,27 +27,28 @@ serve(async (req) => {
     const body = await req.json();
     console.log('Request body:', body);
 
-    const { lessonId } = body;
-    console.log('Received lessonId:', lessonId);
-    
-    if (!lessonId) {
-      console.error('No lessonId provided in request body:', body);
-      throw new Error('Не указан ID урока');
-    }
-    
-    let prompt: string;
-    try {
-      if (lessonId.startsWith('ba-')) {
-        prompt = getBusinessAnalystLessonPrompt(lessonId);
-      } else if (lessonId.startsWith('devops-')) {
-        prompt = getDevOpsLessonPrompt(lessonId);
-      } else {
-        prompt = getPythonLessonPrompt(lessonId);
+    const { lessonId, prompt } = body;
+    let finalPrompt: string;
+
+    if (lessonId) {
+      console.log('Generating content for lessonId:', lessonId);
+      try {
+        if (lessonId.startsWith('ba-')) {
+          finalPrompt = getBusinessAnalystLessonPrompt(lessonId);
+        } else if (lessonId.startsWith('devops-')) {
+          finalPrompt = getDevOpsLessonPrompt(lessonId);
+        } else {
+          finalPrompt = getPythonLessonPrompt(lessonId);
+        }
+      } catch (error) {
+        console.error('Error getting lesson prompt:', error);
+        finalPrompt = `Расскажи подробно про урок ${lessonId}, используя практические примеры и понятные объяснения.`;
       }
-      console.log('Generated prompt for lesson:', lessonId);
-    } catch (error) {
-      console.error('Error getting lesson prompt:', error);
-      throw new Error(`Урок ${lessonId} не найден`);
+    } else if (prompt) {
+      console.log('Using direct prompt:', prompt);
+      finalPrompt = prompt;
+    } else {
+      throw new Error('Необходимо указать ID урока или вопрос');
     }
 
     console.log('Making request to OpenAI API...');
@@ -64,7 +65,7 @@ serve(async (req) => {
             role: 'system',
             content: 'Вы - опытный преподаватель. Ваша задача - подробно объяснить тему урока, используя примеры и понятные объяснения. Используйте маркдаун для форматирования текста.'
           },
-          { role: 'user', content: prompt }
+          { role: 'user', content: finalPrompt }
         ],
         max_tokens: 2500,
       }),
