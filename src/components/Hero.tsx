@@ -1,14 +1,21 @@
 import { GraduationCap, Code, ArrowRight } from "lucide-react";
 import { Button } from "./ui/button";
 import { motion } from "framer-motion";
+import { useNavigate } from "react-router-dom";
 
 export const Hero = () => {
+  const navigate = useNavigate();
+
   const scrollToCategories = (e: React.MouseEvent) => {
     e.preventDefault();
     const categoriesSection = document.querySelector('#categories-section');
     if (categoriesSection) {
       categoriesSection.scrollIntoView({ behavior: 'smooth' });
     }
+  };
+
+  const handleStartLearning = () => {
+    navigate('/program');
   };
 
   return (
@@ -40,9 +47,9 @@ export const Hero = () => {
           <Button 
             size="lg" 
             className="bg-white text-blue-800 hover:bg-gray-100 transition-all duration-300 transform hover:scale-105"
-            onClick={scrollToCategories}
+            onClick={handleStartLearning}
           >
-            Начать бесплатно
+            Начать обучение
             <ArrowRight className="ml-2" />
           </Button>
           <Button 
