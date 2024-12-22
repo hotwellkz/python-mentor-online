@@ -8,21 +8,26 @@ export const useLessonGeneration = () => {
     try {
       console.log('Calling generate-lesson with lessonId:', lessonId);
       
+      // First try to get custom prompt from lesson_prompts table
+      const { data: savedPrompt } = await supabase
+        .from('lesson_prompts')
+        .select('prompt')
+        .eq('lesson_id', lessonId)
+        .maybeSingle();
+
+      // Use saved prompt if exists, otherwise use default prompt
+      const promptToUse = savedPrompt?.prompt;
+      
       const response = await supabase.functions.invoke('generate-lesson', {
-        body: { lessonId },
+        body: { 
+          lessonId,
+          customPrompt: promptToUse // Pass the custom prompt if it exists
+        },
       });
 
       if (response.error) {
         console.error('Error from generate-lesson:', response.error);
-        // Try again with a direct prompt if lessonId approach fails
-        const fallbackResponse = await supabase.functions.invoke('generate-lesson', {
-          body: { 
-            prompt: `Расскажи подробно про урок ${lessonId}, используя практические примеры и понятные объяснения.` 
-          },
-        });
-
-        if (fallbackResponse.error) throw new Error(fallbackResponse.error.message);
-        return fallbackResponse.data.text;
+        throw new Error(response.error.message);
       }
 
       return response.data.text;
