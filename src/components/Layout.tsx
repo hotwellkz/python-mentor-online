@@ -20,6 +20,7 @@ export const Layout = () => {
     const getUser = async () => {
       try {
         const { data: { user }, error } = await supabase.auth.getUser();
+        
         if (error) {
           if (error.message.includes('session_not_found') || error.status === 403) {
             await supabase.auth.signOut();
@@ -31,17 +32,14 @@ export const Layout = () => {
           }
           throw error;
         }
+        
         setUserEmail(user?.email || null);
       } catch (error: any) {
         console.error('Auth error:', error);
-        toast({
-          variant: "destructive",
-          title: "Ошибка авторизации",
-          description: "Пожалуйста, войдите в систему заново",
-        });
+        setUserEmail(null);
       }
     };
-    
+
     getUser();
 
     const { data: authListener } = supabase.auth.onAuthStateChange(async (event, session) => {
@@ -62,14 +60,14 @@ export const Layout = () => {
 
   const handleLogout = async () => {
     try {
-      const { error } = await supabase.auth.signOut();
-      if (error) throw error;
+      await supabase.auth.signOut();
       navigate("/");
     } catch (error: any) {
+      console.error('Logout error:', error);
       toast({
         variant: "destructive",
         title: "Ошибка",
-        description: error.message,
+        description: error.message || "Произошла ошибка при выходе из системы",
       });
     }
   };
