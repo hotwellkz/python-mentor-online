@@ -110,35 +110,39 @@ export const FavoriteCourses = ({ userId }: FavoriteCoursesProps) => {
     </div>;
   }
 
+  const favoriteCourses = courses.filter(course => favorites.includes(course.type));
+
   return (
     <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
       <h2 className="text-xl font-semibold mb-6">Избранные курсы</h2>
       <div className="space-y-4">
-        {courses.map((course) => (
-          <div
-            key={course.id}
-            className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-700 rounded-lg"
-          >
-            <Link 
-              to={course.path}
-              className="text-gray-900 dark:text-gray-100 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
+        {favoriteCourses.length > 0 ? (
+          favoriteCourses.map((course) => (
+            <div
+              key={course.id}
+              className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-700 rounded-lg"
             >
-              {course.title}
-            </Link>
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={() => toggleFavorite(course.type)}
-              className="hover:bg-transparent"
-            >
-              {favorites.includes(course.type) ? (
+              <Link 
+                to={course.path}
+                className="text-gray-900 dark:text-gray-100 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
+              >
+                {course.title}
+              </Link>
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => toggleFavorite(course.type)}
+                className="hover:bg-transparent"
+              >
                 <Star className="h-5 w-5 text-yellow-500 fill-yellow-500" />
-              ) : (
-                <StarOff className="h-5 w-5 text-gray-400" />
-              )}
-            </Button>
-          </div>
-        ))}
+              </Button>
+            </div>
+          ))
+        ) : (
+          <p className="text-gray-600 dark:text-gray-400 text-center">
+            У вас пока нет избранных курсов
+          </p>
+        )}
       </div>
     </div>
   );
