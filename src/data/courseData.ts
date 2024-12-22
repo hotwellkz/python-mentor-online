@@ -1,4 +1,3 @@
-import { businessAnalystBlocks } from './course/businessAnalyst';
 import { block1 } from './course/block1';
 import { block2 } from './course/block2';
 import { block3 } from './course/block3';
@@ -27,4 +26,5 @@ export const courseBlocks = [
   block12,
 ];
 
-export { businessAnalystBlocks };
+export { businessAnalystBlocks } from './course/businessAnalyst';
+export { dataScienceBlocks } from './course/dataScience';

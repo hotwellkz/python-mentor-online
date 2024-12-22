@@ -1,10 +1,11 @@
 import { modules } from "@/components/course/DevOpsCourseProgram";
-import { courseBlocks, businessAnalystBlocks } from "@/data/courseData";
+import { courseBlocks, businessAnalystBlocks, dataScienceBlocks } from "@/data/courseData";
 import { getDevOpsQuestions } from "@/utils/devopsQuestions";
 
 export const useLessonContent = (lessonId: string | undefined) => {
   const isDevOpsLesson = lessonId?.startsWith('devops-');
   const isBusinessAnalystLesson = lessonId?.startsWith('ba-');
+  const isDataScienceLesson = lessonId?.startsWith('ds-');
 
   let lessonTitle = '';
   let topQuestions: string[] = [];
@@ -24,6 +25,14 @@ export const useLessonContent = (lessonId: string | undefined) => {
       lessonTitle = currentLesson.title;
       topQuestions = currentLesson.topics;
     }
+  } else if (isDataScienceLesson) {
+    const [, blockIndex, lessonIndex] = (lessonId || "").split("-").map(Number);
+    const currentBlock = dataScienceBlocks[blockIndex - 1];
+    const currentLesson = currentBlock?.lessons[lessonIndex - 1];
+    if (currentLesson) {
+      lessonTitle = currentLesson.title;
+      topQuestions = currentLesson.topics;
+    }
   } else {
     const [blockIndex, lessonIndex] = (lessonId || "").split("-").map(Number);
     const currentBlock = courseBlocks[blockIndex - 1];
@@ -38,6 +47,7 @@ export const useLessonContent = (lessonId: string | undefined) => {
     lessonTitle,
     topQuestions,
     isDevOpsLesson,
-    isBusinessAnalystLesson
+    isBusinessAnalystLesson,
+    isDataScienceLesson
   };
 };

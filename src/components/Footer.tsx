@@ -36,6 +36,11 @@ export const Footer = () => {
                   </Link>
                 </DropdownMenuItem>
                 <DropdownMenuItem className="rounded hover:bg-gray-100 transition-colors">
+                  <Link to="/data-science" className="w-full px-3 py-2 text-gray-700 hover:text-primary">
+                    Data Science
+                  </Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem className="rounded hover:bg-gray-100 transition-colors">
                   <Link to="/devops" className="w-full px-3 py-2 text-gray-700 hover:text-primary">
                     DevOps
                   </Link>

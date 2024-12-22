@@ -6,18 +6,23 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
-import { courseBlocks, businessAnalystBlocks } from "@/data/courseData";
+import { courseBlocks, businessAnalystBlocks, dataScienceBlocks } from "@/data/courseData";
 import { supabase } from "@/integrations/supabase/client";
 import { Check } from "lucide-react";
 
 interface CourseProgramProps {
-  courseType?: 'python' | 'business-analyst';
+  courseType?: 'python' | 'business-analyst' | 'data-science';
 }
 
 export const CourseProgram = ({ courseType = 'python' }: CourseProgramProps) => {
   const [completedLessons, setCompletedLessons] = useState<string[]>([]);
   const [progress, setProgress] = useState(0);
-  const blocks = courseType === 'business-analyst' ? businessAnalystBlocks : courseBlocks;
+  
+  const blocks = courseType === 'business-analyst' 
+    ? businessAnalystBlocks 
+    : courseType === 'data-science'
+    ? dataScienceBlocks
+    : courseBlocks;
 
   const calculateProgress = (completedCount: number) => {
     const totalLessons = blocks.reduce((acc, block) => acc + block.lessons.length, 0);
@@ -43,7 +48,11 @@ export const CourseProgram = ({ courseType = 'python' }: CourseProgramProps) => 
         {
           event: 'INSERT',
           schema: 'public',
-          table: courseType === 'business-analyst' ? 'business_analyst_progress' : 'completed_lessons',
+          table: courseType === 'business-analyst' 
+            ? 'business_analyst_progress' 
+            : courseType === 'data-science'
+            ? 'data_science_progress'
+            : 'completed_lessons',
         },
         () => {
           fetchCompletedLessons();
@@ -65,7 +74,12 @@ export const CourseProgram = ({ courseType = 'python' }: CourseProgramProps) => 
       return;
     }
 
-    const table = courseType === 'business-analyst' ? 'business_analyst_progress' : 'completed_lessons';
+    const table = courseType === 'business-analyst' 
+      ? 'business_analyst_progress' 
+      : courseType === 'data-science'
+      ? 'data_science_progress'
+      : 'completed_lessons';
+
     const { data } = await supabase
       .from(table)
       .select('lesson_id')
@@ -105,6 +119,8 @@ export const CourseProgram = ({ courseType = 'python' }: CourseProgramProps) => 
                 {block.lessons.map((lesson, lessonIndex) => {
                   const lessonId = courseType === 'business-analyst' 
                     ? `ba-${blockIndex + 1}-${lessonIndex + 1}`
+                    : courseType === 'data-science'
+                    ? `ds-${blockIndex + 1}-${lessonIndex + 1}`
                     : `${blockIndex + 1}-${lessonIndex + 1}`;
                   const isCompleted = completedLessons.includes(lessonId);
 

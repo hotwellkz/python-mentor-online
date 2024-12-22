@@ -10,7 +10,8 @@ const Pricing = () => {
       tokens: 100,
       description: "Достаточно для знакомства с платформой и изучения основ Python",
       gradient: "from-blue-500 to-purple-500",
-      popular: false
+      popular: false,
+      paymentLink: "https://c.tiptoppay.kz/payments/5434c62cf0114fb4922930d095b94ac4"
     },
     {
       name: "AI Прорыв",
@@ -18,7 +19,8 @@ const Pricing = () => {
       tokens: 300,
       description: "Оптимальный набор для полноценного изучения Python с помощью ИИ",
       gradient: "from-blue-400 to-purple-600",
-      popular: true
+      popular: true,
+      paymentLink: "https://c.tiptoppay.kz/payments/1382f3739cc34b31adfe037f87856585"
     },
     {
       name: "AI Эксперт",
@@ -26,9 +28,14 @@ const Pricing = () => {
       tokens: 1000,
       description: "Максимальный набор для полного курса и будущих обновлений",
       gradient: "from-purple-500 to-pink-500",
-      popular: false
+      popular: false,
+      paymentLink: "https://c.tiptoppay.kz/payments/47f48b6c07bf4e67b6ab53015aa0429b"
     }
   ];
+
+  const handlePayment = (link: string) => {
+    window.location.href = link;
+  };
 
   return (
     <>
@@ -91,6 +98,7 @@ const Pricing = () => {
                 <motion.button
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
+                  onClick={() => handlePayment(plan.paymentLink)}
                   className={`w-full rounded-xl bg-gradient-to-r ${plan.gradient} py-3 text-white font-semibold shadow-lg transition-all hover:shadow-xl`}
                 >
                   Начать обучение
