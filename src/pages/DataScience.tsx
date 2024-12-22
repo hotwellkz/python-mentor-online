@@ -1,14 +1,20 @@
 import { Helmet } from "react-helmet";
 import { Button } from "@/components/ui/button";
 import { Link, useNavigate } from "react-router-dom";
-import { ArrowRight, Brain, Star, Users, Clock, CheckCircle, Code } from "lucide-react";
+import { ArrowRight, Brain, Star, Users, Clock, CheckCircle } from "lucide-react";
 import { motion } from "framer-motion";
+import { useAuth } from "@supabase/auth-helpers-react";
 
 const DataScience = () => {
   const navigate = useNavigate();
+  const auth = useAuth();
 
   const handleStartLearning = () => {
-    navigate('/program');
+    if (auth?.user) {
+      navigate('/data-science-program');
+    } else {
+      navigate('/auth', { state: { returnTo: '/data-science-program' } });
+    }
   };
 
   return (
@@ -61,17 +67,19 @@ const DataScience = () => {
                 </p>
                 
                 <div className="flex flex-wrap justify-center gap-4 pt-8">
-                  <Link to="/program">
-                    <motion.div
-                      whileHover={{ scale: 1.05 }}
-                      whileTap={{ scale: 0.95 }}
+                  <motion.div
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                  >
+                    <Button 
+                      size="lg" 
+                      className="bg-yellow-400 text-gray-900 hover:bg-yellow-300 font-semibold text-lg px-8"
+                      onClick={handleStartLearning}
                     >
-                      <Button size="lg" className="bg-yellow-400 text-gray-900 hover:bg-yellow-300 font-semibold text-lg px-8">
-                        Начать обучение
-                        <ArrowRight className="ml-2 h-5 w-5" />
-                      </Button>
-                    </motion.div>
-                  </Link>
+                      Начать обучение
+                      <ArrowRight className="ml-2 h-5 w-5" />
+                    </Button>
+                  </motion.div>
                 </div>
 
                 {/* Stats */}
@@ -149,12 +157,14 @@ const DataScience = () => {
             <h2 className="text-3xl md:text-4xl font-bold mb-8">
               Готовы начать свой путь в Data Science?
             </h2>
-            <Link to="/program">
-              <Button size="lg" className="bg-yellow-400 text-gray-900 hover:bg-yellow-300">
-                Начать бесплатно
-                <ArrowRight className="ml-2 h-5 w-5" />
-              </Button>
-            </Link>
+            <Button 
+              size="lg" 
+              className="bg-yellow-400 text-gray-900 hover:bg-yellow-300"
+              onClick={handleStartLearning}
+            >
+              Начать бесплатно
+              <ArrowRight className="ml-2 h-5 w-5" />
+            </Button>
           </div>
         </section>
       </main>
