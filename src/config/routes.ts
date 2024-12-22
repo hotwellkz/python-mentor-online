@@ -12,5 +12,5 @@ export const routes: { [key: string]: { title: string; parent?: string } } = {
   "/admin": { title: "Панель администратора" },
   "/profile": { title: "Профиль" },
   "/settings": { title: "Настройки аккаунта" },
-  "/faq": { title: "Часто задаваемые вопросы" }
+  "/faq": { title: "Часто задаваемые вопросы", parent: "/python-course" }
 };
