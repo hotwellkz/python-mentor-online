@@ -245,7 +245,14 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      decrement_visitor_count: {
+        Args: Record<PropertyKey, never>
+        Returns: Json
+      }
+      increment_visitor_count: {
+        Args: Record<PropertyKey, never>
+        Returns: Json
+      }
     }
     Enums: {
       [_ in never]: never

@@ -37,7 +37,7 @@ export const VisitorCounter = () => {
           schema: 'public',
           table: 'visitors'
         },
-        (payload: any) => {
+        (payload) => {
           if (payload.new) {
             setVisitorCount(payload.new.visitor_count);
             setDailyCount(payload.new.daily_count);
@@ -48,7 +48,13 @@ export const VisitorCounter = () => {
 
     // Update visitor count when component mounts
     const updateVisitorCount = async () => {
-      const { error } = await supabase.rpc('increment_visitor_count');
+      const { data, error } = await supabase
+        .from('visitors')
+        .update({ visitor_count: supabase.sql`visitor_count + 1` })
+        .eq('id', '1')
+        .select()
+        .single();
+
       if (error) console.error('Error updating visitor count:', error);
     };
 
@@ -57,7 +63,12 @@ export const VisitorCounter = () => {
     // Cleanup subscription and decrement count when component unmounts
     return () => {
       const cleanup = async () => {
-        await supabase.rpc('decrement_visitor_count');
+        const { error } = await supabase
+          .from('visitors')
+          .update({ visitor_count: supabase.sql`GREATEST(visitor_count - 1, 0)` })
+          .eq('id', '1');
+        
+        if (error) console.error('Error decrementing visitor count:', error);
         supabase.removeChannel(channel);
       };
       cleanup();
