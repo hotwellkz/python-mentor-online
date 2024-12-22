@@ -49,9 +49,7 @@ export const Layout = () => {
         setUserEmail(session?.user?.email || null);
       } else if (event === 'SIGNED_OUT') {
         setUserEmail(null);
-        if (pathname.startsWith('/lesson/')) {
-          navigate('/auth', { state: { from: pathname } });
-        }
+        navigate('/');
       } else if (event === 'TOKEN_REFRESHED') {
         setUserEmail(session?.user?.email || null);
       }
@@ -66,10 +64,7 @@ export const Layout = () => {
     try {
       const { error } = await supabase.auth.signOut();
       if (error) throw error;
-      
-      if (pathname.startsWith('/lesson/')) {
-        navigate("/program");
-      }
+      navigate("/");
     } catch (error: any) {
       toast({
         variant: "destructive",
