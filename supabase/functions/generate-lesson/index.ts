@@ -52,6 +52,11 @@ serve(async (req) => {
         }),
       });
 
+      if (!response.ok) {
+        console.error('OpenAI error status:', response.status);
+        throw new Error('OpenAI API returned an error');
+      }
+
       const data = await response.json();
       
       if (data.error) {
@@ -84,6 +89,11 @@ serve(async (req) => {
           }],
         }),
       });
+
+      if (!response.ok) {
+        console.error('Anthropic error status:', response.status);
+        throw new Error('Anthropic API returned an error');
+      }
 
       const data = await response.json();
       
