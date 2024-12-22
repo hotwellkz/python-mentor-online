@@ -6,6 +6,7 @@ import { Features } from "@/components/Features";
 import { TargetAudience } from "@/components/TargetAudience";
 import { Reviews } from "@/components/Reviews";
 import { StartLearning } from "@/components/StartLearning";
+import { motion } from "framer-motion";
 
 const PythonCourse = () => {
   return (
@@ -27,24 +28,70 @@ const PythonCourse = () => {
       </Helmet>
 
       <main className="min-h-screen">
-        {/* Hero Section */}
-        <section className="bg-gradient-to-br from-blue-400 to-blue-800 text-white py-20 md:py-32">
-          <div className="container mx-auto px-4">
+        {/* Hero Section with New Design */}
+        <section className="relative py-20 md:py-32 overflow-hidden">
+          {/* Background gradient */}
+          <div className="absolute inset-0 bg-gradient-to-br from-blue-600 via-purple-600 to-violet-800 opacity-90" />
+          
+          {/* Animated background patterns */}
+          <div className="absolute inset-0">
+            <div className="absolute inset-0 bg-[linear-gradient(45deg,#ffffff20_1px,transparent_1px)] bg-[length:40px_40px]" />
+            <div className="absolute inset-0 bg-[linear-gradient(-45deg,#ffffff15_1px,transparent_1px)] bg-[length:40px_40px]" />
+          </div>
+          
+          <div className="container relative mx-auto px-4">
             <div className="max-w-4xl mx-auto text-center">
-              <h1 className="text-4xl md:text-6xl font-bold mb-6 animate-fade-up">
-                Изучайте Python с Персональным ИИ-учителем
-              </h1>
-              <p className="text-xl md:text-2xl mb-8 opacity-90 animate-fade-up" style={{ animationDelay: "0.2s" }}>
-                Начните свой путь в программировании с самого популярного языка. Бесплатно.
-              </p>
-              <div className="animate-fade-up" style={{ animationDelay: "0.4s" }}>
-                <Link to="/program">
-                  <Button size="lg" className="bg-white text-blue-800 hover:bg-blue-50">
-                    Начать обучение
-                    <ArrowRight className="ml-2 h-5 w-5" />
-                  </Button>
-                </Link>
-              </div>
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6 }}
+                className="space-y-6"
+              >
+                <h1 className="text-4xl md:text-6xl font-bold mb-6 text-white">
+                  Освойте{" "}
+                  <span className="bg-gradient-to-r from-yellow-200 via-yellow-300 to-yellow-400 bg-clip-text text-transparent">
+                    Python
+                  </span>{" "}
+                  с Персональным ИИ-учителем
+                </h1>
+                <p className="text-xl md:text-2xl text-gray-100 max-w-2xl mx-auto leading-relaxed">
+                  Погрузитесь в мир программирования с поддержкой 24/7. Начните свой путь в IT прямо сейчас!
+                </p>
+                
+                <div className="flex flex-wrap justify-center gap-4 pt-8">
+                  <Link to="/program">
+                    <motion.div
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
+                    >
+                      <Button size="lg" className="bg-yellow-400 text-gray-900 hover:bg-yellow-300 font-semibold text-lg px-8">
+                        Начать обучение
+                        <ArrowRight className="ml-2 h-5 w-5" />
+                      </Button>
+                    </motion.div>
+                  </Link>
+                </div>
+
+                {/* Stats */}
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.3, duration: 0.6 }}
+                  className="grid grid-cols-2 md:grid-cols-4 gap-8 pt-12"
+                >
+                  {[
+                    { number: "500+", label: "Уроков" },
+                    { number: "24/7", label: "Поддержка" },
+                    { number: "100%", label: "Практики" },
+                    { number: "1000+", label: "Студентов" }
+                  ].map((stat, index) => (
+                    <div key={index} className="text-center">
+                      <div className="text-3xl md:text-4xl font-bold text-yellow-300">{stat.number}</div>
+                      <div className="text-gray-200 mt-2">{stat.label}</div>
+                    </div>
+                  ))}
+                </motion.div>
+              </motion.div>
             </div>
           </div>
         </section>
@@ -107,13 +154,13 @@ const PythonCourse = () => {
         <Reviews />
 
         {/* CTA Section */}
-        <section className="bg-gradient-to-br from-blue-400 to-blue-800 text-white py-20">
+        <section className="bg-gradient-to-br from-blue-600 to-violet-800 text-white py-20">
           <div className="container mx-auto px-4 text-center">
             <h2 className="text-3xl md:text-4xl font-bold mb-8">
               Готовы начать свой путь в программировании?
             </h2>
             <Link to="/program">
-              <Button size="lg" className="bg-white text-blue-800 hover:bg-blue-50">
+              <Button size="lg" className="bg-yellow-400 text-gray-900 hover:bg-yellow-300">
                 Начать бесплатно
                 <ArrowRight className="ml-2 h-5 w-5" />
               </Button>
