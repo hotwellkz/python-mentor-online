@@ -1,6 +1,6 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Helmet } from "react-helmet";
-import { Link } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import { Eye, EyeOff } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -17,6 +17,19 @@ export const Auth = () => {
   const [loading, setLoading] = useState(false);
   const [showGiftModal, setShowGiftModal] = useState(false);
   const { toast } = useToast();
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  useEffect(() => {
+    const checkAuth = async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (user) {
+        const from = location.state?.from?.pathname || "/";
+        navigate(from, { replace: true });
+      }
+    };
+    checkAuth();
+  }, [navigate, location]);
 
   const validateEmail = (email: string) => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -56,6 +69,9 @@ export const Auth = () => {
         if (!data?.user) {
           throw new Error("Не удалось получить данные пользователя");
         }
+
+        const from = location.state?.from?.pathname || "/";
+        navigate(from, { replace: true });
       } else {
         const { data, error } = await supabase.auth.signUp({
           email: trimmedEmail,
@@ -79,6 +95,8 @@ export const Auth = () => {
             description: "Пожалуйста, проверьте вашу почту и подтвердите email для доступа к урокам",
           });
           setShowGiftModal(true);
+          const from = location.state?.from?.pathname || "/";
+          navigate(from, { replace: true });
         } else {
           throw new Error("Не удалось создать пользователя");
         }
@@ -181,3 +199,5 @@ export const Auth = () => {
     </>
   );
 };
+
+export default Profile;

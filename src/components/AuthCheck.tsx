@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import { Mail } from "lucide-react";
@@ -10,6 +10,7 @@ export const AuthCheck = () => {
   const [isEmailVerified, setIsEmailVerified] = useState<boolean | null>(null);
   const [userEmail, setUserEmail] = useState<string | null>(null);
   const { toast } = useToast();
+  const location = useLocation();
 
   useEffect(() => {
     checkAuth();
@@ -55,7 +56,10 @@ export const AuthCheck = () => {
             Для доступа к урокам необходимо войти в систему или зарегистрироваться
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Link to="/auth">
+            <Link 
+              to="/auth" 
+              state={{ from: location }}
+            >
               <Button size="lg">
                 Войти в систему
               </Button>
