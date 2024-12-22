@@ -11,6 +11,25 @@ export const Features = () => {
     }
   };
 
+  const questions = [
+    {
+      id: 1,
+      question: "Как работает ИИ-учитель?",
+    },
+    {
+      id: 2,
+      question: "Сколько стоит обучение?",
+    },
+    {
+      id: 3,
+      question: "Какие курсы доступны?",
+    },
+    {
+      id: 4,
+      question: "Как начать обучение?",
+    }
+  ];
+
   return (
     <div className="py-16 px-4 bg-gray-50">
       <div className="max-w-7xl mx-auto space-y-20">
@@ -60,7 +79,7 @@ export const Features = () => {
             <div className="space-y-4">
               <h2 className="text-3xl md:text-4xl font-bold">Топ 10 вопросов</h2>
               <p className="text-lg opacity-90">
-                Ответы на самые популярные вопросы о курсе и обучении программированию
+                Ответы на самые популярные вопросы о курсах и обучении с ИИ-учителем
               </p>
               <Link to="/faq">
                 <Button variant="secondary" className="text-white hover:bg-secondary/90">
@@ -70,14 +89,14 @@ export const Features = () => {
               </Link>
             </div>
             <div className="grid grid-cols-2 gap-4">
-              {[1, 2, 3, 4].map((num) => (
+              {questions.map((item) => (
                 <div
-                  key={num}
+                  key={item.id}
                   className="bg-white/10 p-4 rounded-lg backdrop-blur-sm hover:bg-white/20 transition-colors cursor-pointer animate-fade-up"
-                  style={{ animationDelay: `${num * 100}ms` }}
+                  style={{ animationDelay: `${item.id * 100}ms` }}
                 >
-                  <span className="text-2xl font-bold">#{num}</span>
-                  <p className="text-sm mt-2 opacity-80">Популярный вопрос</p>
+                  <span className="text-2xl font-bold">#{item.id}</span>
+                  <p className="text-sm mt-2 opacity-80">{item.question}</p>
                 </div>
               ))}
             </div>
