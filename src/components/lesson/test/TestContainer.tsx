@@ -98,7 +98,7 @@ export const TestContainer = ({ open, onOpenChange }: TestContainerProps) => {
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="w-[95vw] max-w-[500px] p-4 sm:p-6">
+      <DialogContent className="w-[95vw] max-w-[500px] p-4 sm:p-6 overflow-y-auto max-h-[90vh]">
         <DialogHeader>
           <DialogTitle>
             {showScore ? "Результаты теста" : "Тест по теме урока"}
