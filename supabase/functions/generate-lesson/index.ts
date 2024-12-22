@@ -80,13 +80,25 @@ serve(async (req) => {
     });
 
     if (!response.ok) {
-      console.error('OpenAI API error:', response.status, response.statusText);
-      throw new Error('Error calling OpenAI API');
+      const errorData = await response.json();
+      console.error('OpenAI API error:', response.status, response.statusText, errorData);
+      
+      // Возвращаем более информативное сообщение об ошибке
+      return new Response(JSON.stringify({ 
+        error: `Ошибка при генерации урока: ${errorData.error?.message || 'Неизвестная ошибка'}` 
+      }), {
+        status: 500,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
     }
 
     const data = await response.json();
     console.log('OpenAI response received');
     
+    if (!data.choices?.[0]?.message?.content) {
+      throw new Error('Некорректный ответ от OpenAI API');
+    }
+
     const generatedText = data.choices[0].message.content;
     const cleanedText = cleanText(generatedText);
 
@@ -97,7 +109,9 @@ serve(async (req) => {
     });
   } catch (error) {
     console.error('Error in generate-lesson function:', error);
-    return new Response(JSON.stringify({ error: error.message }), {
+    return new Response(JSON.stringify({ 
+      error: `Произошла ошибка при генерации урока: ${error.message}` 
+    }), {
       status: 500,
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });
