@@ -42,7 +42,7 @@ export const NavLinks = () => {
               className="w-full px-3 py-2 text-gray-700 hover:text-primary"
               onClick={() => setIsOpen(false)}
             >
-              Освойте Data Science с Персональным ИИ-учителем
+              Data Science
             </Link>
           </DropdownMenuItem>
           <DropdownMenuItem className="rounded hover:bg-gray-100 transition-colors">
@@ -61,6 +61,15 @@ export const NavLinks = () => {
               onClick={() => setIsOpen(false)}
             >
               Бизнес-аналитик
+            </Link>
+          </DropdownMenuItem>
+          <DropdownMenuItem className="rounded hover:bg-gray-100 transition-colors">
+            <Link 
+              to="/product-management" 
+              className="w-full px-3 py-2 text-gray-700 hover:text-primary"
+              onClick={() => setIsOpen(false)}
+            >
+              Продукт-менеджмент
             </Link>
           </DropdownMenuItem>
         </DropdownMenuContent>
