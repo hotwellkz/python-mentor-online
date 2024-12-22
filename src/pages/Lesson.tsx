@@ -1,5 +1,4 @@
 import { useParams } from "react-router-dom";
-import { Helmet } from "react-helmet";
 import { LessonHeader } from "@/components/lesson/LessonHeader";
 import { LessonContent } from "@/components/lesson/LessonContent";
 import { LessonTest } from "@/components/lesson/LessonTest";
@@ -10,10 +9,9 @@ import { useLesson } from "@/hooks/useLesson";
 import { useSpeech } from "@/hooks/useSpeech";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
-import { courseBlocks, businessAnalystBlocks } from "@/data/courseData";
 import { useEffect, useState } from "react";
-import { modules } from "@/components/course/DevOpsCourseProgram";
-import { getDevOpsQuestions } from '@/utils/devopsQuestions';
+import { LessonSEO } from "@/components/lesson/LessonSEO";
+import { useLessonContent } from "@/hooks/lesson/useLessonContent";
 
 const Lesson = () => {
   const { lessonId } = useParams();
@@ -29,27 +27,7 @@ const Lesson = () => {
     setIsEmailVerified(user?.email_confirmed_at !== null);
   };
 
-  // Находим текущий урок
-  const [blockIndex, lessonIndex] = (lessonId || "").split("-").map(Number);
-  const currentBlock = courseBlocks[blockIndex - 1];
-  const currentLesson = currentBlock?.lessons[lessonIndex - 1];
-
-  const isDevOpsLesson = lessonId?.startsWith('devops-');
-  const isBusinessAnalystLesson = lessonId?.startsWith('ba-');
-
-  let topQuestions: string[] = [];
-
-  if (isDevOpsLesson) {
-    const [, moduleIndex, topicIndex] = (lessonId || "").split("-").map(Number);
-    const currentModule = modules[moduleIndex - 1];
-    if (currentModule) {
-      topQuestions = getDevOpsQuestions(moduleIndex, topicIndex).map(q => q.question);
-    }
-  } else if (isBusinessAnalystLesson) {
-    topQuestions = currentLesson?.topics || [];
-  } else {
-    topQuestions = currentLesson?.topics || [];
-  }
+  const { lessonTitle, topQuestions, isDevOpsLesson } = useLessonContent(lessonId);
 
   const {
     loading,
@@ -114,7 +92,7 @@ const Lesson = () => {
     return <AuthCheck />;
   }
 
-  if (!currentLesson) {
+  if (!lessonTitle) {
     return (
       <div className="container mx-auto px-4 py-8">
         <h1 className="text-2xl font-bold text-center">Урок не найден</h1>
@@ -124,27 +102,16 @@ const Lesson = () => {
 
   return (
     <>
-      <Helmet>
-        <title>{currentLesson.title} | Python с ИИ-учителем</title>
-        <meta
-          name="description"
-          content={`${currentLesson.title}. ${currentLesson.topics.join(". ")}. Интерактивное обучение Python с ИИ-учителем.`}
-        />
-        <meta 
-          name="keywords" 
-          content={`python урок, ${currentLesson.topics.join(", ")}, обучение python, курсы программирования`} 
-        />
-        <meta name="robots" content="index, follow" />
-        <link rel="canonical" href={window.location.href} />
-        <meta property="og:title" content={`${currentLesson.title} | Python с ИИ-учителем`} />
-        <meta property="og:description" content={`${currentLesson.title}. ${currentLesson.topics.join(". ")}. Интерактивное обучение Python с ИИ-учителем.`} />
-        <meta property="og:type" content="article" />
-        <meta property="og:url" content={window.location.href} />
-      </Helmet>
+      <LessonSEO 
+        lessonTitle={lessonTitle}
+        topQuestions={topQuestions}
+        isDevOpsLesson={isDevOpsLesson}
+      />
+
       <div className="container mx-auto px-4 py-8">
         <div className="max-w-4xl mx-auto relative">
           <div className="flex flex-col md:flex-row justify-between items-start mb-6">
-            <h1 className="text-2xl md:text-3xl font-bold">{currentLesson.title}</h1>
+            <h1 className="text-2xl md:text-3xl font-bold">{lessonTitle}</h1>
             <div className="mt-4 md:mt-0">
               <PromptEditor lessonId={lessonId || ""} />
             </div>
