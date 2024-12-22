@@ -11,7 +11,7 @@ export const MessageBubble = ({ role, content }: MessageBubbleProps) => {
       className={`p-4 rounded-lg ${
         role === 'user'
           ? 'bg-primary text-primary-foreground ml-8'
-          : 'bg-muted mr-8'
+          : 'bg-gray-50 dark:bg-gray-900 mr-8'
       }`}
     >
       {role === 'assistant' ? (
@@ -20,7 +20,7 @@ export const MessageBubble = ({ role, content }: MessageBubbleProps) => {
           dangerouslySetInnerHTML={{ __html: formatMessage(content) }}
         />
       ) : (
-        content
+        <p className="text-gray-100">{content}</p>
       )}
     </div>
   );
