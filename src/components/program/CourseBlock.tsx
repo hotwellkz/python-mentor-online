@@ -1,5 +1,6 @@
 import { motion } from "framer-motion";
 import { ChevronDown } from "lucide-react";
+import { Link } from "react-router-dom";
 import {
   Accordion,
   AccordionContent,
@@ -38,9 +39,14 @@ export const CourseBlock = ({ title, lessons, index }: CourseBlockProps) => {
                   key={lessonIndex}
                   className="border-l-4 border-primary pl-4 py-2"
                 >
-                  <h3 className="text-lg md:text-xl font-semibold text-gray-800 dark:text-gray-200 mb-3">
-                    {lesson.title}
-                  </h3>
+                  <Link
+                    to={`/lesson/${index + 1}-${lessonIndex + 1}`}
+                    className="block"
+                  >
+                    <h3 className="text-lg md:text-xl font-semibold text-gray-800 dark:text-gray-200 mb-3 hover:text-primary transition-colors">
+                      {lesson.title}
+                    </h3>
+                  </Link>
                   <ul className="space-y-2">
                     {lesson.topics.map((topic, topicIndex) => (
                       <li

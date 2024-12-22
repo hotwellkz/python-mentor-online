@@ -29,34 +29,25 @@ const Lesson = () => {
     setIsEmailVerified(user?.email_confirmed_at !== null);
   };
 
-  // Определяем тип урока
+  // Находим текущий урок
+  const [blockIndex, lessonIndex] = (lessonId || "").split("-").map(Number);
+  const currentBlock = courseBlocks[blockIndex - 1];
+  const currentLesson = currentBlock?.lessons[lessonIndex - 1];
+
   const isDevOpsLesson = lessonId?.startsWith('devops-');
   const isBusinessAnalystLesson = lessonId?.startsWith('ba-');
 
-  // Находим текущий урок в зависимости от типа
-  let currentLesson;
   let topQuestions: string[] = [];
 
   if (isDevOpsLesson) {
     const [, moduleIndex, topicIndex] = (lessonId || "").split("-").map(Number);
     const currentModule = modules[moduleIndex - 1];
     if (currentModule) {
-      currentLesson = {
-        title: currentModule.topics[topicIndex - 1],
-        topics: [currentModule.title],
-      };
-      const questions = getDevOpsQuestions(moduleIndex, topicIndex);
-      topQuestions = questions.map(q => q.question);
+      topQuestions = getDevOpsQuestions(moduleIndex, topicIndex).map(q => q.question);
     }
   } else if (isBusinessAnalystLesson) {
-    const [, blockIndex, lessonIndex] = (lessonId || "").split("-").map(Number);
-    const currentBlock = businessAnalystBlocks[blockIndex - 1];
-    currentLesson = currentBlock?.lessons[lessonIndex - 1];
     topQuestions = currentLesson?.topics || [];
   } else {
-    const [blockIndex, lessonIndex] = (lessonId || "").split("-").map(Number);
-    const currentBlock = courseBlocks[blockIndex - 1];
-    currentLesson = currentBlock?.lessons[lessonIndex - 1];
     topQuestions = currentLesson?.topics || [];
   }
 
@@ -134,17 +125,21 @@ const Lesson = () => {
   return (
     <>
       <Helmet>
-        <title>{currentLesson.title} | {isBusinessAnalystLesson ? 'Бизнес-аналитик' : isDevOpsLesson ? 'DevOps' : 'Python'} с ИИ-учителем</title>
+        <title>{currentLesson.title} | Python с ИИ-учителем</title>
         <meta
           name="description"
-          content={`${currentLesson.title}. ${currentLesson.topics.join(". ")}. Интерактивное обучение с ИИ-учителем.`}
+          content={`${currentLesson.title}. ${currentLesson.topics.join(". ")}. Интерактивное обучение Python с ИИ-учителем.`}
         />
         <meta 
           name="keywords" 
-          content={`${currentLesson.topics.join(", ")}, ${isBusinessAnalystLesson ? 'бизнес-аналитик обучение, бизнес-аналитик курс' : isDevOpsLesson ? 'devops обучение, devops курс' : 'python обучение, python курс'}`} 
+          content={`python урок, ${currentLesson.topics.join(", ")}, обучение python, курсы программирования`} 
         />
         <meta name="robots" content="index, follow" />
         <link rel="canonical" href={window.location.href} />
+        <meta property="og:title" content={`${currentLesson.title} | Python с ИИ-учителем`} />
+        <meta property="og:description" content={`${currentLesson.title}. ${currentLesson.topics.join(". ")}. Интерактивное обучение Python с ИИ-учителем.`} />
+        <meta property="og:type" content="article" />
+        <meta property="og:url" content={window.location.href} />
       </Helmet>
       <div className="container mx-auto px-4 py-8">
         <div className="max-w-4xl mx-auto relative">
