@@ -1,40 +1,49 @@
 import "https://deno.land/x/xhr@0.1.0/mod.ts";
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
-import { getPrompt } from "./prompts/index.ts";
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 
 const openAIApiKey = Deno.env.get('OPENAI_API_KEY');
 const anthropicApiKey = Deno.env.get('ANTHROPIC_API_KEY');
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Methods': 'POST, OPTIONS',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
-  'Access-Control-Max-Age': '86400',
 };
 
 serve(async (req) => {
-  console.log('Function called with method:', req.method);
-  
-  // Handle CORS preflight requests
   if (req.method === 'OPTIONS') {
-    return new Response('ok', { 
-      status: 204, 
-      headers: corsHeaders 
-    });
+    return new Response('ok', { headers: corsHeaders });
   }
 
   try {
-    const { lessonId, customPrompt } = await req.json();
-    console.log('Generating lesson for:', lessonId);
-    
-    // Use custom prompt if provided, otherwise get default prompt
-    const prompt = customPrompt || await getPrompt(lessonId);
-    
-    if (!prompt) {
-      throw new Error('Failed to get prompt for lesson');
+    const { lessonId } = await req.json();
+    console.log('Getting prompt for lesson:', lessonId);
+
+    // Initialize Supabase client
+    const supabaseClient = createClient(
+      Deno.env.get('SUPABASE_URL') ?? '',
+      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
+    );
+
+    // Get saved prompt from database
+    const { data: savedPrompt, error: dbError } = await supabaseClient
+      .from('lesson_prompts')
+      .select('prompt')
+      .eq('lesson_id', lessonId)
+      .single();
+
+    if (dbError) {
+      console.error('Database error:', dbError);
+      throw dbError;
     }
 
-    // Try OpenAI first
+    if (!savedPrompt) {
+      throw new Error('No prompt found for this lesson');
+    }
+
+    const prompt = savedPrompt.prompt;
+    console.log('Using prompt:', prompt);
+
     try {
       console.log('Attempting to use OpenAI...');
       const response = await fetch('https://api.openai.com/v1/chat/completions', {
@@ -58,8 +67,6 @@ serve(async (req) => {
       });
 
       if (!response.ok) {
-        const errorText = await response.text();
-        console.error('OpenAI error:', response.status, errorText);
         throw new Error(`OpenAI API error: ${response.status}`);
       }
 
@@ -74,8 +81,6 @@ serve(async (req) => {
     } catch (openAIError) {
       console.error('OpenAI error, falling back to Anthropic:', openAIError);
       
-      // Fallback to Anthropic
-      console.log('Attempting to use Anthropic...');
       const response = await fetch('https://api.anthropic.com/v1/messages', {
         method: 'POST',
         headers: {
@@ -95,8 +100,6 @@ serve(async (req) => {
       });
 
       if (!response.ok) {
-        const errorText = await response.text();
-        console.error('Anthropic error:', response.status, errorText);
         throw new Error(`Anthropic API error: ${response.status}`);
       }
 
@@ -109,7 +112,7 @@ serve(async (req) => {
       );
     }
   } catch (error) {
-    console.error('Error in generate-lesson function:', error);
+    console.error('Error in generate-lesson-from-prompt:', error);
     return new Response(
       JSON.stringify({ 
         error: error.message,

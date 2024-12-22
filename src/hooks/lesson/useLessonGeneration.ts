@@ -6,23 +6,15 @@ export const useLessonGeneration = () => {
 
   const generateLesson = async (lessonId: string) => {
     try {
-      console.log('Calling generate-lesson with lessonId:', lessonId);
+      console.log('Calling generate-lesson-from-prompt with lessonId:', lessonId);
       
-      const response = await supabase.functions.invoke('generate-lesson', {
-        body: { lessonId },
+      const response = await supabase.functions.invoke('generate-lesson-from-prompt', {
+        body: { lessonId }
       });
 
       if (response.error) {
-        console.error('Error from generate-lesson:', response.error);
-        // Try again with a direct prompt if lessonId approach fails
-        const fallbackResponse = await supabase.functions.invoke('generate-lesson', {
-          body: { 
-            prompt: `Расскажи подробно про урок ${lessonId}, используя практические примеры и понятные объяснения.` 
-          },
-        });
-
-        if (fallbackResponse.error) throw new Error(fallbackResponse.error.message);
-        return fallbackResponse.data.text;
+        console.error('Error from generate-lesson-from-prompt:', response.error);
+        throw new Error(response.error.message);
       }
 
       return response.data.text;

@@ -1,7 +1,7 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { ContentActions } from "./content/ContentActions";
 import { PlaybackControls } from "./content/PlaybackControls";
-import { cleanText } from "./content/TextFormatter";
+import { formatMessage } from "@/utils/messageFormatter";
 
 interface LessonContentProps {
   loading: boolean;
@@ -40,8 +40,8 @@ export const LessonContent = ({
             exit={{ opacity: 0 }}
             className="text-center py-8"
           >
-            <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-primary" />
-            <p className="mt-4 text-lg">Готовлю урок...</p>
+            <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-[#333333]" />
+            <p className="mt-4 text-lg text-[#333333] dark:text-gray-200">Готовлю урок...</p>
           </motion.div>
         )}
       </AnimatePresence>
@@ -52,8 +52,11 @@ export const LessonContent = ({
           animate={{ opacity: 1 }}
           className="space-y-8"
         >
-          <div className="prose prose-lg max-w-none dark:prose-invert prose-headings:text-xl prose-headings:font-semibold prose-p:my-4 prose-pre:bg-gray-100 dark:prose-pre:bg-gray-800 prose-pre:p-4 prose-pre:rounded-lg prose-code:bg-gray-100 dark:prose-code:bg-gray-800 prose-code:px-1 prose-code:rounded prose-a:text-primary hover:prose-a:underline prose-li:ml-4 prose-ul:list-disc prose-ul:my-4">
-            <div dangerouslySetInnerHTML={{ __html: cleanText(generatedText) }} />
+          <div className="prose prose-lg max-w-none dark:prose-invert">
+            <div 
+              className="lesson-content"
+              dangerouslySetInnerHTML={{ __html: formatMessage(generatedText) }}
+            />
           </div>
 
           <ContentActions

@@ -18,9 +18,30 @@ serve(async (req) => {
     console.log('Updating prompt for lesson:', lessonId);
     console.log('New prompt:', prompt);
 
-    // В будущем здесь можно добавить логику сохранения промпта
-    // в базу данных или файловую систему
+    // Initialize Supabase client
+    const supabaseClient = createClient(
+      Deno.env.get('SUPABASE_URL') ?? '',
+      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
+    );
 
+    // Upsert the prompt
+    const { error: dbError } = await supabaseClient
+      .from('lesson_prompts')
+      .upsert(
+        { 
+          lesson_id: lessonId, 
+          prompt: prompt,
+          updated_at: new Date().toISOString()
+        },
+        { onConflict: 'lesson_id' }
+      );
+
+    if (dbError) {
+      console.error('Database error:', dbError);
+      throw dbError;
+    }
+
+    console.log('Prompt updated successfully');
     return new Response(
       JSON.stringify({ success: true }),
       {
