@@ -2,7 +2,7 @@ import { Link, useLocation } from "react-router-dom";
 import { ChevronRight } from "lucide-react";
 
 const routes: { [key: string]: { title: string; parent?: string } } = {
-  "/program": { title: "Программа курса Python" },
+  "/program": { title: "Программа курса Python", parent: "/python-course" },
   "/python-course": { title: "Изучайте Python" },
   "/devops": { title: "DevOps-инженер" },
   "/devops-program": { title: "Программа курса DevOps", parent: "/devops" },
@@ -29,8 +29,8 @@ export const Breadcrumbs = () => {
     const lessonId = location.pathname.split('/').pop();
     let courseTitle = "Программа курса Python";
     let coursePath = "/program";
-    let parentTitle = null;
-    let parentPath = null;
+    let parentTitle = "Изучайте Python";
+    let parentPath = "/python-course";
 
     if (lessonId?.startsWith('devops-')) {
       courseTitle = "Программа курса DevOps";
