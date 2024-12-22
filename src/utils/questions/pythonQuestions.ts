@@ -1,4 +1,10 @@
 import { Question } from '@/types/question';
+import { getBlock1Questions } from './blocks/block1';
+import { getBlock2Questions } from './blocks/block2/index';
+import { getBlock3Questions } from './blocks/block3/index';
+import { getBlock4Questions } from './blocks/block4';
+import { getBlock5Questions } from './blocks/block5';
+import { getBlock6Questions } from './blocks/block6';
 import { getBlock7Questions } from './blocks/block7';
 import { getBlock8Questions } from './blocks/block8';
 import { getBlock9Questions } from './blocks/block9';
@@ -8,6 +14,18 @@ import { getBlock12Questions } from './blocks/block12';
 
 export const getPythonQuestions = (blockIndex: number, lessonIndex: number): Question[] => {
   switch (blockIndex) {
+    case 1:
+      return getBlock1Questions(lessonIndex);
+    case 2:
+      return getBlock2Questions(lessonIndex);
+    case 3:
+      return getBlock3Questions(lessonIndex);
+    case 4:
+      return getBlock4Questions(lessonIndex);
+    case 5:
+      return getBlock5Questions(lessonIndex);
+    case 6:
+      return getBlock6Questions(lessonIndex);
     case 7:
       return getBlock7Questions(lessonIndex);
     case 8:
@@ -21,57 +39,6 @@ export const getPythonQuestions = (blockIndex: number, lessonIndex: number): Que
     case 12:
       return getBlock12Questions(lessonIndex);
     default:
-      return [
-        {
-          question: "Какой тип приложений нельзя разрабатывать на Python?",
-          options: [
-            "Мобильные приложения",
-            "Веб-сайты",
-            "Скрипты автоматизации",
-            "Игры"
-          ],
-          correctAnswer: 0
-        },
-        {
-          question: "Какая компания НЕ использует Python?",
-          options: [
-            "Google",
-            "Netflix",
-            "Apple",
-            "Nintendo"
-          ],
-          correctAnswer: 3
-        },
-        {
-          question: "Сколько в среднем времени нужно для освоения базового Python?",
-          options: [
-            "1-2 месяца",
-            "3-4 месяца",
-            "6 месяцев",
-            "2-3 года"
-          ],
-          correctAnswer: 1
-        },
-        {
-          question: "В какой сфере Python используется наиболее активно?",
-          options: [
-            "Data Science и машинное обучение",
-            "Разработка игр",
-            "Мобильная разработка",
-            "Дизайн"
-          ],
-          correctAnswer: 0
-        },
-        {
-          question: "Какое преимущество Python делает его лучшим для начинающих?",
-          options: [
-            "Простой и понятный синтаксис",
-            "Высокая производительность",
-            "Строгая типизация",
-            "Сложная система сборки"
-          ],
-          correctAnswer: 0
-        }
-      ];
+      return [];
   }
 };

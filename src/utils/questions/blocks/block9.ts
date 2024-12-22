@@ -2,106 +2,106 @@ import { Question } from '@/types/question';
 
 export const getBlock9Questions = (lessonIndex: number): Question[] => {
   const questions: { [key: number]: Question[] } = {
-    1: [ // REST API
+    1: [ // Unit-тесты
       {
-        question: "Что такое REST API?",
+        question: "Какой модуль используется для работы с файлами?",
         options: [
-          "Архитектурный стиль для веб-сервисов",
-          "База данных",
-          "Язык программирования",
-          "Фреймворк"
+          "os",
+          "file",
+          "system",
+          "path"
         ],
         correctAnswer: 0
       },
       {
-        question: "Какой метод HTTP используется для получения данных?",
+        question: "Как создать новую директорию?",
         options: [
-          "GET",
-          "POST",
-          "PUT",
-          "DELETE"
+          "os.mkdir()",
+          "os.create_dir()",
+          "os.new_folder()",
+          "os.make_directory()"
         ],
         correctAnswer: 0
       },
       {
-        question: "Как вернуть JSON ответ во Flask?",
+        question: "Как получить список файлов в директории?",
         options: [
-          "jsonify(data)",
-          "json.dumps(data)",
-          "return_json(data)",
-          "send_json(data)"
+          "os.listdir()",
+          "os.files()",
+          "os.get_files()",
+          "os.directory_content()"
         ],
         correctAnswer: 0
       },
       {
-        question: "Какой код состояния HTTP для успешного создания ресурса?",
+        question: "Как запланировать выполнение задачи?",
         options: [
-          "201",
-          "200",
-          "204",
-          "202"
+          "schedule.every().day.at('10:30')",
+          "cron.daily('10:30')",
+          "task.schedule('10:30')",
+          "timer.daily('10:30')"
         ],
         correctAnswer: 0
       },
       {
-        question: "Как обработать ошибку 404 во Flask?",
+        question: "Как получить аргументы командной строки?",
         options: [
-          "@app.errorhandler(404)",
-          "app.handle_404()",
-          "@error(404)",
-          "app.on_404()"
+          "sys.argv",
+          "os.args",
+          "command.arguments",
+          "cli.params"
         ],
         correctAnswer: 0
       }
     ],
-    2: [ // Работа с внешними API
+    2: [ // Покрытие тестов
       {
-        question: "Как сделать GET запрос с помощью requests?",
+        question: "Что такое pytest?",
         options: [
-          "requests.get(url)",
-          "requests.fetch(url)",
-          "requests.request(url)",
-          "requests.send(url)"
+          "Фреймворк для тестирования кода в Python",
+          "Библиотека для работы с HTTP-запросами",
+          "Система управления шаблонами",
+          "Анализатор данных"
         ],
         correctAnswer: 0
       },
       {
-        question: "Как добавить заголовки в запрос?",
+        question: "Как запустить тесты с использованием pytest?",
         options: [
-          "headers={'Authorization': 'Bearer token'}",
-          "set_headers('Authorization', 'Bearer token')",
-          "add_header('Authorization: Bearer token')",
-          "with_headers({'auth': 'token'})"
+          "pytest test_file.py",
+          "python -m pytest test_file.py",
+          "pytest run test_file.py",
+          "a и b"
+        ],
+        correctAnswer: 3
+      },
+      {
+        question: "Как проверить, прошли ли все тесты в pytest?",
+        options: [
+          "Смотреть в логе: PASSED/FAILED",
+          "Проверить вручную",
+          "Использовать команду pytest --results",
+          "pytest автоматически создаёт отчёт в HTML"
         ],
         correctAnswer: 0
       },
       {
-        question: "Как получить JSON из ответа API?",
+        question: "Что такое покрытие тестов?",
         options: [
-          "response.json()",
-          "response.get_json()",
-          "response.to_json()",
-          "response.parse_json()"
+          "Процент кода, который выполняется во время тестирования",
+          "Количество написанных тестов",
+          "Скорость выполнения тестов",
+          "Количество проверяемых функций"
         ],
         correctAnswer: 0
       },
       {
-        question: "Как обработать ошибки в requests?",
+        question: "Как использовать библиотеку pytest-cov для покрытия тестов?",
         options: [
-          "try-except requests.exceptions.RequestException",
-          "on_error(callback)",
-          "requests.handle_error()",
-          "catch_errors()"
-        ],
-        correctAnswer: 0
-      },
-      {
-        question: "Как сделать асинхронный запрос?",
-        options: [
-          "async with aiohttp.ClientSession()",
-          "requests.async_get()",
-          "await requests.get()",
-          "requests.get_async()"
+          "pytest --cov",
+          "pytest --coverage",
+          "pytest --cov-report",
+          "pytest --coverage-report"
         ],
         correctAnswer: 0
       }
