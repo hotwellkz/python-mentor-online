@@ -2,6 +2,7 @@ import { Helmet } from "react-helmet";
 import { motion } from "framer-motion";
 import { CourseProgram } from "@/components/course/CourseProgram";
 import { ChatInterface } from "@/components/chat/ChatInterface";
+import { FavoriteButton } from "@/components/course/FavoriteButton";
 
 const DataScienceProgram = () => {
   return (
@@ -18,7 +19,8 @@ const DataScienceProgram = () => {
         />
         <link rel="canonical" href={window.location.origin + "/data-science-program"} />
       </Helmet>
-      <div className="container mx-auto px-4 py-8">
+      <div className="container mx-auto px-4 py-8 relative">
+        <FavoriteButton courseType="data-science" />
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}

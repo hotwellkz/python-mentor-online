@@ -7,6 +7,7 @@ import { useToast } from "@/hooks/use-toast";
 import { NavLinks } from "./navigation/NavLinks";
 import { UserMenu } from "./navigation/UserMenu";
 import { MobileMenu } from "./navigation/MobileMenu";
+import { VisitorCounter } from "./VisitorCounter";
 
 export const Layout = () => {
   const { pathname } = useLocation();
@@ -92,6 +93,9 @@ export const Layout = () => {
 
             {/* Mobile Navigation */}
             <MobileMenu userEmail={userEmail} onLogout={handleLogout} />
+          </div>
+          <div className="mt-2 flex justify-end">
+            <VisitorCounter />
           </div>
         </div>
       </header>

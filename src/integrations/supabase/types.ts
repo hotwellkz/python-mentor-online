@@ -117,6 +117,27 @@ export type Database = {
         }
         Relationships: []
       }
+      favorite_courses: {
+        Row: {
+          course_type: string
+          created_at: string
+          id: string
+          user_id: string
+        }
+        Insert: {
+          course_type: string
+          created_at?: string
+          id?: string
+          user_id: string
+        }
+        Update: {
+          course_type?: string
+          created_at?: string
+          id?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       lesson_progress: {
         Row: {
           chat_messages: Json | null
@@ -192,12 +213,46 @@ export type Database = {
         }
         Relationships: []
       }
+      visitors: {
+        Row: {
+          created_at: string | null
+          daily_count: number | null
+          date: string | null
+          id: string
+          updated_at: string | null
+          visitor_count: number | null
+        }
+        Insert: {
+          created_at?: string | null
+          daily_count?: number | null
+          date?: string | null
+          id?: string
+          updated_at?: string | null
+          visitor_count?: number | null
+        }
+        Update: {
+          created_at?: string | null
+          daily_count?: number | null
+          date?: string | null
+          id?: string
+          updated_at?: string | null
+          visitor_count?: number | null
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      decrement_visitor_count: {
+        Args: Record<PropertyKey, never>
+        Returns: Json
+      }
+      increment_visitor_count: {
+        Args: Record<PropertyKey, never>
+        Returns: Json
+      }
     }
     Enums: {
       [_ in never]: never
