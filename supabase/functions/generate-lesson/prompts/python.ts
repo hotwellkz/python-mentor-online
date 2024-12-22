@@ -8,6 +8,7 @@ export const getPythonLessonPrompt = (lessonId: string) => {
         {
           title: "Знакомство с Python",
           prompt: `Расскажи подробно о языке Python:
+            - История создания и философия языка
             - Почему Python считается лучшим для начинающих
             - Какие компании используют Python
             - Сколько времени нужно на освоение базового Python
@@ -46,6 +47,31 @@ export const getPythonLessonPrompt = (lessonId: string) => {
             Добавь примеры команд и кода.`
         }
       ]
+    },
+    {
+      title: "Основы Python",
+      lessons: [
+        {
+          title: "Переменные и типы данных",
+          prompt: `Объясни основы работы с переменными в Python:
+            - Что такое переменные и зачем они нужны
+            - Основные типы данных (int, float, str, bool)
+            - Правила именования переменных
+            - Преобразование типов данных
+            - Примеры использования
+            Добавь много примеров кода.`
+        },
+        {
+          title: "Операторы и выражения",
+          prompt: `Расскажи об операторах в Python:
+            - Арифметические операторы
+            - Операторы сравнения
+            - Логические операторы
+            - Операторы присваивания
+            - Приоритет операторов
+            Используй примеры для каждого типа операторов.`
+        }
+      ]
     }
   ];
 
@@ -58,6 +84,6 @@ export const getPythonLessonPrompt = (lessonId: string) => {
     throw new Error(`Урок ${lessonId} не найден. Пожалуйста, проверьте правильность ID урока.`);
   }
 
-  console.log(`Generated prompt for lesson ${lessonId}`);
+  console.log(`Generated prompt for lesson ${lessonId}: ${lesson.title}`);
   return lesson.prompt;
 };

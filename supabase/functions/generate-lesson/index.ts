@@ -24,7 +24,10 @@ serve(async (req) => {
       throw new Error('OpenAI API key not configured');
     }
 
-    const { lessonId } = await req.json();
+    const body = await req.json();
+    console.log('Request body:', body);
+
+    const { lessonId } = body;
     console.log('Received lessonId:', lessonId);
     
     if (!lessonId) {
