@@ -1,6 +1,6 @@
 import { Helmet } from "react-helmet";
 import { Button } from "@/components/ui/button";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { ArrowRight, Code, Brain, Star, Users, Clock, CheckCircle } from "lucide-react";
 import { Features } from "@/components/Features";
 import { TargetAudience } from "@/components/TargetAudience";
@@ -9,6 +9,12 @@ import { StartLearning } from "@/components/StartLearning";
 import { motion } from "framer-motion";
 
 const PythonCourse = () => {
+  const navigate = useNavigate();
+
+  const handleStartLearning = () => {
+    navigate('/program');
+  };
+
   return (
     <>
       <Helmet>
@@ -101,6 +107,55 @@ const PythonCourse = () => {
 
         {/* Target Audience Section */}
         <TargetAudience />
+
+        {/* New Era of Learning Section */}
+        <section className="py-16 bg-gradient-to-br from-purple-600 to-blue-600">
+          <div className="container mx-auto px-4">
+            <div className="max-w-6xl mx-auto">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+                <div className="text-white space-y-6">
+                  <h2 className="text-3xl md:text-4xl font-bold">Пройти обучение</h2>
+                  <p className="text-lg md:text-xl opacity-90">
+                    Начните свой путь в программировании прямо сейчас. Первый урок бесплатно!
+                  </p>
+                  <motion.div
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                  >
+                    <Button
+                      onClick={handleStartLearning}
+                      className="bg-white text-purple-600 hover:bg-gray-100 text-lg px-8 py-6"
+                    >
+                      Начать обучение
+                      <ArrowRight className="ml-2 h-5 w-5" />
+                    </Button>
+                  </motion.div>
+                </div>
+                <div className="flex justify-center">
+                  <motion.div
+                    initial={{ opacity: 0, scale: 0.5 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    transition={{ duration: 0.5 }}
+                  >
+                    <div className="w-48 h-48 text-white">
+                      <svg
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      >
+                        <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z" />
+                        <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z" />
+                      </svg>
+                    </div>
+                  </motion.div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
 
         {/* Start Learning Section */}
         <StartLearning />
