@@ -18,10 +18,28 @@ export const Layout = () => {
     window.scrollTo(0, 0);
     
     const getUser = async () => {
-      const { data: { user } } = await supabase.auth.getUser();
-      setUserEmail(user?.email || null);
+      try {
+        const { data: { user }, error } = await supabase.auth.getUser();
+        
+        if (error) {
+          if (error.message.includes('session_not_found') || error.status === 403) {
+            await supabase.auth.signOut();
+            setUserEmail(null);
+            if (pathname.startsWith('/lesson/')) {
+              navigate('/auth', { state: { from: pathname } });
+            }
+            return;
+          }
+          throw error;
+        }
+        
+        setUserEmail(user?.email || null);
+      } catch (error: any) {
+        console.error('Auth error:', error);
+        setUserEmail(null);
+      }
     };
-    
+
     getUser();
 
     const { data: authListener } = supabase.auth.onAuthStateChange(async (event, session) => {
@@ -29,26 +47,28 @@ export const Layout = () => {
         setUserEmail(session?.user?.email || null);
       } else if (event === 'SIGNED_OUT') {
         setUserEmail(null);
+        navigate('/');
+      } else if (event === 'TOKEN_REFRESHED') {
+        setUserEmail(session?.user?.email || null);
       }
     });
 
     return () => {
       authListener?.subscription.unsubscribe();
     };
-  }, [pathname]);
+  }, [pathname, navigate, toast]);
 
   const handleLogout = async () => {
-    const { error } = await supabase.auth.signOut();
-    if (error) {
+    try {
+      await supabase.auth.signOut();
+      navigate("/");
+    } catch (error: any) {
+      console.error('Logout error:', error);
       toast({
         variant: "destructive",
         title: "Ошибка",
-        description: error.message,
+        description: error.message || "Произошла ошибка при выходе из системы",
       });
-    } else {
-      if (pathname.startsWith('/lesson/')) {
-        navigate("/program");
-      }
     }
   };
 

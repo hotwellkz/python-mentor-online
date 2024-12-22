@@ -26,13 +26,13 @@ export const TestQuestion = ({
       <h3 className="text-base sm:text-lg font-semibold mb-4">
         Вопрос {questionNumber + 1} из {totalQuestions}
       </h3>
-      <p className="mb-4 text-sm sm:text-base">{question}</p>
+      <p className="mb-4 text-sm sm:text-base break-words whitespace-pre-wrap">{question}</p>
       <div className="space-y-2">
         {options.map((option, index) => (
           <Button
             key={index}
             variant={selectedAnswer === index ? "default" : "outline"}
-            className="w-full justify-start text-sm sm:text-base py-2 px-3 sm:px-4"
+            className="w-full justify-start text-sm sm:text-base py-2 px-3 sm:px-4 whitespace-normal h-auto break-words"
             onClick={() => onAnswer(index)}
           >
             {option}

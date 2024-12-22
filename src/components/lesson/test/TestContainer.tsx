@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import {
   Dialog,
@@ -8,8 +8,10 @@ import {
 } from "@/components/ui/dialog";
 import { getDevOpsQuestions } from '@/utils/testQuestions';
 import { getBusinessAnalystQuestions } from '@/utils/questions/businessAnalyst';
+import { getPythonQuestions } from '@/utils/questions/pythonQuestions';
 import { TestScore } from './TestScore';
 import { TestQuestion } from './TestQuestion';
+import { useToast } from '@/hooks/use-toast';
 
 interface TestContainerProps {
   open: boolean;
@@ -22,21 +24,49 @@ export const TestContainer = ({ open, onOpenChange }: TestContainerProps) => {
   const [score, setScore] = useState(0);
   const [showScore, setShowScore] = useState(false);
   const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null);
+  const [questions, setQuestions] = useState<any[]>([]);
+  const { toast } = useToast();
 
-  const isDevOpsLesson = lessonId?.startsWith('devops-');
-  const isBusinessAnalystLesson = lessonId?.startsWith('ba-');
-  
-  let questions = [];
+  useEffect(() => {
+    if (!open) return;
 
-  if (isBusinessAnalystLesson) {
-    const [, blockIndex, lessonIndex] = (lessonId || "").split("-").map(Number);
-    questions = getBusinessAnalystQuestions(blockIndex, lessonIndex);
-  } else if (isDevOpsLesson) {
-    const [, moduleIndex, topicIndex] = (lessonId || "").split("-").map(Number);
-    questions = getDevOpsQuestions(moduleIndex, topicIndex);
-  } else {
-    questions = getDevOpsQuestions(1, 1); // fallback
-  }
+    try {
+      let loadedQuestions = [];
+      const isDevOpsLesson = lessonId?.startsWith('devops-');
+      const isBusinessAnalystLesson = lessonId?.startsWith('ba-');
+
+      if (isBusinessAnalystLesson) {
+        const [, blockIndex, lessonIndex] = (lessonId || "").split("-").map(Number);
+        loadedQuestions = getBusinessAnalystQuestions(blockIndex, lessonIndex);
+      } else if (isDevOpsLesson) {
+        const [, moduleIndex, topicIndex] = (lessonId || "").split("-").map(Number);
+        loadedQuestions = getDevOpsQuestions(moduleIndex, topicIndex);
+      } else {
+        const [blockIndex, lessonIndex] = (lessonId || "").split("-").map(Number);
+        loadedQuestions = getPythonQuestions(blockIndex, lessonIndex);
+      }
+
+      if (!loadedQuestions || loadedQuestions.length === 0) {
+        toast({
+          variant: "destructive",
+          title: "Ошибка",
+          description: "Тестовые вопросы для этого урока не найдены",
+        });
+        onOpenChange(false);
+        return;
+      }
+
+      setQuestions(loadedQuestions);
+    } catch (error) {
+      console.error('Error loading questions:', error);
+      toast({
+        variant: "destructive",
+        title: "Ошибка",
+        description: "Не удалось загрузить тестовые вопросы",
+      });
+      onOpenChange(false);
+    }
+  }, [lessonId, open, toast, onOpenChange]);
 
   const handleAnswer = (answerIndex: number) => {
     setSelectedAnswer(answerIndex);
@@ -62,9 +92,13 @@ export const TestContainer = ({ open, onOpenChange }: TestContainerProps) => {
     onOpenChange(false);
   };
 
+  if (!questions.length) {
+    return null;
+  }
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="w-[95vw] max-w-[500px] p-4 sm:p-6">
+      <DialogContent className="w-[95vw] max-w-[500px] p-4 sm:p-6 overflow-y-auto max-h-[90vh]">
         <DialogHeader>
           <DialogTitle>
             {showScore ? "Результаты теста" : "Тест по теме урока"}
