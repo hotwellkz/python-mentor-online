@@ -6,18 +6,23 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
-import { courseBlocks, businessAnalystBlocks } from "@/data/courseData";
+import { courseBlocks, businessAnalystBlocks, dataScienceBlocks } from "@/data/courseData";
 import { supabase } from "@/integrations/supabase/client";
 import { Check } from "lucide-react";
 
 interface CourseProgramProps {
-  courseType?: 'python' | 'business-analyst';
+  courseType?: 'python' | 'business-analyst' | 'data-science';
 }
 
 export const CourseProgram = ({ courseType = 'python' }: CourseProgramProps) => {
   const [completedLessons, setCompletedLessons] = useState<string[]>([]);
   const [progress, setProgress] = useState(0);
-  const blocks = courseType === 'business-analyst' ? businessAnalystBlocks : courseBlocks;
+  
+  const blocks = courseType === 'business-analyst' 
+    ? businessAnalystBlocks 
+    : courseType === 'data-science'
+    ? dataScienceBlocks
+    : courseBlocks;
 
   const calculateProgress = (completedCount: number) => {
     const totalLessons = blocks.reduce((acc, block) => acc + block.lessons.length, 0);

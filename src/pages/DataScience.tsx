@@ -3,17 +3,17 @@ import { Button } from "@/components/ui/button";
 import { Link, useNavigate } from "react-router-dom";
 import { ArrowRight, Brain, Star, Users, Clock, CheckCircle } from "lucide-react";
 import { motion } from "framer-motion";
-import { useAuth } from "@supabase/auth-helpers-react";
+import { supabase } from "@/integrations/supabase/client";
 
 const DataScience = () => {
   const navigate = useNavigate();
-  const auth = useAuth();
 
-  const handleStartLearning = () => {
-    if (auth?.user) {
+  const handleStartLearning = async () => {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (user) {
       navigate('/data-science-program');
     } else {
-      navigate('/auth', { state: { returnTo: '/data-science-program' } });
+      navigate('/auth', { state: { from: '/data-science-program' } });
     }
   };
 
