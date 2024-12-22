@@ -24,43 +24,31 @@ serve(async (req) => {
       throw new Error('OpenAI API key not configured');
     }
 
-    const { lessonId, prompt } = await req.json();
-    console.log('Processing request for:', { lessonId, hasPrompt: !!prompt });
+    const body = await req.json();
+    console.log('Request body:', body);
 
-    let messages = [];
-    let lessonPrompt;
+    const { lessonId, prompt } = body;
+    let finalPrompt: string;
 
-    try {
-      if (lessonId.startsWith('ba-')) {
-        lessonPrompt = getBusinessAnalystLessonPrompt(lessonId);
-      } else if (lessonId.startsWith('devops-')) {
-        lessonPrompt = getDevOpsLessonPrompt(lessonId);
-      } else {
-        lessonPrompt = getPythonLessonPrompt(lessonId);
+    if (lessonId) {
+      console.log('Generating content for lessonId:', lessonId);
+      try {
+        if (lessonId.startsWith('ba-')) {
+          finalPrompt = getBusinessAnalystLessonPrompt(lessonId);
+        } else if (lessonId.startsWith('devops-')) {
+          finalPrompt = getDevOpsLessonPrompt(lessonId);
+        } else {
+          finalPrompt = getPythonLessonPrompt(lessonId);
+        }
+      } catch (error) {
+        console.error('Error getting lesson prompt:', error);
+        finalPrompt = `Расскажи подробно про урок ${lessonId}, используя практические примеры и понятные объяснения.`;
       }
-
-      if (!lessonPrompt) {
-        console.error('No prompt generated for lesson:', lessonId);
-        throw new Error(`Не удалось сгенерировать промпт для урока ${lessonId}`);
-      }
-
-      console.log('Successfully generated prompt for lesson:', lessonId);
-      
-      messages = [
-        {
-          role: 'system',
-          content: 'Вы - опытный преподаватель. Ваша задача - подробно объяснить тему урока, используя примеры и понятные объяснения. Используйте маркдаун для форматирования текста.'
-        },
-        { role: 'user', content: lessonPrompt }
-      ];
-    } catch (error) {
-      console.error('Error generating lesson prompt:', error);
-      return new Response(JSON.stringify({ 
-        error: `Урок ${lessonId} не найден или произошла ошибка при генерации промпта. Пожалуйста, проверьте правильность ID урока.` 
-      }), {
-        status: 404,
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-      });
+    } else if (prompt) {
+      console.log('Using direct prompt:', prompt);
+      finalPrompt = prompt;
+    } else {
+      throw new Error('Необходимо указать ID урока или вопрос');
     }
 
     console.log('Making request to OpenAI API...');
@@ -72,7 +60,13 @@ serve(async (req) => {
       },
       body: JSON.stringify({
         model: 'gpt-4o',
-        messages: messages,
+        messages: [
+          {
+            role: 'system',
+            content: 'Вы - опытный преподаватель. Ваша задача - подробно объяснить тему урока, используя примеры и понятные объяснения. Используйте маркдаун для форматирования текста.'
+          },
+          { role: 'user', content: finalPrompt }
+        ],
         max_tokens: 2500,
       }),
     });
@@ -80,13 +74,7 @@ serve(async (req) => {
     if (!response.ok) {
       const errorData = await response.json();
       console.error('OpenAI API error:', response.status, response.statusText, errorData);
-      
-      return new Response(JSON.stringify({ 
-        error: `Ошибка при генерации урока: ${errorData.error?.message || 'Неизвестная ошибка'}` 
-      }), {
-        status: 500,
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-      });
+      throw new Error(`Ошибка при генерации урока: ${errorData.error?.message || 'Неизвестная ошибка'}`);
     }
 
     const data = await response.json();
@@ -96,17 +84,15 @@ serve(async (req) => {
       throw new Error('Некорректный ответ от OpenAI API');
     }
 
-    const generatedText = data.choices[0].message.content;
-
     return new Response(JSON.stringify({ 
-      text: generatedText 
+      text: data.choices[0].message.content 
     }), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });
   } catch (error) {
     console.error('Error in generate-lesson function:', error);
     return new Response(JSON.stringify({ 
-      error: `Произошла ошибка при генерации урока: ${error.message}` 
+      error: error.message 
     }), {
       status: 500,
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
