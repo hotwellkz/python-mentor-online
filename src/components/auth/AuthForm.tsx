@@ -2,6 +2,7 @@ import { Eye, EyeOff } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Dispatch, SetStateAction } from "react";
 
 interface AuthFormProps {
   isLogin: boolean;
@@ -14,6 +15,7 @@ interface AuthFormProps {
   loading: boolean;
   handleSubmit: (e: React.FormEvent) => Promise<void>;
   setIsLogin: (isLogin: boolean) => void;
+  setShowGiftModal: Dispatch<SetStateAction<boolean>>;
 }
 
 export const AuthForm = ({
@@ -27,6 +29,7 @@ export const AuthForm = ({
   loading,
   handleSubmit,
   setIsLogin,
+  setShowGiftModal,
 }: AuthFormProps) => {
   return (
     <div className="w-full max-w-md space-y-8">

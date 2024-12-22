@@ -1,9 +1,11 @@
 import { useState } from "react";
 import { Helmet } from "react-helmet";
 import { AuthForm } from "@/components/auth/AuthForm";
+import { useAuthForm } from "@/hooks/useAuthForm";
 
 const Auth = () => {
   const [showGiftModal, setShowGiftModal] = useState(false);
+  const authFormProps = useAuthForm(setShowGiftModal);
 
   return (
     <>
@@ -23,7 +25,7 @@ const Auth = () => {
               Продолжите обучение с персональным ИИ-учителем
             </p>
           </div>
-          <AuthForm setShowGiftModal={setShowGiftModal} />
+          <AuthForm {...authFormProps} setShowGiftModal={setShowGiftModal} />
         </div>
       </div>
     </>
