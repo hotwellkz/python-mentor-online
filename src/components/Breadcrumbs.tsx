@@ -3,6 +3,7 @@ import { ChevronRight } from "lucide-react";
 
 const routes: { [key: string]: string } = {
   "/program": "Программа курса Python",
+  "/python-course": "Изучайте Python",
   "/devops": "Программа курса DevOps",
   "/devops-program": "Программа курса DevOps",
   "/business-analyst": "Программа курса Бизнес-аналитик",
