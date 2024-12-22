@@ -1,5 +1,5 @@
-import { block1Prompts } from './business-analyst/block1';
-import { block2Prompts } from './business-analyst/block2';
+import { block1Prompts } from './business-analyst/block1.ts';
+import { block2Prompts } from './business-analyst/block2.ts';
 
 export const getBusinessAnalystLessonPrompt = (lessonId: string) => {
   const [, blockIndex, lessonIndex] = lessonId.split("-").map(Number);
