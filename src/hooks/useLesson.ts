@@ -115,21 +115,23 @@ export const useLesson = (lessonId: string | undefined) => {
           ? 'business_analyst_progress' as const
           : 'completed_lessons' as const;
 
-      // Проверяем, существует ли уже запись о завершении урока
+      // Check if lesson is already completed
       const { data: existingProgress } = await supabase
         .from(progressTable)
         .select('id')
         .eq('user_id', user.id)
         .eq('lesson_id', lessonId)
-        .single();
+        .maybeSingle();
 
-      // Если записи нет, создаем новую
+      // If lesson is not completed yet, mark it as completed
       if (!existingProgress) {
-        await supabase
+        const { error } = await supabase
           .from(progressTable)
           .insert([
             { user_id: user.id, lesson_id: lessonId }
           ]);
+
+        if (error) throw error;
       }
 
       // Navigate to appropriate program page
@@ -146,6 +148,7 @@ export const useLesson = (lessonId: string | undefined) => {
         description: "Поздравляем! Вы успешно завершили урок.",
       });
     } catch (error: any) {
+      console.error('Error in finishLesson:', error);
       toast({
         variant: "destructive",
         title: "Ошибка",
