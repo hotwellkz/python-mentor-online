@@ -115,12 +115,22 @@ export const useLesson = (lessonId: string | undefined) => {
           ? 'business_analyst_progress' as const
           : 'completed_lessons' as const;
 
-      // Mark lesson as completed
-      await supabase
+      // Проверяем, существует ли уже запись о завершении урока
+      const { data: existingProgress } = await supabase
         .from(progressTable)
-        .insert([
-          { user_id: user.id, lesson_id: lessonId }
-        ]);
+        .select('id')
+        .eq('user_id', user.id)
+        .eq('lesson_id', lessonId)
+        .single();
+
+      // Если записи нет, создаем новую
+      if (!existingProgress) {
+        await supabase
+          .from(progressTable)
+          .insert([
+            { user_id: user.id, lesson_id: lessonId }
+          ]);
+      }
 
       // Navigate to appropriate program page
       if (lessonId?.startsWith('devops-')) {
