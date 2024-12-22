@@ -8,6 +8,7 @@ import {
 } from "@/components/ui/dialog";
 import { getDevOpsQuestions } from '@/utils/testQuestions';
 import { getBusinessAnalystQuestions } from '@/utils/questions/businessAnalyst';
+import { getPythonQuestions } from '@/utils/questions/pythonQuestions';
 import { TestScore } from './TestScore';
 import { TestQuestion } from './TestQuestion';
 
@@ -35,7 +36,8 @@ export const TestContainer = ({ open, onOpenChange }: TestContainerProps) => {
     const [, moduleIndex, topicIndex] = (lessonId || "").split("-").map(Number);
     questions = getDevOpsQuestions(moduleIndex, topicIndex);
   } else {
-    questions = getDevOpsQuestions(1, 1); // fallback
+    const [blockIndex, lessonIndex] = (lessonId || "").split("-").map(Number);
+    questions = getPythonQuestions(blockIndex, lessonIndex);
   }
 
   const handleAnswer = (answerIndex: number) => {
