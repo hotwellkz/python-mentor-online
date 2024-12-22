@@ -2,106 +2,54 @@ import { Question } from '@/types/question';
 
 export const getBlock9Questions = (lessonIndex: number): Question[] => {
   const questions: { [key: number]: Question[] } = {
-    1: [ // REST API
+    1: [
       {
-        question: "Что такое REST API?",
+        question: "Как импортировать модуль для написания unit-тестов?",
         options: [
-          "Архитектурный стиль для веб-сервисов",
-          "База данных",
-          "Язык программирования",
-          "Фреймворк"
+          "import unittest",
+          "import pytest",
+          "import testing",
+          "import test"
         ],
         correctAnswer: 0
       },
       {
-        question: "Какой метод HTTP используется для получения данных?",
+        question: "Как определить класс тестов в unittest?",
         options: [
-          "GET",
-          "POST",
-          "PUT",
-          "DELETE"
+          "Класс должен наследоваться от unittest.TestCase",
+          "Класс должен наследоваться от test.UnitTest",
+          "Класс должен начинаться с Test",
+          "Не нужно наследование"
         ],
         correctAnswer: 0
       },
       {
-        question: "Как вернуть JSON ответ во Flask?",
+        question: "Как называется метод для проверки равенства значений в unittest?",
         options: [
-          "jsonify(data)",
-          "json.dumps(data)",
-          "return_json(data)",
-          "send_json(data)"
+          "check_equal()",
+          "assertEqual()",
+          "testEqual()",
+          "compare()"
+        ],
+        correctAnswer: 1
+      },
+      {
+        question: "Как запустить тесты из файла?",
+        options: [
+          "python -m unittest test_file.py",
+          "python test_file.py",
+          "unittest run test_file",
+          "pytest test_file.py"
         ],
         correctAnswer: 0
       },
       {
-        question: "Какой код состояния HTTP для успешного создания ресурса?",
+        question: "Какой метод выполняется перед каждым тестовым методом?",
         options: [
-          "201",
-          "200",
-          "204",
-          "202"
-        ],
-        correctAnswer: 0
-      },
-      {
-        question: "Как обработать ошибку 404 во Flask?",
-        options: [
-          "@app.errorhandler(404)",
-          "app.handle_404()",
-          "@error(404)",
-          "app.on_404()"
-        ],
-        correctAnswer: 0
-      }
-    ],
-    2: [ // Работа с внешними API
-      {
-        question: "Как сделать GET запрос с помощью requests?",
-        options: [
-          "requests.get(url)",
-          "requests.fetch(url)",
-          "requests.request(url)",
-          "requests.send(url)"
-        ],
-        correctAnswer: 0
-      },
-      {
-        question: "Как добавить заголовки в запрос?",
-        options: [
-          "headers={'Authorization': 'Bearer token'}",
-          "set_headers('Authorization', 'Bearer token')",
-          "add_header('Authorization: Bearer token')",
-          "with_headers({'auth': 'token'})"
-        ],
-        correctAnswer: 0
-      },
-      {
-        question: "Как получить JSON из ответа API?",
-        options: [
-          "response.json()",
-          "response.get_json()",
-          "response.to_json()",
-          "response.parse_json()"
-        ],
-        correctAnswer: 0
-      },
-      {
-        question: "Как обработать ошибки в requests?",
-        options: [
-          "try-except requests.exceptions.RequestException",
-          "on_error(callback)",
-          "requests.handle_error()",
-          "catch_errors()"
-        ],
-        correctAnswer: 0
-      },
-      {
-        question: "Как сделать асинхронный запрос?",
-        options: [
-          "async with aiohttp.ClientSession()",
-          "requests.async_get()",
-          "await requests.get()",
-          "requests.get_async()"
+          "setUp()",
+          "prepare()",
+          "beforeTest()",
+          "initTest()"
         ],
         correctAnswer: 0
       }
