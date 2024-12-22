@@ -87,7 +87,9 @@ export const DevOpsReviews = () => {
         </div>
 
         <div className="relative overflow-hidden">
-          <div className="flex gap-6 animate-scroll">
+          <div className="flex gap-6 animate-scroll" style={{
+            animation: `scroll ${window.innerWidth < 768 ? "10s" : "30s"} linear infinite`
+          }}>
             {[...reviews, ...reviews].map((review, index) => (
               <motion.div
                 key={index}
