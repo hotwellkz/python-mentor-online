@@ -1,5 +1,4 @@
 import { useParams } from "react-router-dom";
-import { Helmet } from "react-helmet";
 import { LessonHeader } from "@/components/lesson/LessonHeader";
 import { LessonContent } from "@/components/lesson/LessonContent";
 import { LessonTest } from "@/components/lesson/LessonTest";
@@ -10,10 +9,9 @@ import { useLesson } from "@/hooks/useLesson";
 import { useSpeech } from "@/hooks/useSpeech";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
-import { courseBlocks, businessAnalystBlocks } from "@/data/courseData";
 import { useEffect, useState } from "react";
-import { modules } from "@/components/course/DevOpsCourseProgram";
-import { getDevOpsQuestions } from '@/utils/devopsQuestions';
+import { LessonSEO } from "@/components/lesson/LessonSEO";
+import { useLessonContent } from "@/hooks/lesson/useLessonContent";
 
 const Lesson = () => {
   const { lessonId } = useParams();
@@ -29,38 +27,7 @@ const Lesson = () => {
     setIsEmailVerified(user?.email_confirmed_at !== null);
   };
 
-  // Определяем тип урока и находим соответствующий контент
-  const isDevOpsLesson = lessonId?.startsWith('devops-');
-  const isBusinessAnalystLesson = lessonId?.startsWith('ba-');
-
-  let currentLesson;
-  let lessonTitle = '';
-  let topQuestions: string[] = [];
-
-  if (isDevOpsLesson) {
-    const [, moduleIndex, topicIndex] = (lessonId || "").split("-").map(Number);
-    const currentModule = modules[moduleIndex - 1];
-    if (currentModule) {
-      lessonTitle = currentModule.topics[topicIndex - 1];
-      topQuestions = getDevOpsQuestions(moduleIndex, topicIndex).map(q => q.question);
-    }
-  } else if (isBusinessAnalystLesson) {
-    const [, blockIndex, lessonIndex] = (lessonId || "").split("-").map(Number);
-    const currentBlock = businessAnalystBlocks[blockIndex - 1];
-    currentLesson = currentBlock?.lessons[lessonIndex - 1];
-    if (currentLesson) {
-      lessonTitle = currentLesson.title;
-      topQuestions = currentLesson.topics;
-    }
-  } else {
-    const [blockIndex, lessonIndex] = (lessonId || "").split("-").map(Number);
-    const currentBlock = courseBlocks[blockIndex - 1];
-    currentLesson = currentBlock?.lessons[lessonIndex - 1];
-    if (currentLesson) {
-      lessonTitle = currentLesson.title;
-      topQuestions = currentLesson.topics;
-    }
-  }
+  const { lessonTitle, topQuestions, isDevOpsLesson } = useLessonContent(lessonId);
 
   const {
     loading,
@@ -135,23 +102,11 @@ const Lesson = () => {
 
   return (
     <>
-      <Helmet>
-        <title>{lessonTitle} | {isDevOpsLesson ? 'DevOps-инженер PRO' : 'Python'} с ИИ-учителем</title>
-        <meta
-          name="description"
-          content={`${lessonTitle}. ${topQuestions.join(". ")}. Интерактивное обучение ${isDevOpsLesson ? 'DevOps' : 'Python'} с ИИ-учителем.`}
-        />
-        <meta 
-          name="keywords" 
-          content={`${isDevOpsLesson ? 'devops' : 'python'} урок, ${topQuestions.join(", ")}, обучение ${isDevOpsLesson ? 'devops' : 'python'}`} 
-        />
-        <meta name="robots" content="index, follow" />
-        <link rel="canonical" href={window.location.href} />
-        <meta property="og:title" content={`${lessonTitle} | ${isDevOpsLesson ? 'DevOps-инженер PRO' : 'Python'} с ИИ-учителем`} />
-        <meta property="og:description" content={`${lessonTitle}. ${topQuestions.join(". ")}. Интерактивное обучение ${isDevOpsLesson ? 'DevOps' : 'Python'} с ИИ-учителем.`} />
-        <meta property="og:type" content="article" />
-        <meta property="og:url" content={window.location.href} />
-      </Helmet>
+      <LessonSEO 
+        lessonTitle={lessonTitle}
+        topQuestions={topQuestions}
+        isDevOpsLesson={isDevOpsLesson}
+      />
 
       <div className="container mx-auto px-4 py-8">
         <div className="max-w-4xl mx-auto relative">
