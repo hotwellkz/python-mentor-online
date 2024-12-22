@@ -24,7 +24,8 @@ export const ContentActions = ({
 
   const shareToTelegram = () => {
     const text = encodeURIComponent(generatedText);
-    window.open(`https://t.me/share/url?url=${window.location.href}&text=${text}`, '_blank');
+    const url = encodeURIComponent(window.location.href);
+    window.open(`https://t.me/share/url?url=${url}&text=${text}`, '_blank');
   };
 
   const copyToClipboard = async () => {
