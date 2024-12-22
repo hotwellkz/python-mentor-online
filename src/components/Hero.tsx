@@ -18,24 +18,59 @@ export const Hero = () => {
     navigate('/program');
   };
 
+  // Animation variants for the text
+  const textVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: (i: number) => ({
+      opacity: 1,
+      y: 0,
+      transition: {
+        delay: i * 0.1,
+        duration: 0.8,
+        ease: [0.43, 0.13, 0.23, 0.96]
+      }
+    })
+  };
+
+  const words = ["Изучайте", "курсы", "с", "Персональным", "ИИ-учителем"];
+
   return (
     <div className="min-h-screen flex items-center justify-center px-4 py-20">
       <div className="max-w-4xl mx-auto text-center space-y-8">
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
           transition={{ duration: 0.6 }}
           className="space-y-4"
         >
-          <h1 className="text-4xl md:text-6xl font-bold leading-tight text-[#E5DEFF]">
-            Изучайте курсы с{" "}
-            <span className="bg-gradient-to-r from-[#D6BCFA] to-[#F1F1F1] bg-clip-text text-transparent">
-              Персональным ИИ-учителем
-            </span>
+          <h1 className="text-4xl md:text-6xl font-bold leading-tight">
+            <div className="flex flex-wrap justify-center gap-x-4 gap-y-2">
+              {words.map((word, i) => (
+                <motion.span
+                  key={i}
+                  custom={i}
+                  initial="hidden"
+                  animate="visible"
+                  variants={textVariants}
+                  className={
+                    i === 3 || i === 4
+                      ? "bg-gradient-to-r from-[#D6BCFA] to-[#F1F1F1] bg-clip-text text-transparent animate-pulse"
+                      : "text-[#E5DEFF]"
+                  }
+                >
+                  {word}
+                </motion.span>
+              ))}
+            </div>
           </h1>
-          <p className="text-xl md:text-2xl text-[#F1F1F1] max-w-2xl mx-auto font-light">
+          <motion.p
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.8, duration: 0.6 }}
+            className="text-xl md:text-2xl text-[#F1F1F1] max-w-2xl mx-auto font-light"
+          >
             Погрузитесь в мир технологий с персональным наставником, который адаптируется под ваш темп обучения
-          </p>
+          </motion.p>
         </motion.div>
 
         <motion.div
