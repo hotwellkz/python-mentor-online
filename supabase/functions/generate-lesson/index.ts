@@ -37,34 +37,51 @@ serve(async (req) => {
         },
         { role: 'user', content: prompt }
       ];
-    } else if (lessonId?.startsWith('ba-')) {
-      const baPrompt = getBusinessAnalystLessonPrompt(lessonId);
+    } else if (lessonId) {
+      let lessonPrompt;
+      
+      if (lessonId.startsWith('ba-')) {
+        lessonPrompt = getBusinessAnalystLessonPrompt(lessonId);
+      } else if (lessonId.startsWith('devops-')) {
+        lessonPrompt = getDevOpsLessonPrompt(lessonId);
+      } else {
+        try {
+          lessonPrompt = getPythonLessonPrompt(lessonId);
+        } catch (error) {
+          console.error('Error getting Python lesson prompt:', error);
+          return new Response(JSON.stringify({ 
+            error: `Урок ${lessonId} не найден. Пожалуйста, проверьте правильность ID урока.` 
+          }), {
+            status: 404,
+            headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+          });
+        }
+      }
+
+      if (!lessonPrompt) {
+        console.error('Lesson prompt not found for ID:', lessonId);
+        return new Response(JSON.stringify({ 
+          error: `Урок ${lessonId} не найден. Пожалуйста, проверьте правильность ID урока.` 
+        }), {
+          status: 404,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        });
+      }
+
       messages = [
         {
           role: 'system',
-          content: 'Вы - опытный преподаватель бизнес-анализа. Ваша задача - подробно объяснить тему урока, используя примеры и понятные объяснения. Используйте маркдаун для форматирования текста.'
+          content: 'Вы - опытный преподаватель. Ваша задача - подробно объяснить тему урока, используя примеры и понятные объяснения. Используйте маркдаун для форматирования текста.'
         },
-        { role: 'user', content: baPrompt }
-      ];
-    } else if (lessonId?.startsWith('devops-')) {
-      const devOpsPrompt = getDevOpsLessonPrompt(lessonId);
-      messages = [
-        {
-          role: 'system',
-          content: 'Вы - опытный преподаватель DevOps. Ваша задача - подробно объяснить тему урока, используя примеры и понятные объяснения. Используйте маркдаун для форматирования текста.'
-        },
-        { role: 'user', content: devOpsPrompt }
+        { role: 'user', content: lessonPrompt }
       ];
     } else {
-      // Python lesson
-      const pythonPrompt = getPythonLessonPrompt(lessonId);
-      messages = [
-        {
-          role: 'system',
-          content: 'Вы - опытный преподаватель Python. Ваша задача - подробно объяснить тему урока, используя примеры и понятные объяснения. Используйте маркдаун для форматирования текста.'
-        },
-        { role: 'user', content: pythonPrompt }
-      ];
+      return new Response(JSON.stringify({ 
+        error: 'Необходимо указать либо prompt, либо lessonId' 
+      }), {
+        status: 400,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
     }
 
     console.log('Making request to OpenAI API...');
