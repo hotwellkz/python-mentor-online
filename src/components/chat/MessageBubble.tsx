@@ -1,3 +1,5 @@
+import { formatMessage } from "@/utils/messageFormatter";
+
 interface MessageBubbleProps {
   role: 'user' | 'assistant';
   content: string;
