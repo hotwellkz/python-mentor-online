@@ -1,6 +1,9 @@
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Users } from "lucide-react";
+import { Database } from "@/integrations/supabase/types";
+
+type Visitor = Database['public']['Tables']['visitors']['Row'];
 
 export const VisitorCounter = () => {
   const [visitorCount, setVisitorCount] = useState(0);
@@ -20,8 +23,8 @@ export const VisitorCounter = () => {
       }
 
       if (data) {
-        setVisitorCount(data.visitor_count);
-        setDailyCount(data.daily_count);
+        setVisitorCount(data.visitor_count || 0);
+        setDailyCount(data.daily_count || 0);
       }
     };
 
@@ -37,10 +40,10 @@ export const VisitorCounter = () => {
           schema: 'public',
           table: 'visitors'
         },
-        (payload) => {
+        (payload: { new: Visitor }) => {
           if (payload.new) {
-            setVisitorCount(payload.new.visitor_count);
-            setDailyCount(payload.new.daily_count);
+            setVisitorCount(payload.new.visitor_count || 0);
+            setDailyCount(payload.new.daily_count || 0);
           }
         }
       )
@@ -48,12 +51,20 @@ export const VisitorCounter = () => {
 
     // Update visitor count when component mounts
     const updateVisitorCount = async () => {
-      const { data, error } = await supabase
+      const { error } = await supabase
         .from('visitors')
-        .update({ visitor_count: supabase.sql`visitor_count + 1` })
-        .eq('id', '1')
-        .select()
-        .single();
+        .update({ 
+          visitor_count: supabase.sql`visitor_count + 1`,
+          daily_count: supabase.sql`CASE 
+            WHEN date = CURRENT_DATE THEN daily_count + 1
+            ELSE 1
+          END`,
+          date: supabase.sql`CASE 
+            WHEN date = CURRENT_DATE THEN date
+            ELSE CURRENT_DATE
+          END`
+        })
+        .eq('id', '1');
 
       if (error) console.error('Error updating visitor count:', error);
     };
