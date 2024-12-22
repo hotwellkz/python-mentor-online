@@ -6,6 +6,8 @@ import { useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { motion } from "framer-motion";
 import { DevOpsFeatures } from "@/components/devops/DevOpsFeatures";
+import { DevOpsTargetAudience } from "@/components/devops/DevOpsTargetAudience";
+import { DevOpsReviews } from "@/components/devops/DevOpsReviews";
 
 const DevOps = () => {
   const navigate = useNavigate();
@@ -73,14 +75,17 @@ const DevOps = () => {
                     { icon: Database, text: "База данных" },
                     { icon: Cloud, text: "Облака" },
                   ].map((item, index) => (
-                    <div
+                    <motion.div
                       key={index}
-                      className="p-6 rounded-lg bg-[#403E43]/30 backdrop-blur-sm hover:bg-[#403E43]/50 transition-all animate-fade-up"
-                      style={{ animationDelay: `${index * 100}ms` }}
+                      initial={{ opacity: 0, y: 20 }}
+                      whileInView={{ opacity: 1, y: 0 }}
+                      transition={{ duration: 0.5, delay: index * 0.1 }}
+                      viewport={{ once: true }}
+                      className="p-6 rounded-lg bg-[#403E43]/30 backdrop-blur-sm hover:bg-[#403E43]/50 transition-all"
                     >
                       <item.icon className="h-8 w-8 mb-2 text-[#D6BCFA]" />
                       <p className="font-medium">{item.text}</p>
-                    </div>
+                    </motion.div>
                   ))}
                 </div>
               </div>
@@ -89,6 +94,8 @@ const DevOps = () => {
         </section>
 
         <DevOpsFeatures />
+        <DevOpsTargetAudience />
+        <DevOpsReviews />
       </main>
     </>
   );
