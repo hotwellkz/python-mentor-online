@@ -3,7 +3,6 @@ import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { getPythonLessonPrompt } from "./prompts/python.ts";
 import { getDevOpsLessonPrompt } from "./prompts/devops.ts";
 import { getBusinessAnalystLessonPrompt } from "./prompts/business-analyst.ts";
-import { cleanText } from "./textFormatter.ts";
 
 const openAIApiKey = Deno.env.get('OPENAI_API_KEY');
 
@@ -29,56 +28,37 @@ serve(async (req) => {
     console.log('Processing request for:', { lessonId, hasPrompt: !!prompt });
 
     let messages = [];
-    if (prompt) {
+    let lessonPrompt;
+
+    try {
+      if (lessonId.startsWith('ba-')) {
+        lessonPrompt = getBusinessAnalystLessonPrompt(lessonId);
+      } else if (lessonId.startsWith('devops-')) {
+        lessonPrompt = getDevOpsLessonPrompt(lessonId);
+      } else {
+        lessonPrompt = getPythonLessonPrompt(lessonId);
+      }
+
+      if (!lessonPrompt) {
+        console.error('No prompt generated for lesson:', lessonId);
+        throw new Error(`Не удалось сгенерировать промпт для урока ${lessonId}`);
+      }
+
+      console.log('Successfully generated prompt for lesson:', lessonId);
+      
       messages = [
         {
           role: 'system',
-          content: 'Вы - опытный преподаватель Python и DevOps. Ваша задача - подробно и понятно отвечать на вопросы ученика, используя примеры кода и команд где это уместно. Отвечайте четко и по существу. Используйте маркдаун для форматирования текста: заголовки через #, жирный текст через **, курсив через *, блоки кода через ```, списки через - или 1., 2. и т.д.'
+          content: 'Вы - опытный преподаватель. Ваша задача - подробно объяснить тему урока, используя примеры и понятные объяснения. Используйте маркдаун для форматирования текста.'
         },
-        { role: 'user', content: prompt }
+        { role: 'user', content: lessonPrompt }
       ];
-    } else if (lessonId) {
-      console.log('Getting prompt for lesson:', lessonId);
-      let lessonPrompt;
-      
-      try {
-        if (lessonId.startsWith('ba-')) {
-          lessonPrompt = getBusinessAnalystLessonPrompt(lessonId);
-        } else if (lessonId.startsWith('devops-')) {
-          lessonPrompt = getDevOpsLessonPrompt(lessonId);
-        } else {
-          lessonPrompt = getPythonLessonPrompt(lessonId);
-        }
-
-        if (!lessonPrompt) {
-          console.error('No prompt generated for lesson:', lessonId);
-          throw new Error(`Не удалось сгенерировать промпт для урока ${lessonId}`);
-        }
-
-        console.log('Successfully generated prompt for lesson:', lessonId);
-        
-        messages = [
-          {
-            role: 'system',
-            content: 'Вы - опытный преподаватель. Ваша задача - подробно объяснить тему урока, используя примеры и понятные объяснения. Используйте маркдаун для форматирования текста.'
-          },
-          { role: 'user', content: lessonPrompt }
-        ];
-      } catch (error) {
-        console.error('Error generating lesson prompt:', error);
-        return new Response(JSON.stringify({ 
-          error: `Урок ${lessonId} не найден или произошла ошибка при генерации промпта. Пожалуйста, проверьте правильность ID урока.` 
-        }), {
-          status: 404,
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-        });
-      }
-    } else {
-      console.error('Neither prompt nor lessonId provided');
+    } catch (error) {
+      console.error('Error generating lesson prompt:', error);
       return new Response(JSON.stringify({ 
-        error: 'Необходимо указать либо prompt, либо lessonId' 
+        error: `Урок ${lessonId} не найден или произошла ошибка при генерации промпта. Пожалуйста, проверьте правильность ID урока.` 
       }), {
-        status: 400,
+        status: 404,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       });
     }
@@ -117,10 +97,9 @@ serve(async (req) => {
     }
 
     const generatedText = data.choices[0].message.content;
-    const cleanedText = cleanText(generatedText);
 
     return new Response(JSON.stringify({ 
-      text: cleanedText 
+      text: generatedText 
     }), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });
