@@ -18,10 +18,8 @@ serve(async (req) => {
   // Handle CORS preflight requests
   if (req.method === 'OPTIONS') {
     return new Response('ok', { 
-      headers: {
-        ...corsHeaders,
-        'Content-Type': 'text/plain'
-      } 
+      status: 204, 
+      headers: corsHeaders 
     });
   }
 
@@ -54,14 +52,15 @@ serve(async (req) => {
             },
             { role: 'user', content: prompt }
           ],
+          temperature: 0.7,
+          max_tokens: 2500,
         }),
       });
 
       if (!response.ok) {
-        console.error('OpenAI error status:', response.status);
         const errorText = await response.text();
-        console.error('OpenAI error response:', errorText);
-        throw new Error(`OpenAI API returned error ${response.status}: ${errorText}`);
+        console.error('OpenAI error:', response.status, errorText);
+        throw new Error(`OpenAI API error: ${response.status}`);
       }
 
       const data = await response.json();
@@ -69,17 +68,13 @@ serve(async (req) => {
       
       return new Response(
         JSON.stringify({ text: data.choices[0].message.content }),
-        { 
-          headers: { 
-            ...corsHeaders, 
-            'Content-Type': 'application/json' 
-          } 
-        },
+        { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
+
     } catch (openAIError) {
       console.error('OpenAI error, falling back to Anthropic:', openAIError);
       
-      // Fallback to Anthropic if OpenAI fails
+      // Fallback to Anthropic
       console.log('Attempting to use Anthropic...');
       const response = await fetch('https://api.anthropic.com/v1/messages', {
         method: 'POST',
@@ -95,14 +90,14 @@ serve(async (req) => {
             role: 'user',
             content: prompt
           }],
+          temperature: 0.7,
         }),
       });
 
       if (!response.ok) {
-        console.error('Anthropic error status:', response.status);
         const errorText = await response.text();
-        console.error('Anthropic error response:', errorText);
-        throw new Error(`Anthropic API returned error ${response.status}: ${errorText}`);
+        console.error('Anthropic error:', response.status, errorText);
+        throw new Error(`Anthropic API error: ${response.status}`);
       }
 
       const data = await response.json();
@@ -110,12 +105,7 @@ serve(async (req) => {
       
       return new Response(
         JSON.stringify({ text: data.content[0].text }),
-        { 
-          headers: { 
-            ...corsHeaders, 
-            'Content-Type': 'application/json' 
-          } 
-        },
+        { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
   } catch (error) {
@@ -127,11 +117,8 @@ serve(async (req) => {
       }),
       {
         status: 500,
-        headers: { 
-          ...corsHeaders, 
-          'Content-Type': 'application/json' 
-        },
-      },
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+      }
     );
   }
 });
