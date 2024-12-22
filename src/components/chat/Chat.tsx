@@ -71,12 +71,55 @@ export const Chat = ({ topQuestions, onAskQuestion }: ChatProps) => {
           lesson_id: lessonId,
           chat_messages: newMessages as unknown as Json,
           updated_at: new Date().toISOString()
+        }, {
+          onConflict: 'user_id,lesson_id'
         });
 
       if (error) throw error;
     } catch (error) {
       console.error('Error saving chat messages:', error);
     }
+  };
+
+  const formatMessage = (content: string | undefined) => {
+    if (!content) return '';
+    
+    return content
+      .split('\n\n')
+      .map((paragraph, index) => {
+        // Обработка заголовков
+        if (paragraph.startsWith('#')) {
+          return `<h3 class="text-xl font-semibold my-4">${paragraph.replace(/^#+\s/, '')}</h3>`;
+        }
+        
+        // Обработка списков
+        if (paragraph.includes('\n- ')) {
+          const items = paragraph.split('\n- ').filter(Boolean);
+          return `<ul class="list-disc pl-6 my-4 space-y-2">
+            ${items.map(item => `<li>${item}</li>`).join('')}
+          </ul>`;
+        }
+
+        // Обработка нумерованных списков
+        if (paragraph.match(/^\d+\./)) {
+          const items = paragraph.split('\n').filter(Boolean);
+          return `<ol class="list-decimal pl-6 my-4 space-y-2">
+            ${items.map(item => `<li>${item.replace(/^\d+\.\s/, '')}</li>`).join('')}
+          </ol>`;
+        }
+
+        // Обработка кода
+        if (paragraph.includes('```')) {
+          return paragraph
+            .replace(/```(.*?)```/gs, (_, code) => 
+              `<pre class="bg-gray-100 dark:bg-gray-800 p-4 rounded-lg my-4 overflow-x-auto"><code>${code.trim()}</code></pre>`
+            );
+        }
+
+        // Обычные параграфы
+        return `<p class="my-4">${paragraph}</p>`;
+      })
+      .join('');
   };
 
   const handleAskQuestion = async (text: string) => {
@@ -134,45 +177,6 @@ export const Chat = ({ topQuestions, onAskQuestion }: ChatProps) => {
     } finally {
       setLoading(false);
     }
-  };
-
-  const formatMessage = (content: string) => {
-    return content
-      .split('\n\n')
-      .map((paragraph, index) => {
-        // Обработка заголовков
-        if (paragraph.startsWith('#')) {
-          return `<h3 class="text-xl font-semibold my-4">${paragraph.replace(/^#+\s/, '')}</h3>`;
-        }
-        
-        // Обработка списков
-        if (paragraph.includes('\n- ')) {
-          const items = paragraph.split('\n- ').filter(Boolean);
-          return `<ul class="list-disc pl-6 my-4 space-y-2">
-            ${items.map(item => `<li>${item}</li>`).join('')}
-          </ul>`;
-        }
-
-        // Обработка нумерованных списков
-        if (paragraph.match(/^\d+\./)) {
-          const items = paragraph.split('\n').filter(Boolean);
-          return `<ol class="list-decimal pl-6 my-4 space-y-2">
-            ${items.map(item => `<li>${item.replace(/^\d+\.\s/, '')}</li>`).join('')}
-          </ol>`;
-        }
-
-        // Обработка кода
-        if (paragraph.includes('```')) {
-          return paragraph
-            .replace(/```(.*?)```/gs, (_, code) => 
-              `<pre class="bg-gray-100 dark:bg-gray-800 p-4 rounded-lg my-4 overflow-x-auto"><code>${code.trim()}</code></pre>`
-            );
-        }
-
-        // Обычные параграфы
-        return `<p class="my-4">${paragraph}</p>`;
-      })
-      .join('');
   };
 
   return (
