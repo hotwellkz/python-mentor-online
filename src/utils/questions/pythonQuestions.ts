@@ -5,22 +5,13 @@ import { getBlock9Questions } from './blocks/block9';
 import { getBlock10Questions } from './blocks/block10';
 import { getBlock11Questions } from './blocks/block11';
 import { getBlock12Questions } from './blocks/block12';
-import { 
-  getQuestionsForLesson2_1,
-  getQuestionsForLesson2_2,
-  getQuestionsForLesson2_3,
-  getQuestionsForLesson2_4,
-  getQuestionsForLesson2_5,
-  getQuestionsForLesson2_6
-} from './blocks/block2';
-import {
-  getQuestionsForLesson3_1,
-  getQuestionsForLesson3_2,
-  getQuestionsForLesson3_3,
-  getQuestionsForLesson3_4,
-  getQuestionsForLesson3_5
-} from './blocks/block3';
+import { getQuestionsForLesson2_1, getQuestionsForLesson2_2, getQuestionsForLesson2_3, 
+         getQuestionsForLesson2_4, getQuestionsForLesson2_5, getQuestionsForLesson2_6 } from './blocks/block2';
+import { getQuestionsForLesson3_1, getQuestionsForLesson3_2, getQuestionsForLesson3_3,
+         getQuestionsForLesson3_4, getQuestionsForLesson3_5 } from './blocks/block3';
 import { getBlock4Questions } from './blocks/block4';
+import { getBlock5Questions } from './blocks/block5';
+import { getBlock6Questions } from './blocks/block6';
 
 export const getPythonQuestions = (blockIndex: number, lessonIndex: number): Question[] => {
   switch (blockIndex) {
@@ -328,6 +319,10 @@ export const getPythonQuestions = (blockIndex: number, lessonIndex: number): Que
       }
     case 4:
       return getBlock4Questions(lessonIndex);
+    case 5:
+      return getBlock5Questions(lessonIndex);
+    case 6:
+      return getBlock6Questions(lessonIndex);
     case 7:
       return getBlock7Questions(lessonIndex);
     case 8:
