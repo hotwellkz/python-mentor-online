@@ -1,6 +1,8 @@
 import "https://deno.land/x/xhr@0.1.0/mod.ts";
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
-import { getPythonLessonPrompt, getDevOpsLessonPrompt, getBusinessAnalystLessonPrompt } from "./prompts.ts";
+import { getPythonLessonPrompt } from "./prompts/python.ts";
+import { getDevOpsLessonPrompt } from "./prompts/devops.ts";
+import { getBusinessAnalystLessonPrompt } from "./prompts/business-analyst.ts";
 import { cleanText } from "./textFormatter.ts";
 
 const openAIApiKey = Deno.env.get('OPENAI_API_KEY');
@@ -73,7 +75,7 @@ serve(async (req) => {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        model: 'gpt-4o',
+        model: 'gpt-4',
         messages: messages,
         max_tokens: 2500,
       }),
@@ -83,7 +85,6 @@ serve(async (req) => {
       const errorData = await response.json();
       console.error('OpenAI API error:', response.status, response.statusText, errorData);
       
-      // Возвращаем более информативное сообщение об ошибке
       return new Response(JSON.stringify({ 
         error: `Ошибка при генерации урока: ${errorData.error?.message || 'Неизвестная ошибка'}` 
       }), {
