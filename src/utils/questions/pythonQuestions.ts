@@ -5,6 +5,18 @@ import { getBlock9Questions } from './blocks/block9';
 import { getBlock10Questions } from './blocks/block10';
 import { getBlock11Questions } from './blocks/block11';
 import { getBlock12Questions } from './blocks/block12';
+import { 
+  getQuestionsForLesson2_1,
+  getQuestionsForLesson2_2,
+  getQuestionsForLesson2_3,
+  getQuestionsForLesson2_4,
+  getQuestionsForLesson2_5,
+  getQuestionsForLesson2_6
+} from './blocks/block2';
+import {
+  getQuestionsForLesson3_1,
+  getQuestionsForLesson3_2
+} from './blocks/block3';
 
 export const getPythonQuestions = (blockIndex: number, lessonIndex: number): Question[] => {
   switch (blockIndex) {
@@ -275,6 +287,32 @@ export const getPythonQuestions = (blockIndex: number, lessonIndex: number): Que
               correctAnswer: 3
             }
           ];
+        default:
+          return [];
+      }
+    case 2:
+      switch (lessonIndex) {
+        case 1:
+          return getQuestionsForLesson2_1();
+        case 2:
+          return getQuestionsForLesson2_2();
+        case 3:
+          return getQuestionsForLesson2_3();
+        case 4:
+          return getQuestionsForLesson2_4();
+        case 5:
+          return getQuestionsForLesson2_5();
+        case 6:
+          return getQuestionsForLesson2_6();
+        default:
+          return [];
+      }
+    case 3:
+      switch (lessonIndex) {
+        case 1:
+          return getQuestionsForLesson3_1();
+        case 2:
+          return getQuestionsForLesson3_2();
         default:
           return [];
       }

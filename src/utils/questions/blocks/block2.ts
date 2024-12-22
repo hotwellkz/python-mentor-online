@@ -161,3 +161,84 @@ export const getQuestionsForLesson2_4 = (): Question[] => [
     correctAnswer: 2
   }
 ];
+
+export const getQuestionsForLesson2_5 = (): Question[] => [
+  {
+    question: "Какой метод используется для добавления элемента в список?",
+    options: ["append()", "add()", "insert()", "extend()"],
+    correctAnswer: 0
+  },
+  {
+    question: "Чем отличается кортеж от списка?",
+    options: [
+      "Кортеж неизменяемый, список изменяемый",
+      "Кортеж поддерживает только числа",
+      "Кортеж не может быть пустым",
+      "У кортежа нет индексов"
+    ],
+    correctAnswer: 0
+  },
+  {
+    question: 'Как обратиться к значению по ключу в словаре?\nmy_dict = {"ключ": "значение"}',
+    options: [
+      "my_dict.ключ",
+      "my_dict[ключ]",
+      'my_dict["ключ"]',
+      "my_dict.get(ключ)"
+    ],
+    correctAnswer: 2
+  },
+  {
+    question: "Какой метод используется для удаления элемента из множества?",
+    options: ["delete()", "remove()", "discard()", "b и c"],
+    correctAnswer: 3
+  },
+  {
+    question: 'Что вернёт len(["a", "b", "c"])?',
+    options: ["3", "2", "Ошибка", "Ничего"],
+    correctAnswer: 0
+  }
+];
+
+export const getQuestionsForLesson2_6 = (): Question[] => [
+  {
+    question: "Как начинается определение функции?",
+    options: [
+      "define my_function():",
+      "def my_function():",
+      "function my_function():",
+      "init my_function():"
+    ],
+    correctAnswer: 1
+  },
+  {
+    question: "Что возвращает функция, если не указан оператор return?",
+    options: ["Ошибку", "None", "Пустую строку", "0"],
+    correctAnswer: 1
+  },
+  {
+    question: 'Какой тип аргумента указан в следующем коде?\ndef func(name="John"):\n    print(name)',
+    options: [
+      "Позиционный",
+      "Именованный с значением по умолчанию",
+      "Ключевой",
+      "Неопределённый"
+    ],
+    correctAnswer: 1
+  },
+  {
+    question: "Как вызвать функцию с передачей аргументов?",
+    options: [
+      "my_function аргумент",
+      "my_function(аргумент)",
+      "def my_function(аргумент)",
+      "function my_function(аргумент)"
+    ],
+    correctAnswer: 1
+  },
+  {
+    question: "Какой результат выполнения кода?\ndef add(a, b):\n    return a + b\nprint(add(3, 5))",
+    options: ["8", "35", "Ошибка", "None"],
+    correctAnswer: 0
+  }
+];
