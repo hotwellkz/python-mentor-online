@@ -5,6 +5,7 @@ import { ArrowRight, Code, Brain, Star, Users, Clock, CheckCircle } from "lucide
 import { Features } from "@/components/Features";
 import { TargetAudience } from "@/components/TargetAudience";
 import { Reviews } from "@/components/Reviews";
+import { StartLearning } from "@/components/StartLearning";
 
 const PythonCourse = () => {
   return (
@@ -53,6 +54,9 @@ const PythonCourse = () => {
 
         {/* Target Audience Section */}
         <TargetAudience />
+
+        {/* Start Learning Section */}
+        <StartLearning />
 
         {/* Course Info Section */}
         <section className="py-20">
