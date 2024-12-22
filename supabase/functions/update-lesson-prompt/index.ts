@@ -1,5 +1,5 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
-import { createClient } from '@supabase/supabase-js';
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -7,17 +7,19 @@ const corsHeaders = {
 };
 
 serve(async (req) => {
+  console.log('Function called with method:', req.method);
+  
   if (req.method === 'OPTIONS') {
     return new Response('ok', { headers: corsHeaders });
   }
 
   try {
     const { lessonId, prompt } = await req.json();
+    console.log('Updating prompt for lesson:', lessonId);
+    console.log('New prompt:', prompt);
 
-    // Здесь нужно сохранить промпт в соответствующий файл
-    // В зависимости от типа урока (Python, DevOps, BA)
-    // Это потребует дополнительной логики для определения
-    // правильного файла с промптами
+    // В будущем здесь можно добавить логику сохранения промпта
+    // в базу данных или файловую систему
 
     return new Response(
       JSON.stringify({ success: true }),
@@ -27,6 +29,7 @@ serve(async (req) => {
       },
     );
   } catch (error) {
+    console.error('Error in update-lesson-prompt:', error);
     return new Response(
       JSON.stringify({ error: error.message }),
       {
