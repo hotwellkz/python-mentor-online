@@ -3,6 +3,8 @@ import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import { ArrowRight, Code, Brain, Star, Users, Clock, CheckCircle } from "lucide-react";
 import { Features } from "@/components/Features";
+import { TargetAudience } from "@/components/TargetAudience";
+import { Reviews } from "@/components/Reviews";
 
 const PythonCourse = () => {
   return (
@@ -49,6 +51,9 @@ const PythonCourse = () => {
         {/* Features Section */}
         <Features />
 
+        {/* Target Audience Section */}
+        <TargetAudience />
+
         {/* Course Info Section */}
         <section className="py-20">
           <div className="container mx-auto px-4">
@@ -93,6 +98,9 @@ const PythonCourse = () => {
             </div>
           </div>
         </section>
+
+        {/* Reviews Section */}
+        <Reviews />
 
         {/* CTA Section */}
         <section className="bg-gradient-to-br from-blue-400 to-blue-800 text-white py-20">
