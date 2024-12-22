@@ -1,25 +1,29 @@
-import { useState, useEffect } from "react";
+import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
+import { useLessonState } from "./lesson/useLessonState";
+import { useLessonProgress } from "./lesson/useLessonProgress";
+import { useLessonGeneration } from "./lesson/useLessonGeneration";
 
 export const useLesson = (lessonId: string | undefined) => {
   const navigate = useNavigate();
   const { toast } = useToast();
-  const [loading, setLoading] = useState(false);
-  const [generatedText, setGeneratedText] = useState("");
-  const [isPlaying, setIsPlaying] = useState(false);
-  const [isPremiumPlaying, setIsPremiumPlaying] = useState(false);
-  const [showTest, setShowTest] = useState(false);
-  const [synthesis, setSynthesis] = useState<SpeechSynthesis | null>(null);
-  const [utterance, setUtterance] = useState<SpeechSynthesisUtterance | null>(null);
-  const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
-  const [userPrompt, setUserPrompt] = useState("");
+  const {
+    loading, setLoading,
+    generatedText, setGeneratedText,
+    isPlaying, isPremiumPlaying,
+    showTest, setShowTest,
+    isAuthenticated, setIsAuthenticated,
+    userPrompt, setUserPrompt,
+  } = useLessonState();
+
+  const { loadLessonProgress, saveLessonProgress } = useLessonProgress(lessonId);
+  const { generateLesson } = useLessonGeneration();
 
   useEffect(() => {
-    setSynthesis(window.speechSynthesis);
     checkAuth();
-    loadLessonProgress();
+    loadInitialProgress();
   }, [lessonId]);
 
   const checkAuth = async () => {
@@ -27,57 +31,10 @@ export const useLesson = (lessonId: string | undefined) => {
     setIsAuthenticated(!!session);
   };
 
-  const loadLessonProgress = async () => {
-    if (!lessonId) return;
-
-    try {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) return;
-
-      const { data: progress } = await supabase
-        .from('lesson_progress')
-        .select('*')
-        .eq('lesson_id', lessonId)
-        .eq('user_id', user.id)
-        .maybeSingle();
-
-      if (progress?.generated_text) {
-        setGeneratedText(progress.generated_text);
-      }
-    } catch (error) {
-      console.error('Error loading lesson progress:', error);
-    }
-  };
-
-  const saveLessonProgress = async (text: string) => {
-    if (!lessonId) return;
-
-    try {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) return;
-
-      const { error } = await supabase
-        .from('lesson_progress')
-        .upsert(
-          {
-            user_id: user.id,
-            lesson_id: lessonId,
-            generated_text: text,
-            updated_at: new Date().toISOString()
-          },
-          {
-            onConflict: 'user_id,lesson_id'
-          }
-        );
-
-      if (error) throw error;
-    } catch (error) {
-      console.error('Error saving lesson progress:', error);
-      toast({
-        variant: "destructive",
-        title: "Ошибка",
-        description: "Не удалось сохранить прогресс урока",
-      });
+  const loadInitialProgress = async () => {
+    const savedText = await loadLessonProgress();
+    if (savedText) {
+      setGeneratedText(savedText);
     }
   };
 
@@ -118,14 +75,7 @@ export const useLesson = (lessonId: string | undefined) => {
       }
 
       setLoading(true);
-      console.log('Calling generate-lesson with lessonId:', lessonId);
-      
-      const response = await supabase.functions.invoke('generate-lesson', {
-        body: { lessonId },
-      });
-
-      if (response.error) throw new Error(response.error.message);
-      const generatedText = response.data.text;
+      const generatedText = await generateLesson(lessonId);
       setGeneratedText(generatedText);
       await saveLessonProgress(generatedText);
 
