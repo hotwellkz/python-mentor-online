@@ -20,13 +20,13 @@ serve(async (req) => {
   }
 
   try {
-    const { lessonId, prompt } = await req.json();
-    console.log('Generating lesson for:', lessonId, 'with prompt:', prompt);
-
     if (!openAIApiKey) {
       console.error('OpenAI API key not found');
       throw new Error('OpenAI API key not configured');
     }
+
+    const { lessonId, prompt } = await req.json();
+    console.log('Processing request for:', { lessonId, hasPrompt: !!prompt });
 
     let messages = [];
     if (prompt) {
@@ -38,44 +38,43 @@ serve(async (req) => {
         { role: 'user', content: prompt }
       ];
     } else if (lessonId) {
+      console.log('Getting prompt for lesson:', lessonId);
       let lessonPrompt;
       
-      if (lessonId.startsWith('ba-')) {
-        lessonPrompt = getBusinessAnalystLessonPrompt(lessonId);
-      } else if (lessonId.startsWith('devops-')) {
-        lessonPrompt = getDevOpsLessonPrompt(lessonId);
-      } else {
-        try {
+      try {
+        if (lessonId.startsWith('ba-')) {
+          lessonPrompt = getBusinessAnalystLessonPrompt(lessonId);
+        } else if (lessonId.startsWith('devops-')) {
+          lessonPrompt = getDevOpsLessonPrompt(lessonId);
+        } else {
           lessonPrompt = getPythonLessonPrompt(lessonId);
-        } catch (error) {
-          console.error('Error getting Python lesson prompt:', error);
-          return new Response(JSON.stringify({ 
-            error: `Урок ${lessonId} не найден. Пожалуйста, проверьте правильность ID урока.` 
-          }), {
-            status: 404,
-            headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-          });
         }
-      }
 
-      if (!lessonPrompt) {
-        console.error('Lesson prompt not found for ID:', lessonId);
+        if (!lessonPrompt) {
+          console.error('No prompt generated for lesson:', lessonId);
+          throw new Error(`Не удалось сгенерировать промпт для урока ${lessonId}`);
+        }
+
+        console.log('Successfully generated prompt for lesson:', lessonId);
+        
+        messages = [
+          {
+            role: 'system',
+            content: 'Вы - опытный преподаватель. Ваша задача - подробно объяснить тему урока, используя примеры и понятные объяснения. Используйте маркдаун для форматирования текста.'
+          },
+          { role: 'user', content: lessonPrompt }
+        ];
+      } catch (error) {
+        console.error('Error generating lesson prompt:', error);
         return new Response(JSON.stringify({ 
-          error: `Урок ${lessonId} не найден. Пожалуйста, проверьте правильность ID урока.` 
+          error: `Урок ${lessonId} не найден или произошла ошибка при генерации промпта. Пожалуйста, проверьте правильность ID урока.` 
         }), {
           status: 404,
           headers: { ...corsHeaders, 'Content-Type': 'application/json' },
         });
       }
-
-      messages = [
-        {
-          role: 'system',
-          content: 'Вы - опытный преподаватель. Ваша задача - подробно объяснить тему урока, используя примеры и понятные объяснения. Используйте маркдаун для форматирования текста.'
-        },
-        { role: 'user', content: lessonPrompt }
-      ];
     } else {
+      console.error('Neither prompt nor lessonId provided');
       return new Response(JSON.stringify({ 
         error: 'Необходимо указать либо prompt, либо lessonId' 
       }), {
