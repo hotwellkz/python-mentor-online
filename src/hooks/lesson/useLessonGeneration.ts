@@ -6,27 +6,14 @@ export const useLessonGeneration = () => {
 
   const generateLesson = async (lessonId: string) => {
     try {
-      console.log('Calling generate-lesson with lessonId:', lessonId);
+      console.log('Calling generate-lesson-from-prompt with lessonId:', lessonId);
       
-      // First try to get custom prompt from lesson_prompts table
-      const { data: savedPrompt } = await supabase
-        .from('lesson_prompts')
-        .select('prompt')
-        .eq('lesson_id', lessonId)
-        .maybeSingle();
-
-      // Use saved prompt if exists, otherwise use default prompt
-      const promptToUse = savedPrompt?.prompt;
-      
-      const response = await supabase.functions.invoke('generate-lesson', {
-        body: { 
-          lessonId,
-          customPrompt: promptToUse // Pass the custom prompt if it exists
-        },
+      const response = await supabase.functions.invoke('generate-lesson-from-prompt', {
+        body: { lessonId }
       });
 
       if (response.error) {
-        console.error('Error from generate-lesson:', response.error);
+        console.error('Error from generate-lesson-from-prompt:', response.error);
         throw new Error(response.error.message);
       }
 
