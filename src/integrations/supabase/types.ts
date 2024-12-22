@@ -162,7 +162,7 @@ export type Database = {
           created_at?: string
           generated_text?: string | null
           id?: string
-          lesson_id: string
+          lesson_id?: string
           updated_at?: string
           user_id?: string | null
         }
@@ -186,7 +186,7 @@ export type Database = {
         Update: {
           created_at?: string
           id?: string
-          lesson_id: string
+          lesson_id?: string
           prompt?: string
           updated_at?: string
         }
@@ -203,11 +203,11 @@ export type Database = {
           created_at?: string
           id: string
           tokens?: number
-          updated_at: string
+          updated_at?: string
         }
         Update: {
           created_at?: string
-          id: string
+          id?: string
           tokens?: number
           updated_at?: string
         }
@@ -215,29 +215,30 @@ export type Database = {
       }
       visitors: {
         Row: {
-          id: string
-          visitor_count: number | null
+          created_at: string | null
           daily_count: number | null
           date: string | null
-          created_at: string | null
+          id: string
           updated_at: string | null
+          visitor_count: number | null
         }
         Insert: {
-          id?: string
-          visitor_count?: number | null
+          created_at?: string | null
           daily_count?: number | null
           date?: string | null
-          created_at?: string | null
+          id?: string
           updated_at?: string | null
+          visitor_count?: number | null
         }
         Update: {
-          id?: string
-          visitor_count?: number | null
+          created_at?: string | null
           daily_count?: number | null
           date?: string | null
-          created_at?: string | null
+          id?: string
           updated_at?: string | null
+          visitor_count?: number | null
         }
+        Relationships: []
       }
     }
     Views: {
@@ -264,7 +265,7 @@ export type Tables<
   TableName extends PublicTableNameOrOptions extends { schema: keyof Database }
     ? keyof (Database[PublicTableNameOrOptions["schema"]]["Tables"] &
         Database[PublicTableNameOrOptions["schema"]]["Views"])
-    : never,
+    : never = never,
 > = PublicTableNameOrOptions extends { schema: keyof Database }
   ? (Database[PublicTableNameOrOptions["schema"]]["Tables"] &
       Database[PublicTableNameOrOptions["schema"]]["Views"])[TableName] extends {
@@ -276,10 +277,10 @@ export type Tables<
         PublicSchema["Views"])
     ? (PublicSchema["Tables"] &
         PublicSchema["Views"])[PublicTableNameOrOptions] extends {
-      Row: infer R
-    }
-    ? R
-    : never
+        Row: infer R
+      }
+      ? R
+      : never
     : never
 
 export type TablesInsert<

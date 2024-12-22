@@ -25,7 +25,7 @@ export const TestQuestion = ({
 }: TestQuestionProps) => {
   const getButtonVariant = (index: number) => {
     if (selectedAnswer === null) return "outline";
-    if (index === correctAnswer) return "success";
+    if (index === correctAnswer) return "secondary";
     if (index === selectedAnswer) return "destructive";
     return "outline";
   };
