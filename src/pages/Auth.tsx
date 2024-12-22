@@ -1,43 +1,31 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Helmet } from "react-helmet";
-import { Link, useNavigate, useLocation } from "react-router-dom";
-import { supabase } from "@/integrations/supabase/client";
-import { WelcomeGiftModal } from "@/components/WelcomeGiftModal";
 import { AuthForm } from "@/components/auth/AuthForm";
-import { useAuthForm } from "@/hooks/useAuthForm";
 
-export const Auth = () => {
+const Auth = () => {
   const [showGiftModal, setShowGiftModal] = useState(false);
-  const navigate = useNavigate();
-  const location = useLocation();
-  const authForm = useAuthForm(setShowGiftModal);
-
-  useEffect(() => {
-    const checkAuth = async () => {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (user) {
-        const from = location.state?.from?.pathname || "/";
-        navigate(from, { replace: true });
-      }
-    };
-    checkAuth();
-  }, [navigate, location]);
 
   return (
     <>
       <Helmet>
-        <title>{authForm.isLogin ? "Вход" : "Регистрация"} | Python с ИИ-учителем</title>
+        <title>Авторизация | Курсы программирования с ИИ-учителем</title>
+        <meta
+          name="description"
+          content="Войдите в свой аккаунт или зарегистрируйтесь для доступа к курсам программирования с ИИ-учителем. Безопасная авторизация и персональный кабинет."
+        />
+        <meta name="robots" content="noindex,nofollow" />
       </Helmet>
-      <div className="min-h-screen flex flex-col items-center justify-center p-4">
-        <Link
-          to="/"
-          className="mb-8 text-2xl font-bold hover:text-primary transition-colors"
-        >
-          Главная страница
-        </Link>
-        <AuthForm {...authForm} />
+      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 py-12 px-4 sm:px-6 lg:px-8">
+        <div className="max-w-md w-full mx-auto space-y-8">
+          <div className="text-center">
+            <h1 className="text-3xl font-bold">Войти в аккаунт</h1>
+            <p className="mt-2 text-gray-600 dark:text-gray-400">
+              Продолжите обучение с персональным ИИ-учителем
+            </p>
+          </div>
+          <AuthForm setShowGiftModal={setShowGiftModal} />
+        </div>
       </div>
-      <WelcomeGiftModal open={showGiftModal} onOpenChange={setShowGiftModal} />
     </>
   );
 };

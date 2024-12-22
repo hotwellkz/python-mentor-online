@@ -10,23 +10,20 @@ const Program = () => {
   return (
     <>
       <Helmet>
-        <title>Программа курса Python | Изучение Python с ИИ-учителем</title>
+        <title>Программа курса Python | Полное руководство по Python</title>
         <meta
           name="description"
-          content="Подробная программа курса Python для начинающих. Изучите основы программирования, ООП, работу с базами данных, веб-разработку и многое другое с персональным ИИ-учителем."
+          content="Изучите Python от основ до продвинутого уровня с персональным ИИ-учителем. Подробная программа курса, практические задания и проекты."
         />
         <meta
           name="keywords"
-          content="python курс, программа обучения python, python для начинающих, изучение python, уроки python"
+          content="программа курса python, уроки python, обучение python программированию, python для начинающих"
         />
         <link rel="canonical" href={window.location.origin + "/program"} />
-        <meta property="og:title" content="Программа курса Python | Изучение Python с ИИ-учителем" />
-        <meta property="og:description" content="Подробная программа курса Python для начинающих. Изучите основы программирования, ООП, работу с базами данных, веб-разработку и многое другое с персональным ИИ-учителем." />
-        <meta property="og:type" content="website" />
+        <meta property="og:title" content="Программа курса Python | Полное руководство по Python" />
+        <meta property="og:description" content="Изучите Python от основ до продвинутого уровня с персональным ИИ-учителем." />
+        <meta property="og:type" content="article" />
         <meta property="og:url" content={window.location.origin + "/program"} />
-        <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:title" content="Программа курса Python | Изучение Python с ИИ-учителем" />
-        <meta name="twitter:description" content="Подробная программа курса Python для начинающих. Изучите Python с персональным ИИ-учителем." />
       </Helmet>
 
       <motion.div

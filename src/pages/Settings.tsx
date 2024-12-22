@@ -1,31 +1,44 @@
-import { useState } from "react";
 import { Helmet } from "react-helmet";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
+import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 
 const Settings = () => {
-  const [newPassword, setNewPassword] = useState("");
-  const [loading, setLoading] = useState(false);
   const { toast } = useToast();
+  const navigate = useNavigate();
+  const [email, setEmail] = useState("");
+  const [loading, setLoading] = useState(false);
 
-  const handlePasswordChange = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setLoading(true);
+  useEffect(() => {
+    getProfile();
+  }, []);
 
+  const getProfile = async () => {
     try {
-      const { error } = await supabase.auth.updateUser({
-        password: newPassword,
-      });
+      const { data: { user } } = await supabase.auth.getUser();
+      if (user) {
+        setEmail(user.email || "");
+      }
+    } catch (error: any) {
+      console.error("Error loading user data:", error.message);
+    }
+  };
+
+  const handleUpdateProfile = async () => {
+    try {
+      setLoading(true);
+      const { error } = await supabase.auth.updateUser({ email });
 
       if (error) throw error;
 
       toast({
         title: "Успешно",
-        description: "Пароль успешно изменен",
+        description: "Профиль обновлен",
       });
-      setNewPassword("");
     } catch (error: any) {
       toast({
         variant: "destructive",
@@ -37,89 +50,90 @@ const Settings = () => {
     }
   };
 
-  const handleResendEmail = async () => {
-    setLoading(true);
-    try {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user?.email) throw new Error("Email не найден");
+  const handleDeleteAccount = async () => {
+    const confirmed = window.confirm(
+      "Вы уверены, что хотите удалить аккаунт? Это действие необратимо."
+    );
 
-      console.log("Отправка письма для подтверждения на:", user.email);
+    if (confirmed) {
+      try {
+        setLoading(true);
+        const { error } = await supabase.auth.admin.deleteUser(
+          (await supabase.auth.getUser()).data.user?.id || ""
+        );
 
-      const { error } = await supabase.auth.resend({
-        type: 'signup',
-        email: user.email,
-      });
+        if (error) throw error;
 
-      if (error) {
-        console.error("Ошибка при отправке письма:", error);
-        throw error;
+        await supabase.auth.signOut();
+        navigate("/");
+        
+        toast({
+          title: "Аккаунт удален",
+          description: "Ваш аккаунт был успешно удален",
+        });
+      } catch (error: any) {
+        toast({
+          variant: "destructive",
+          title: "Ошибка",
+          description: error.message,
+        });
+      } finally {
+        setLoading(false);
       }
-
-      console.log("Письмо успешно отправлено");
-
-      toast({
-        title: "Письмо отправлено",
-        description: "Проверьте папку 'Входящие' и 'Спам'. Письмо должно прийти в течение нескольких минут.",
-      });
-    } catch (error: any) {
-      console.error("Ошибка в handleResendEmail:", error);
-      toast({
-        variant: "destructive",
-        title: "Ошибка при отправке письма",
-        description: error.message || "Попробуйте позже или обратитесь в поддержку",
-      });
-    } finally {
-      setLoading(false);
     }
   };
 
   return (
     <>
       <Helmet>
-        <title>Настройки | Python с ИИ-учителем</title>
+        <title>Настройки аккаунта | Курсы программирования с ИИ-учителем</title>
+        <meta
+          name="description"
+          content="Настройте параметры своего аккаунта, управляйте уведомлениями и персонализируйте опыт обучения."
+        />
+        <meta name="robots" content="noindex,nofollow" />
       </Helmet>
       <div className="container mx-auto px-4 py-8">
-        <div className="max-w-md mx-auto space-y-8">
-          <div>
-            <h1 className="text-2xl font-bold text-center">Настройки аккаунта</h1>
-            <p className="text-muted-foreground text-center mt-2">
-              Управление паролем и подтверждением email
-            </p>
+        <div className="max-w-2xl mx-auto">
+          <h1 className="text-3xl font-bold mb-8">Настройки аккаунта</h1>
+
+          <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6 mb-8">
+            <h2 className="text-xl font-semibold mb-4">Основные настройки</h2>
+            <div className="space-y-4">
+              <div>
+                <Label htmlFor="email">Email</Label>
+                <Input
+                  id="email"
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  className="mt-1"
+                />
+              </div>
+
+              <Button
+                onClick={handleUpdateProfile}
+                disabled={loading}
+                className="w-full"
+              >
+                {loading ? "Сохранение..." : "Сохранить изменения"}
+              </Button>
+            </div>
           </div>
 
-          <form onSubmit={handlePasswordChange} className="space-y-4">
-            <div className="space-y-2">
-              <label htmlFor="new-password" className="block text-sm font-medium">
-                Новый пароль
-              </label>
-              <Input
-                id="new-password"
-                type="password"
-                value={newPassword}
-                onChange={(e) => setNewPassword(e.target.value)}
-                placeholder="Введите новый пароль"
-                minLength={6}
-                required
-              />
-            </div>
-            <Button type="submit" className="w-full" disabled={loading}>
-              {loading ? "Загрузка..." : "Изменить пароль"}
-            </Button>
-          </form>
-
-          <div className="space-y-4">
-            <h2 className="text-xl font-semibold">Подтверждение email</h2>
-            <p className="text-sm text-muted-foreground">
-              Если вы не получили письмо для подтверждения email, нажмите кнопку ниже.
-              Проверьте папку "Спам" после отправки.
+          <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
+            <h2 className="text-xl font-semibold mb-4 text-red-600">Опасная зона</h2>
+            <p className="text-gray-600 dark:text-gray-400 mb-4">
+              Удаление аккаунта приведет к потере всех данных и прогресса обучения.
+              Это действие необратимо.
             </p>
             <Button
-              variant="outline"
-              className="w-full"
-              onClick={handleResendEmail}
+              variant="destructive"
+              onClick={handleDeleteAccount}
               disabled={loading}
+              className="w-full"
             >
-              {loading ? "Отправка..." : "Отправить письмо повторно"}
+              {loading ? "Удаление..." : "Удалить аккаунт"}
             </Button>
           </div>
         </div>

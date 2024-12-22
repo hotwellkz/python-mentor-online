@@ -4,11 +4,12 @@ const Terms = () => {
   return (
     <>
       <Helmet>
-        <title>Публичная оферта | Python с ИИ-учителем</title>
+        <title>Условия использования | Курсы программирования с ИИ-учителем</title>
         <meta
           name="description"
-          content="Публичная оферта для онлайн курса Python с ИИ-учителем. Ознакомьтесь с условиями предоставления услуг."
+          content="Ознакомьтесь с условиями использования платформы обучения программированию с ИИ-учителем. Правила и соглашения для пользователей."
         />
+        <meta name="robots" content="noindex" />
       </Helmet>
       <div className="container mx-auto px-4 py-8 max-w-4xl">
         <h1 className="text-3xl font-bold mb-8">Публичная оферта</h1>
