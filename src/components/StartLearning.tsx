@@ -1,9 +1,15 @@
 import { GraduationCap } from "lucide-react";
 import { Button } from "./ui/button";
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 
 export const StartLearning = () => {
+  const navigate = useNavigate();
+
+  const handleStartLearning = () => {
+    navigate('/program');
+  };
+
   return (
     <section className="py-20 bg-gradient-to-br from-primary/10 to-secondary/10">
       <div className="container mx-auto px-4">
@@ -25,15 +31,14 @@ export const StartLearning = () => {
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
           >
-            <Link to="/program">
-              <Button 
-                size="lg" 
-                className="bg-primary hover:bg-primary/90 text-lg px-8 py-6"
-              >
-                Начать бесплатно
-                <GraduationCap className="ml-2 h-6 w-6" />
-              </Button>
-            </Link>
+            <Button 
+              size="lg" 
+              className="bg-primary hover:bg-primary/90 text-lg px-8 py-6"
+              onClick={handleStartLearning}
+            >
+              Начать бесплатно
+              <GraduationCap className="ml-2 h-6 w-6" />
+            </Button>
           </motion.div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-12 text-left">

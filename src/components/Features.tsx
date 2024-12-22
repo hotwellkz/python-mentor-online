@@ -1,8 +1,37 @@
 import { GraduationCap, BookOpen, ListOrdered, ArrowRight } from "lucide-react";
 import { Button } from "./ui/button";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 export const Features = () => {
+  const navigate = useNavigate();
+  
+  const scrollToCategories = (e: React.MouseEvent) => {
+    e.preventDefault();
+    const categoriesSection = document.querySelector('#categories-section');
+    if (categoriesSection) {
+      categoriesSection.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
+
+  const questions = [
+    {
+      id: 1,
+      question: "Как работает ИИ-учитель?",
+    },
+    {
+      id: 2,
+      question: "Сколько стоит обучение?",
+    },
+    {
+      id: 3,
+      question: "Какие курсы доступны?",
+    },
+    {
+      id: 4,
+      question: "Как начать обучение?",
+    }
+  ];
+
   return (
     <div className="py-16 px-4 bg-gray-50">
       <div className="max-w-7xl mx-auto space-y-20">
@@ -33,12 +62,10 @@ export const Features = () => {
             <p className="text-lg text-gray-600">
               Начните свой путь в программировании прямо сейчас. Первый урок бесплатно!
             </p>
-            <Link to="/program">
-              <Button size="lg" className="group">
-                Начать обучение
-                <ArrowRight className="ml-2 w-4 h-4 group-hover:translate-x-1 transition-transform" />
-              </Button>
-            </Link>
+            <Button size="lg" className="group" onClick={scrollToCategories}>
+              Начать обучение
+              <ArrowRight className="ml-2 w-4 h-4 group-hover:translate-x-1 transition-transform" />
+            </Button>
           </div>
           <div className="flex justify-center">
             <div className="relative">
@@ -54,24 +81,27 @@ export const Features = () => {
             <div className="space-y-4">
               <h2 className="text-3xl md:text-4xl font-bold">Топ 10 вопросов</h2>
               <p className="text-lg opacity-90">
-                Ответы на самые популярные вопросы о курсе и обучении программированию
+                Ответы на самые популярные вопросы о курсах и обучении с ИИ-учителем
               </p>
-              <Link to="/faq">
-                <Button variant="secondary" className="text-white hover:bg-secondary/90">
-                  Смотреть все вопросы
-                  <ListOrdered className="ml-2 w-4 h-4" />
-                </Button>
-              </Link>
+              <Button 
+                variant="secondary" 
+                className="text-white hover:bg-secondary/90"
+                onClick={() => navigate('/faq')}
+              >
+                Смотреть все вопросы
+                <ListOrdered className="ml-2 w-4 h-4" />
+              </Button>
             </div>
             <div className="grid grid-cols-2 gap-4">
-              {[1, 2, 3, 4].map((num) => (
+              {questions.map((item) => (
                 <div
-                  key={num}
+                  key={item.id}
                   className="bg-white/10 p-4 rounded-lg backdrop-blur-sm hover:bg-white/20 transition-colors cursor-pointer animate-fade-up"
-                  style={{ animationDelay: `${num * 100}ms` }}
+                  style={{ animationDelay: `${item.id * 100}ms` }}
+                  onClick={() => navigate('/faq')}
                 >
-                  <span className="text-2xl font-bold">#{num}</span>
-                  <p className="text-sm mt-2 opacity-80">Популярный вопрос</p>
+                  <span className="text-2xl font-bold">#{item.id}</span>
+                  <p className="text-sm mt-2 opacity-80">{item.question}</p>
                 </div>
               ))}
             </div>

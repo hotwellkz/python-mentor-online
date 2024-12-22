@@ -5,11 +5,14 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { useState } from "react";
 
 export const NavLinks = () => {
+  const [isOpen, setIsOpen] = useState(false);
+
   return (
     <>
-      <DropdownMenu>
+      <DropdownMenu open={isOpen} onOpenChange={setIsOpen}>
         <DropdownMenuTrigger className="text-white hover:text-primary transition-colors group flex items-center gap-1">
           <span>Курсы</span>
           <svg
@@ -25,17 +28,29 @@ export const NavLinks = () => {
         </DropdownMenuTrigger>
         <DropdownMenuContent className="animate-scale-in bg-white rounded-lg shadow-lg border border-gray-200 p-1 min-w-[150px]">
           <DropdownMenuItem className="rounded hover:bg-gray-100 transition-colors">
-            <Link to="/" className="w-full px-3 py-2 text-gray-700 hover:text-primary">
+            <Link 
+              to="/python-course" 
+              className="w-full px-3 py-2 text-gray-700 hover:text-primary"
+              onClick={() => setIsOpen(false)}
+            >
               Python
             </Link>
           </DropdownMenuItem>
           <DropdownMenuItem className="rounded hover:bg-gray-100 transition-colors">
-            <Link to="/devops" className="w-full px-3 py-2 text-gray-700 hover:text-primary">
+            <Link 
+              to="/devops" 
+              className="w-full px-3 py-2 text-gray-700 hover:text-primary"
+              onClick={() => setIsOpen(false)}
+            >
               DevOps
             </Link>
           </DropdownMenuItem>
           <DropdownMenuItem className="rounded hover:bg-gray-100 transition-colors">
-            <Link to="/business-analyst" className="w-full px-3 py-2 text-gray-700 hover:text-primary">
+            <Link 
+              to="/business-analyst" 
+              className="w-full px-3 py-2 text-gray-700 hover:text-primary"
+              onClick={() => setIsOpen(false)}
+            >
               Бизнес-аналитик
             </Link>
           </DropdownMenuItem>

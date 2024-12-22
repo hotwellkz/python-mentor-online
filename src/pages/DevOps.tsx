@@ -1,9 +1,13 @@
 import { Helmet } from "react-helmet";
 import { Button } from "@/components/ui/button";
 import { Link, useNavigate } from "react-router-dom";
-import { ArrowRight, CheckCircle2, Code2, Database, Network, Server, Cloud, Container } from "lucide-react";
+import { ArrowRight, Code2, Database, Network, Server, Cloud, Container } from "lucide-react";
 import { useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import { motion } from "framer-motion";
+import { DevOpsFeatures } from "@/components/devops/DevOpsFeatures";
+import { DevOpsTargetAudience } from "@/components/devops/DevOpsTargetAudience";
+import { DevOpsReviews } from "@/components/devops/DevOpsReviews";
 
 const DevOps = () => {
   const navigate = useNavigate();
@@ -34,7 +38,7 @@ const DevOps = () => {
         />
       </Helmet>
 
-      <main className="min-h-screen">
+      <main className="min-h-screen bg-[#1A1F2C]">
         {/* Hero Section */}
         <section className="bg-gradient-to-r from-[#243949] to-[#517fa4] text-white py-20">
           <div className="container mx-auto px-4">
@@ -48,20 +52,20 @@ const DevOps = () => {
                 </p>
                 <div className="flex flex-wrap gap-4">
                   <Link to="/devops-program">
-                    <Button size="lg" className="bg-primary hover:bg-primary/90">
+                    <Button size="lg" className="bg-[#6E59A5] hover:bg-[#8B5CF6] transition-all duration-300">
                       Начать обучение
                       <ArrowRight className="ml-2 h-5 w-5" />
                     </Button>
                   </Link>
                   <Link to="/pricing">
-                    <Button size="lg" variant="outline" className="bg-white/10 hover:bg-white/20">
+                    <Button size="lg" variant="outline" className="bg-white/10 hover:bg-white/20 border-[#D6BCFA]">
                       Тарифы
                     </Button>
                   </Link>
                 </div>
               </div>
               <div className="relative hidden md:block">
-                <div className="absolute inset-0 bg-white/5 rounded-lg backdrop-blur-sm"></div>
+                <div className="absolute inset-0 bg-[#D6BCFA]/5 rounded-lg backdrop-blur-sm"></div>
                 <div className="grid grid-cols-2 gap-4 relative">
                   {[
                     { icon: Code2, text: "CI/CD Pipeline" },
@@ -71,14 +75,17 @@ const DevOps = () => {
                     { icon: Database, text: "База данных" },
                     { icon: Cloud, text: "Облака" },
                   ].map((item, index) => (
-                    <div
+                    <motion.div
                       key={index}
-                      className="p-6 rounded-lg bg-white/10 backdrop-blur-sm hover:bg-white/20 transition-all animate-fade-up"
-                      style={{ animationDelay: `${index * 100}ms` }}
+                      initial={{ opacity: 0, y: 20 }}
+                      whileInView={{ opacity: 1, y: 0 }}
+                      transition={{ duration: 0.5, delay: index * 0.1 }}
+                      viewport={{ once: true }}
+                      className="p-6 rounded-lg bg-[#403E43]/30 backdrop-blur-sm hover:bg-[#403E43]/50 transition-all"
                     >
-                      <item.icon className="h-8 w-8 mb-2" />
+                      <item.icon className="h-8 w-8 mb-2 text-[#D6BCFA]" />
                       <p className="font-medium">{item.text}</p>
-                    </div>
+                    </motion.div>
                   ))}
                 </div>
               </div>
@@ -86,40 +93,9 @@ const DevOps = () => {
           </div>
         </section>
 
-        {/* Преимущества */}
-        <section className="py-20 bg-gray-50">
-          <div className="container mx-auto px-4">
-            <h2 className="text-3xl md:text-4xl font-bold text-center mb-12">
-              Почему стоит выбрать наш курс
-            </h2>
-            <div className="grid md:grid-cols-3 gap-8">
-              {[
-                {
-                  title: "Персональный ИИ-наставник",
-                  description: "Получите поддержку 24/7 от вашего личного ИИ-учителя",
-                },
-                {
-                  title: "Практические проекты",
-                  description: "Работайте над реальными DevOps задачами и кейсами",
-                },
-                {
-                  title: "Современные технологии",
-                  description: "Изучайте актуальные инструменты и практики DevOps",
-                },
-              ].map((item, index) => (
-                <div
-                  key={index}
-                  className="p-6 rounded-lg bg-white shadow-lg hover:shadow-xl transition-shadow animate-fade-up"
-                  style={{ animationDelay: `${index * 100}ms` }}
-                >
-                  <CheckCircle2 className="h-12 w-12 text-primary mb-4" />
-                  <h3 className="text-xl font-semibold mb-2">{item.title}</h3>
-                  <p className="text-gray-600">{item.description}</p>
-                </div>
-              ))}
-            </div>
-          </div>
-        </section>
+        <DevOpsFeatures />
+        <DevOpsTargetAudience />
+        <DevOpsReviews />
       </main>
     </>
   );
