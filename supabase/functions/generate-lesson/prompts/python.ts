@@ -1,10 +1,15 @@
-import { block1Prompts } from './python/block1';
-import { block2Prompts } from './python/block2';
-import { block3Prompts } from './python/block3';
-import { block4Prompts } from './python/block4';
-import { block5Prompts } from './python/block5';
-import { block6Prompts } from './python/block6';
-import { block7Prompts } from './python/block7';
+import { block1Prompts } from './python/block1.ts';
+import { block2Prompts } from './python/block2.ts';
+import { block3Prompts } from './python/block3.ts';
+import { block4Prompts } from './python/block4.ts';
+import { block5Prompts } from './python/block5.ts';
+import { block6Prompts } from './python/block6.ts';
+import { block7Prompts } from './python/block7.ts';
+import { block8Prompts } from './python/block8.ts';
+import { block9Prompts } from './python/block9.ts';
+import { block10Prompts } from './python/block10.ts';
+import { block11Prompts } from './python/block11.ts';
+import { block12Prompts } from './python/block12.ts';
 
 export const getPythonLessonPrompt = (lessonId: string) => {
   const [blockIndex, lessonIndex] = lessonId.split("-").map(Number);
@@ -17,22 +22,11 @@ export const getPythonLessonPrompt = (lessonId: string) => {
     5: block5Prompts,
     6: block6Prompts,
     7: block7Prompts,
-    8: {
-      lesson1: `Расскажи о веб-разработке на Python:
-        - Что такое веб-фреймворк и зачем он нужен
-        - Популярные веб-фреймворки Python
-        - Создание простого веб-сервера на Flask
-        - Маршрутизация в веб-приложениях
-        - HTTP методы в Flask
-        Приведи примеры создания простого веб-приложения.`,
-      lesson2: `Объясни работу с шаблонами и формами:
-        - Использование шаблонизатора Jinja2
-        - Создание и обработка форм
-        - Структура Flask приложения
-        - Работа с сессиями
-        - Загрузка файлов
-        Добавь примеры работы с шаблонами и формами.`
-    }
+    8: block8Prompts,
+    9: block9Prompts,
+    10: block10Prompts,
+    11: block11Prompts,
+    12: block12Prompts
   };
 
   const block = blocks[blockIndex];
