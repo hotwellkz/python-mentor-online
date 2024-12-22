@@ -78,7 +78,7 @@ export const CourseProgram = ({ courseType = 'python' }: CourseProgramProps) => 
       return;
     }
 
-    const table = courseType === 'business-analyst' 
+    const tableName = courseType === 'business-analyst' 
       ? 'business_analyst_progress' 
       : courseType === 'data-science'
       ? 'data_science_progress'
@@ -86,12 +86,12 @@ export const CourseProgram = ({ courseType = 'python' }: CourseProgramProps) => 
       ? 'product_management_progress'
       : 'completed_lessons';
 
-    const { data } = await supabase
-      .from(table)
+    const { data, error } = await supabase
+      .from(tableName)
       .select('lesson_id')
       .eq('user_id', user.id);
 
-    if (data) {
+    if (data && !error) {
       setCompletedLessons(data.map(item => item.lesson_id));
       setProgress(calculateProgress(data.length));
     }
