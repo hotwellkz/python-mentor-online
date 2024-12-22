@@ -46,7 +46,7 @@ export const Layout = () => {
     const { data: authListener } = supabase.auth.onAuthStateChange(async (event, session) => {
       if (event === 'SIGNED_IN') {
         setUserEmail(session?.user?.email || null);
-      } else if (event === 'SIGNED_OUT' || event === 'USER_DELETED') {
+      } else if (event === 'SIGNED_OUT') {
         setUserEmail(null);
         if (pathname.startsWith('/lesson/')) {
           navigate('/auth', { state: { from: pathname } });
