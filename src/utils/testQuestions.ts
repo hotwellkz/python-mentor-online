@@ -1,6 +1,7 @@
 import { Question } from '@/types/question';
 import { getBusinessAnalystQuestions } from './questions/businessAnalyst';
 import { getModuleThreeQuestions } from './questions/moduleThree';
+import { getDataScienceQuestions } from './questions/dataScience';
 
 export const getPythonQuestions = (): Question[] => {
   return [
@@ -74,6 +75,30 @@ export const getDevOpsQuestions = (moduleIndex: number, topicIndex: number): Que
       correctAnswer: 0
     }
   ];
+};
+
+export const getTestQuestions = (lessonId: string): Question[] => {
+  if (lessonId.startsWith('ds-')) {
+    const [_, moduleStr, lessonStr] = lessonId.split('-');
+    const moduleIndex = parseInt(moduleStr);
+    const lessonIndex = parseInt(lessonStr);
+    console.log('Data Science Questions:', { moduleIndex, lessonIndex });
+    const questions = getDataScienceQuestions(moduleIndex, lessonIndex);
+    console.log('Retrieved questions:', questions);
+    return questions;
+  }
+  
+  if (lessonId.startsWith('ba-')) {
+    const [_, moduleStr, lessonStr] = lessonId.split('-');
+    return getBusinessAnalystQuestions(parseInt(moduleStr), parseInt(lessonStr));
+  }
+
+  if (lessonId.includes('-')) {
+    const [moduleStr, lessonStr] = lessonId.split('-');
+    return getDevOpsQuestions(parseInt(moduleStr), parseInt(lessonStr));
+  }
+
+  return getPythonQuestions();
 };
 
 export { getBusinessAnalystQuestions };

@@ -11,7 +11,7 @@ const categories = [
     isHot: true,
   },
   {
-    title: "Data Science",
+    title: "Data Scientist",
     duration: "12 мес",
     icon: Brain,
     bg: "bg-[#FDE1D3]",
@@ -32,14 +32,6 @@ const categories = [
     icon: Database,
     bg: "bg-[#FFDEE2]",
     link: "/devops",
-    isHot: true,
-  },
-  {
-    title: "Data Scientist",
-    duration: "12 мес",
-    icon: Brain,
-    bg: "bg-[#FDE1D3]",
-    link: "/program",
     isHot: true,
   },
   {
