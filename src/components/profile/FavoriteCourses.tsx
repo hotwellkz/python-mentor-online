@@ -21,6 +21,7 @@ const courses: Course[] = [
   { id: '2', title: 'DevOps', type: 'devops', path: '/devops' },
   { id: '3', title: 'Data Science', type: 'data-science', path: '/data-science' },
   { id: '4', title: 'Бизнес-аналитик', type: 'business-analyst', path: '/business-analyst' },
+  { id: '5', title: 'Продукт-менеджмент', type: 'product-management', path: '/product-management' },
 ];
 
 export const FavoriteCourses = ({ userId }: FavoriteCoursesProps) => {

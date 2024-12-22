@@ -28,3 +28,4 @@ export const courseBlocks = [
 
 export { businessAnalystBlocks } from './course/businessAnalyst';
 export { dataScienceBlocks } from './course/dataScience';
+export { productManagementBlocks } from './course/productManagement';

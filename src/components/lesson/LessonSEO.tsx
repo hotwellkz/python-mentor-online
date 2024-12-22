@@ -5,18 +5,22 @@ interface LessonSEOProps {
   topQuestions: string[];
   isDevOpsLesson: boolean;
   isDataScienceLesson?: boolean;
+  isProductManagementLesson?: boolean;
 }
 
 export const LessonSEO = ({ 
   lessonTitle, 
   topQuestions, 
   isDevOpsLesson,
-  isDataScienceLesson 
+  isDataScienceLesson,
+  isProductManagementLesson
 }: LessonSEOProps) => {
   const courseType = isDevOpsLesson 
     ? 'DevOps' 
     : isDataScienceLesson
     ? 'Data Science'
+    : isProductManagementLesson
+    ? 'Продукт-менеджмент'
     : 'Python';
   
   return (
