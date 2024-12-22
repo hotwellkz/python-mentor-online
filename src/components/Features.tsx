@@ -3,6 +3,14 @@ import { Button } from "./ui/button";
 import { Link } from "react-router-dom";
 
 export const Features = () => {
+  const scrollToCategories = (e: React.MouseEvent) => {
+    e.preventDefault();
+    const categoriesSection = document.querySelector('#categories-section');
+    if (categoriesSection) {
+      categoriesSection.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
+
   return (
     <div className="py-16 px-4 bg-gray-50">
       <div className="max-w-7xl mx-auto space-y-20">
@@ -33,12 +41,10 @@ export const Features = () => {
             <p className="text-lg text-gray-600">
               Начните свой путь в программировании прямо сейчас. Первый урок бесплатно!
             </p>
-            <Link to="/program">
-              <Button size="lg" className="group">
-                Начать обучение
-                <ArrowRight className="ml-2 w-4 h-4 group-hover:translate-x-1 transition-transform" />
-              </Button>
-            </Link>
+            <Button size="lg" className="group" onClick={scrollToCategories}>
+              Начать обучение
+              <ArrowRight className="ml-2 w-4 h-4 group-hover:translate-x-1 transition-transform" />
+            </Button>
           </div>
           <div className="flex justify-center">
             <div className="relative">
