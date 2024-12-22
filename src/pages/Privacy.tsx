@@ -4,11 +4,12 @@ const Privacy = () => {
   return (
     <>
       <Helmet>
-        <title>Политика конфиденциальности | Python с ИИ-учителем</title>
+        <title>Политика конфиденциальности | Курсы программирования с ИИ-учителем</title>
         <meta
           name="description"
-          content="Политика конфиденциальности сервиса Python с ИИ-учителем. Узнайте, как мы защищаем ваши персональные данные."
+          content="Ознакомьтесь с политикой конфиденциальности и обработки персональных данных на платформе обучения программированию с ИИ-учителем."
         />
+        <meta name="robots" content="noindex" />
       </Helmet>
       <div className="container mx-auto px-4 py-8 max-w-4xl">
         <h1 className="text-3xl font-bold mb-8">Политика конфиденциальности</h1>

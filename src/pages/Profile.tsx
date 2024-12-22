@@ -1,140 +1,117 @@
-import { useState, useEffect } from "react";
 import { Helmet } from "react-helmet";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
-import { Eye, EyeOff, Key, Save } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
+import { Button } from "@/components/ui/button";
+import { Loader2 } from "lucide-react";
 
-export const Profile = () => {
-  const [newPassword, setNewPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
-  const [showPassword, setShowPassword] = useState(false);
-  const [loading, setLoading] = useState(false);
-  const [email, setEmail] = useState("");
+const Profile = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
+  const [loading, setLoading] = useState(true);
+  const [userEmail, setUserEmail] = useState<string | null>(null);
+  const [completedLessons, setCompletedLessons] = useState<string[]>([]);
 
   useEffect(() => {
-    const getUser = async () => {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (user?.email) {
-        setEmail(user.email);
-      } else {
-        navigate("/auth");
+    const getProfile = async () => {
+      try {
+        const { data: { user }, error: userError } = await supabase.auth.getUser();
+        
+        if (userError) throw userError;
+        
+        if (!user) {
+          navigate('/auth');
+          return;
+        }
+
+        setUserEmail(user.email);
+
+        const { data: lessonsData, error: lessonsError } = await supabase
+          .from('completed_lessons')
+          .select('lesson_id')
+          .eq('user_id', user.id);
+
+        if (lessonsError) throw lessonsError;
+
+        setCompletedLessons(lessonsData.map(lesson => lesson.lesson_id));
+      } catch (error: any) {
+        console.error('Error fetching profile:', error);
+        toast({
+          variant: "destructive",
+          title: "Ошибка",
+          description: "Не удалось загрузить профиль",
+        });
+      } finally {
+        setLoading(false);
       }
     };
-    getUser();
-  }, [navigate]);
 
-  const handlePasswordChange = async (e: React.FormEvent) => {
-    e.preventDefault();
-    
-    if (newPassword !== confirmPassword) {
-      toast({
-        variant: "destructive",
-        title: "Ошибка",
-        description: "Пароли не совпадают",
-      });
-      return;
-    }
+    getProfile();
+  }, [navigate, toast]);
 
-    setLoading(true);
+  const handleLogout = async () => {
     try {
-      const { error } = await supabase.auth.updateUser({
-        password: newPassword
-      });
-
-      if (error) throw error;
-
-      toast({
-        title: "Успешно",
-        description: "Пароль успешно изменен",
-      });
-      
-      setNewPassword("");
-      setConfirmPassword("");
+      await supabase.auth.signOut();
+      navigate('/');
     } catch (error: any) {
+      console.error('Logout error:', error);
       toast({
         variant: "destructive",
         title: "Ошибка",
-        description: error.message,
+        description: "Не удалось выйти из системы",
       });
-    } finally {
-      setLoading(false);
     }
   };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <Loader2 className="h-8 w-8 animate-spin" />
+      </div>
+    );
+  }
 
   return (
     <>
       <Helmet>
-        <title>Профиль | Python с ИИ-учителем</title>
+        <title>Личный кабинет | Курсы программирования с ИИ-учителем</title>
+        <meta
+          name="description"
+          content="Управляйте своим обучением, отслеживайте прогресс и настраивайте персональные параметры в личном кабинете."
+        />
+        <meta name="robots" content="noindex,nofollow" />
       </Helmet>
       <div className="container mx-auto px-4 py-8">
-        <div className="max-w-md mx-auto space-y-8">
-          <div className="text-center">
-            <h1 className="text-2xl font-bold">Профиль пользователя</h1>
-            <p className="text-muted-foreground mt-2">{email}</p>
-          </div>
+        <div className="max-w-4xl mx-auto">
+          <h1 className="text-3xl font-bold mb-8">Личный кабинет</h1>
           
-          <form onSubmit={handlePasswordChange} className="space-y-6">
-            <div className="space-y-2">
-              <Label htmlFor="newPassword">
-                <div className="flex items-center gap-2">
-                  <Key className="h-4 w-4" />
-                  Новый пароль
-                </div>
-              </Label>
-              <div className="relative">
-                <Input
-                  id="newPassword"
-                  type={showPassword ? "text" : "password"}
-                  value={newPassword}
-                  onChange={(e) => setNewPassword(e.target.value)}
-                  required
-                  minLength={6}
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700"
-                >
-                  {showPassword ? (
-                    <EyeOff className="h-5 w-5" />
-                  ) : (
-                    <Eye className="h-5 w-5" />
-                  )}
-                </button>
-              </div>
-            </div>
-            
-            <div className="space-y-2">
-              <Label htmlFor="confirmPassword">Подтвердите пароль</Label>
-              <div className="relative">
-                <Input
-                  id="confirmPassword"
-                  type={showPassword ? "text" : "password"}
-                  value={confirmPassword}
-                  onChange={(e) => setConfirmPassword(e.target.value)}
-                  required
-                  minLength={6}
-                />
-              </div>
-            </div>
-
-            <Button type="submit" className="w-full" disabled={loading}>
-              {loading ? (
-                "Сохранение..."
-              ) : (
-                <div className="flex items-center gap-2">
-                  <Save className="h-4 w-4" />
-                  Сохранить новый пароль
-                </div>
-              )}
+          <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6 mb-8">
+            <h2 className="text-xl font-semibold mb-4">Информация профиля</h2>
+            <p className="text-gray-600 dark:text-gray-300 mb-4">
+              Email: {userEmail}
+            </p>
+            <Button variant="outline" onClick={handleLogout}>
+              Выйти из аккаунта
             </Button>
-          </form>
+          </div>
+
+          <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
+            <h2 className="text-xl font-semibold mb-4">Прогресс обучения</h2>
+            <p className="text-gray-600 dark:text-gray-300 mb-4">
+              Пройдено уроков: {completedLessons.length}
+            </p>
+            <div className="space-y-4">
+              {completedLessons.map((lessonId) => (
+                <div
+                  key={lessonId}
+                  className="p-4 bg-gray-50 dark:bg-gray-700 rounded-lg"
+                >
+                  Урок {lessonId}
+                </div>
+              ))}
+            </div>
+          </div>
         </div>
       </div>
     </>

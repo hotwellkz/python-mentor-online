@@ -8,15 +8,16 @@ const DevOpsProgram = () => {
   return (
     <>
       <Helmet>
-        <title>Программа курса | DevOps-инженер PRO с ИИ-учителем</title>
+        <title>Программа курса DevOps | Полное руководство по DevOps</title>
         <meta
           name="description"
-          content="Изучите DevOps с персональным ИИ-учителем. Программа включает контейнеризацию, CI/CD, облачные платформы и многое другое. Начните обучение бесплатно!"
+          content="Изучите DevOps практики от основ до продвинутого уровня. CI/CD, контейнеризация, облачные технологии - всё в одном курсе с ИИ-учителем."
         />
         <meta
           name="keywords"
-          content="DevOps курс бесплатно, DevOps обучение, CI/CD, Docker, Kubernetes, облачные технологии"
+          content="программа devops, devops практики, ci cd pipeline, docker kubernetes обучение, облачные технологии курс"
         />
+        <link rel="canonical" href={window.location.origin + "/devops-program"} />
       </Helmet>
       <AuthCheck />
       <div className="container mx-auto px-4 py-8">

@@ -27,19 +27,23 @@ const DevOps = () => {
   return (
     <>
       <Helmet>
-        <title>Курс DevOps-инженер PRO | Обучение с ИИ-учителем</title>
+        <title>DevOps-инженер PRO | Обучение DevOps с ИИ-учителем</title>
         <meta
           name="description"
-          content="Бесплатный курс DevOps-инженера с персональным ИИ-учителем. Изучайте DevOps практики, CI/CD, контейнеризацию и облачные технологии. Начните обучение прямо сейчас!"
+          content="Станьте DevOps-инженером с персональным ИИ-учителем. Изучите CI/CD, Docker, Kubernetes и облачные технологии. Практические задания и поддержка 24/7."
         />
         <meta
           name="keywords"
-          content="курс DevOps-инженер бесплатно, DevOps обучение, DevOps практики, CI/CD, Docker, Kubernetes, облачные технологии"
+          content="devops обучение, devops инженер, devops курсы, ci cd обучение, docker kubernetes, облачные технологии"
         />
+        <link rel="canonical" href={window.location.origin + "/devops"} />
+        <meta property="og:title" content="DevOps-инженер PRO | Обучение DevOps с ИИ-учителем" />
+        <meta property="og:description" content="Станьте DevOps-инженером с персональным ИИ-учителем. Начните обучение сейчас!" />
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content={window.location.origin + "/devops"} />
       </Helmet>
 
       <main className="min-h-screen bg-[#1A1F2C]">
-        {/* Hero Section */}
         <section className="bg-gradient-to-r from-[#243949] to-[#517fa4] text-white py-20">
           <div className="container mx-auto px-4">
             <div className="grid md:grid-cols-2 gap-12 items-center">

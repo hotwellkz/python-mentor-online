@@ -7,15 +7,16 @@ const DataScienceProgram = () => {
   return (
     <>
       <Helmet>
-        <title>Программа курса | Data Science с ИИ-учителем</title>
+        <title>Программа курса Data Science | Полное руководство по анализу данных</title>
         <meta
           name="description"
-          content="Подробная программа курса Data Science с персональным ИИ-учителем. 12 месяцев обучения, практические задания и поддержка 24/7."
+          content="Изучите Data Science от основ до продвинутого уровня. Анализ данных, машинное обучение, визуализация - всё в одном курсе с ИИ-учителем."
         />
         <meta
           name="keywords"
-          content="data science курс, программа обучения data science, data science для начинающих, изучение data science, уроки data science"
+          content="программа data science, анализ данных курс, машинное обучение обучение, визуализация данных, python для data science"
         />
+        <link rel="canonical" href={window.location.origin + "/data-science-program"} />
       </Helmet>
       <div className="container mx-auto px-4 py-8">
         <motion.div

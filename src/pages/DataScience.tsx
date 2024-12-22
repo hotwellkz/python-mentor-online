@@ -20,33 +20,25 @@ const DataScience = () => {
   return (
     <>
       <Helmet>
-        <title>Изучайте Data Science Бесплатно | Курс Data Science с ИИ-учителем</title>
+        <title>Data Science с ИИ-учителем | Курс анализа данных</title>
         <meta
           name="description"
-          content="Бесплатный курс Data Science с персональным ИИ-учителем. Начните изучать Data Science прямо сейчас! Интерактивные уроки, практические задания и поддержка 24/7."
+          content="Освойте Data Science с персональным ИИ-учителем. Изучите анализ данных, машинное обучение и визуализацию. Практические проекты и поддержка 24/7."
         />
         <meta
           name="keywords"
-          content="изучайте data science бесплатно, data science курс бесплатно, обучение data science, data science для начинающих, data science уроки"
+          content="data science курс, анализ данных обучение, машинное обучение, python для data science, визуализация данных"
         />
-        <meta property="og:title" content="Изучайте Data Science Бесплатно | Курс Data Science с ИИ-учителем" />
+        <link rel="canonical" href={window.location.origin + "/data-science"} />
+        <meta property="og:title" content="Data Science с ИИ-учителем | Курс анализа данных" />
+        <meta property="og:description" content="Освойте Data Science с персональным ИИ-учителем. Начните обучение сейчас!" />
         <meta property="og:type" content="website" />
-        <meta property="og:description" content="Бесплатный курс Data Science с персональным ИИ-учителем. Начните изучать Data Science прямо сейчас!" />
-        <link rel="canonical" href="https://your-domain.com/data-science" />
+        <meta property="og:url" content={window.location.origin + "/data-science"} />
       </Helmet>
 
       <main className="min-h-screen">
-        {/* Hero Section */}
         <section className="relative py-20 md:py-32 overflow-hidden">
-          {/* Background gradient */}
           <div className="absolute inset-0 bg-gradient-to-br from-[#1A1F2C] to-[#221F26]" />
-          
-          {/* Animated background patterns */}
-          <div className="absolute inset-0">
-            <div className="absolute inset-0 bg-[linear-gradient(45deg,#ffffff20_1px,transparent_1px)] bg-[length:40px_40px]" />
-            <div className="absolute inset-0 bg-[linear-gradient(-45deg,#ffffff15_1px,transparent_1px)] bg-[length:40px_40px]" />
-          </div>
-          
           <div className="container relative mx-auto px-4">
             <div className="max-w-4xl mx-auto text-center">
               <motion.div
@@ -105,32 +97,31 @@ const DataScience = () => {
             </div>
           </div>
         </section>
-
         {/* Course Info Section */}
-        <section className="py-20 bg-gray-900">
+        <section className="py-20">
           <div className="container mx-auto px-4">
             <div className="max-w-4xl mx-auto">
-              <h2 className="text-3xl md:text-4xl font-bold text-center mb-12 text-white">
+              <h2 className="text-3xl md:text-4xl font-bold text-center mb-12">
                 О курсе Data Science
               </h2>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
                 <div className="flex items-start space-x-4">
-                  <Users className="h-6 w-6 text-yellow-400 mt-1" />
+                  <Users className="h-6 w-6 text-blue-600 mt-1" />
                   <div>
-                    <h3 className="text-xl font-semibold mb-2 text-white">Для кого</h3>
-                    <p className="text-gray-300">Начинающие специалисты без опыта в анализе данных</p>
+                    <h3 className="text-xl font-semibold mb-2">Для кого</h3>
+                    <p className="text-gray-600">Начинающие специалисты без опыта в анализе данных</p>
                   </div>
                 </div>
                 <div className="flex items-start space-x-4">
-                  <Clock className="h-6 w-6 text-yellow-400 mt-1" />
+                  <Clock className="h-6 w-6 text-blue-600 mt-1" />
                   <div>
-                    <h3 className="text-xl font-semibold mb-2 text-white">Длительность</h3>
-                    <p className="text-gray-300">12 месяцев при занятиях 2-3 часа в день</p>
+                    <h3 className="text-xl font-semibold mb-2">Длительность</h3>
+                    <p className="text-gray-600">12 месяцев при занятиях 2-3 часа в день</p>
                   </div>
                 </div>
               </div>
-              <div className="bg-gray-800 rounded-xl p-8">
-                <h3 className="text-2xl font-semibold mb-4 text-white">Чему вы научитесь:</h3>
+              <div className="bg-blue-50 rounded-xl p-8">
+                <h3 className="text-2xl font-semibold mb-4">Чему вы научитесь:</h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   {[
                     "Анализу данных с Python",
