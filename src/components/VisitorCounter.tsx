@@ -4,6 +4,11 @@ import { Users } from "lucide-react";
 import { Database } from "@/integrations/supabase/types";
 
 type Visitor = Database['public']['Tables']['visitors']['Row'];
+type VisitorResponse = {
+  visitor_count: number;
+  daily_count: number;
+  date: string;
+};
 
 export const VisitorCounter = () => {
   const [visitorCount, setVisitorCount] = useState(0);
@@ -51,7 +56,7 @@ export const VisitorCounter = () => {
 
     // Update visitor count when component mounts
     const updateVisitorCount = async () => {
-      const { data, error } = await supabase.rpc('increment_visitor_count');
+      const { data, error } = await supabase.rpc<VisitorResponse>('increment_visitor_count');
 
       if (error) {
         console.error('Error updating visitor count:', error);
