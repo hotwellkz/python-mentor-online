@@ -82,7 +82,10 @@ export const getTestQuestions = (lessonId: string): Question[] => {
     const [_, moduleStr, lessonStr] = lessonId.split('-');
     const moduleIndex = parseInt(moduleStr);
     const lessonIndex = parseInt(lessonStr);
-    return getDataScienceQuestions(moduleIndex, lessonIndex);
+    console.log('Data Science Questions:', { moduleIndex, lessonIndex });
+    const questions = getDataScienceQuestions(moduleIndex, lessonIndex);
+    console.log('Retrieved questions:', questions);
+    return questions;
   }
   
   if (lessonId.startsWith('ba-')) {
