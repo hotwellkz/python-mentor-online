@@ -47,7 +47,7 @@ export const Hero = () => {
           <Button 
             size="lg" 
             className="bg-white text-blue-800 hover:bg-gray-100 transition-all duration-300 transform hover:scale-105"
-            onClick={handleStartLearning}
+            onClick={scrollToCategories}
           >
             Начать обучение
             <ArrowRight className="ml-2" />
