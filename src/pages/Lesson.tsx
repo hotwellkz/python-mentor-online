@@ -5,6 +5,7 @@ import { LessonContent } from "@/components/lesson/LessonContent";
 import { LessonTest } from "@/components/lesson/LessonTest";
 import { Chat } from "@/components/chat/Chat";
 import { AuthCheck } from "@/components/AuthCheck";
+import { PromptEditor } from "@/components/lesson/PromptEditor";
 import { useLesson } from "@/hooks/useLesson";
 import { useSpeech } from "@/hooks/useSpeech";
 import { useToast } from "@/hooks/use-toast";
@@ -146,7 +147,8 @@ const Lesson = () => {
         <link rel="canonical" href={window.location.href} />
       </Helmet>
       <div className="container mx-auto px-4 py-8">
-        <div className="max-w-4xl mx-auto">
+        <div className="max-w-4xl mx-auto relative">
+          <PromptEditor lessonId={lessonId || ""} />
           <h1 className="text-3xl font-bold mb-6">{currentLesson.title}</h1>
           <LessonHeader
             loading={loading}
