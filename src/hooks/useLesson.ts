@@ -130,6 +130,11 @@ export const useLesson = (lessonId: string | undefined) => {
       } else {
         navigate("/program");
       }
+
+      toast({
+        title: "Урок завершен",
+        description: "Поздравляем! Вы успешно завершили урок.",
+      });
     } catch (error: any) {
       toast({
         variant: "destructive",

@@ -73,7 +73,9 @@ export const CourseProgram = ({ courseType = 'python' }: CourseProgramProps) => 
                       <div className="flex items-center gap-2">
                         <Link
                           to={`/lesson/${lessonId}`}
-                          className="font-medium text-primary hover:text-primary/80 transition-colors mb-2 flex-grow"
+                          className={`font-medium hover:text-primary/80 transition-colors mb-2 flex-grow ${
+                            isCompleted ? 'text-green-500' : 'text-primary'
+                          }`}
                         >
                           {lesson.title}
                         </Link>
