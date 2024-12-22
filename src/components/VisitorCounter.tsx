@@ -47,7 +47,7 @@ export const VisitorCounter = () => {
           table: 'visitors'
         },
         (payload) => {
-          if (payload.new) {
+          if (payload.new && typeof payload.new === 'object' && 'visitor_count' in payload.new) {
             setVisitorCount(payload.new.visitor_count || 0);
             setDailyCount(payload.new.daily_count || 0);
           }
@@ -65,7 +65,7 @@ export const VisitorCounter = () => {
       }
 
       if (data) {
-        const response = data as VisitorResponse;
+        const response = data as unknown as VisitorResponse;
         setVisitorCount(response.visitor_count || 0);
         setDailyCount(response.daily_count || 0);
       }
