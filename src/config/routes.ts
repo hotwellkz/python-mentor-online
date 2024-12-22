@@ -3,6 +3,7 @@ export const routes: { [key: string]: { title: string; parent?: string } } = {
   "/python-course": { title: "Изучайте Python" },
   "/devops": { title: "DevOps-инженер" },
   "/devops-program": { title: "Программа курса DevOps", parent: "/devops" },
+  "/devops-faq": { title: "Часто задаваемые вопросы", parent: "/devops" },
   "/business-analyst": { title: "Бизнес-аналитик" },
   "/business-analyst-program": { title: "Программа курса Бизнес-аналитик", parent: "/business-analyst" },
   "/auth": { title: "Авторизация" },

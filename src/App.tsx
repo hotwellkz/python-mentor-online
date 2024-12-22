@@ -8,6 +8,7 @@ import Index from "./pages/Index";
 import Program from "./pages/Program";
 import DevOps from "./pages/DevOps";
 import DevOpsProgram from "./pages/DevOpsProgram";
+import DevOpsFaq from "./pages/DevOpsFaq";
 import { Auth } from "./pages/Auth";
 import Lesson from "./pages/Lesson";
 import Pricing from "./pages/Pricing";
@@ -36,6 +37,7 @@ const App = () => (
             <Route path="/python-course" element={<PythonCourse />} />
             <Route path="/devops" element={<DevOps />} />
             <Route path="/devops-program" element={<DevOpsProgram />} />
+            <Route path="/devops-faq" element={<DevOpsFaq />} />
             <Route path="/business-analyst" element={<BusinessAnalyst />} />
             <Route path="/business-analyst-program" element={<BusinessAnalystProgram />} />
             <Route path="/auth" element={<Auth />} />
