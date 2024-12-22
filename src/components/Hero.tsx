@@ -1,9 +1,16 @@
 import { GraduationCap, Code, ArrowRight } from "lucide-react";
 import { Button } from "./ui/button";
-import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 
 export const Hero = () => {
+  const scrollToCategories = (e: React.MouseEvent) => {
+    e.preventDefault();
+    const categoriesSection = document.querySelector('#categories-section');
+    if (categoriesSection) {
+      categoriesSection.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
+
   return (
     <div className="min-h-screen flex items-center justify-center px-4 py-20">
       <div className="max-w-4xl mx-auto text-center space-y-8">
@@ -30,25 +37,23 @@ export const Hero = () => {
           transition={{ delay: 0.3, duration: 0.6 }}
           className="flex flex-wrap gap-4 justify-center"
         >
-          <Link to="/program">
-            <Button 
-              size="lg" 
-              className="bg-white text-blue-800 hover:bg-gray-100 transition-all duration-300 transform hover:scale-105"
-            >
-              Начать бесплатно
-              <ArrowRight className="ml-2" />
-            </Button>
-          </Link>
-          <Link to="/program">
-            <Button 
-              size="lg" 
-              variant="outline" 
-              className="bg-[#9b87f5] text-white hover:bg-[#8B5CF6] border-none"
-            >
-              Узнать больше
-              <Code className="ml-2" />
-            </Button>
-          </Link>
+          <Button 
+            size="lg" 
+            className="bg-white text-blue-800 hover:bg-gray-100 transition-all duration-300 transform hover:scale-105"
+            onClick={scrollToCategories}
+          >
+            Начать бесплатно
+            <ArrowRight className="ml-2" />
+          </Button>
+          <Button 
+            size="lg" 
+            variant="outline" 
+            className="bg-[#9b87f5] text-white hover:bg-[#8B5CF6] border-none"
+            onClick={scrollToCategories}
+          >
+            Узнать больше
+            <Code className="ml-2" />
+          </Button>
         </motion.div>
 
         <motion.div
