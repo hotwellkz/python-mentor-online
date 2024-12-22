@@ -38,14 +38,14 @@ export const VisitorCounter = () => {
     // Subscribe to realtime updates
     const channel = supabase
       .channel('schema-db-changes')
-      .on(
+      .on<Visitor>(
         'postgres_changes',
         {
           event: '*',
           schema: 'public',
           table: 'visitors'
         },
-        (payload: { new: Visitor }) => {
+        (payload) => {
           if (payload.new) {
             setVisitorCount(payload.new.visitor_count || 0);
             setDailyCount(payload.new.daily_count || 0);
