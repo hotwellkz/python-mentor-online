@@ -2,108 +2,160 @@ import { Question } from '@/types/question';
 
 export const getBlock10Questions = (lessonIndex: number): Question[] => {
   const questions: { [key: number]: Question[] } = {
-    1: [ // Автоматизация задач
+    1: [ // Асинхронное программирование
       {
-        question: "Какой модуль используется для работы с файлами?",
+        question: "Что такое асинхронное программирование?",
         options: [
-          "os",
-          "file",
-          "system",
-          "path"
+          "Параллельное выполнение задач",
+          "Одновременное выполнение задач в разных потоках",
+          "Выполнение задач, не блокируя основного потока",
+          "Управление процессами операционной системы"
+        ],
+        correctAnswer: 2
+      },
+      {
+        question: "Какие ключевые слова используются для асинхронного программирования в Python?",
+        options: [
+          "async, await",
+          "async, yield",
+          "def, await",
+          "await, return"
         ],
         correctAnswer: 0
       },
       {
-        question: "Как создать новую директорию?",
+        question: "Как создать асинхронную функцию?",
         options: [
-          "os.mkdir()",
-          "os.create_dir()",
-          "os.new_folder()",
-          "os.make_directory()"
+          "async my_function()",
+          "def my_function(async):",
+          "async def my_function():",
+          "def async my_function():"
+        ],
+        correctAnswer: 2
+      },
+      {
+        question: "Как выполнить асинхронную функцию?",
+        options: [
+          "asyncio.run(my_function())",
+          "await my_function()",
+          "async_run(my_function())",
+          "a и b"
+        ],
+        correctAnswer: 3
+      },
+      {
+        question: "Как называется объект, который возвращается асинхронной функцией?",
+        options: [
+          "Future",
+          "Coroutine",
+          "AsyncTask",
+          "EventLoop"
+        ],
+        correctAnswer: 1
+      }
+    ],
+    2: [ // Многопоточность и многопроцессорность
+      {
+        question: "Какой модуль используется для работы с потоками в Python?",
+        options: [
+          "threading",
+          "multiprocessing",
+          "async",
+          "parallel"
         ],
         correctAnswer: 0
       },
       {
-        question: "Как получить список файлов в директории?",
+        question: "Какой модуль используется для работы с процессами?",
         options: [
-          "os.listdir()",
-          "os.files()",
-          "os.get_files()",
-          "os.directory_content()"
+          "threading",
+          "multiprocessing",
+          "asyncio",
+          "subprocess"
         ],
-        correctAnswer: 0
+        correctAnswer: 1
       },
       {
-        question: "Как запланировать выполнение задачи?",
+        question: "Как создать поток с использованием модуля threading?",
         options: [
-          "schedule.every().day.at('10:30')",
-          "cron.daily('10:30')",
-          "task.schedule('10:30')",
-          "timer.daily('10:30')"
+          "Thread.run()",
+          "thread.start()",
+          "Thread.create()",
+          "thread.run()"
         ],
-        correctAnswer: 0
+        correctAnswer: 1
       },
       {
-        question: "Как получить аргументы командной строки?",
+        question: "Чем отличается поток от процесса?",
         options: [
-          "sys.argv",
-          "os.args",
-          "command.arguments",
-          "cli.params"
+          "Поток работает в рамках одного процесса",
+          "Процесс может содержать несколько потоков",
+          "Процессы изолированы друг от друга",
+          "Все перечисленные ответы верны"
+        ],
+        correctAnswer: 3
+      },
+      {
+        question: "Как завершить процесс в модуле multiprocessing?",
+        options: [
+          "process.terminate()",
+          "process.kill()",
+          "process.stop()",
+          "process.shutdown()"
         ],
         correctAnswer: 0
       }
     ],
-    2: [ // Работа с Excel и PDF
+    3: [ // Работа с API
       {
-        question: "Какая библиотека используется для работы с Excel?",
+        question: "Что означает API?",
         options: [
-          "openpyxl",
-          "excel",
-          "xlswriter",
-          "pyexcel"
+          "Application Programming Interface",
+          "Application Program Integration",
+          "Advanced Programming Interface",
+          "Advanced Protocol Integration"
         ],
         correctAnswer: 0
       },
       {
-        question: "Как создать новый Excel файл?",
+        question: "Какой метод HTTP используется для получения данных?",
         options: [
-          "Workbook()",
-          "Excel()",
-          "Spreadsheet()",
-          "XLSFile()"
+          "POST",
+          "GET",
+          "PUT",
+          "DELETE"
         ],
-        correctAnswer: 0
+        correctAnswer: 1
       },
       {
-        question: "Какая библиотека используется для создания PDF?",
+        question: "Какой формат данных чаще всего используется при работе с API?",
         options: [
-          "reportlab",
-          "pdfmaker",
-          "pypdf",
-          "pdflib"
+          "XML",
+          "JSON",
+          "CSV",
+          "YAML"
         ],
-        correctAnswer: 0
+        correctAnswer: 1
       },
       {
-        question: "Как извлечь текст из PDF?",
+        question: "Как отправить POST-запрос с помощью библиотеки requests?",
         options: [
-          "PyPDF2.PdfReader()",
-          "pdf.extract_text()",
-          "pdflib.get_text()",
-          "pdf.read_content()"
+          "requests.send()",
+          "requests.post()",
+          "requests.upload()",
+          "requests.send_post()"
         ],
-        correctAnswer: 0
+        correctAnswer: 1
       },
       {
-        question: "Как добавить форматирование в Excel ячейку?",
+        question: "Что такое токен доступа (access token) в API?",
         options: [
-          "cell.style = ...",
-          "cell.format(...)",
-          "cell.set_style(...)",
-          "cell.appearance(...)"
+          "Инструмент для тестирования API",
+          "Ключ для аутентификации клиента",
+          "Программное обеспечение для работы с API",
+          "Пароль для доступа к серверу"
         ],
-        correctAnswer: 0
+        correctAnswer: 1
       }
     ]
   };

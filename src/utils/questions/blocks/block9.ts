@@ -2,54 +2,106 @@ import { Question } from '@/types/question';
 
 export const getBlock9Questions = (lessonIndex: number): Question[] => {
   const questions: { [key: number]: Question[] } = {
-    1: [
+    1: [ // Unit-тесты
       {
-        question: "Как импортировать модуль для написания unit-тестов?",
+        question: "Какой модуль используется для работы с файлами?",
         options: [
-          "import unittest",
-          "import pytest",
-          "import testing",
-          "import test"
+          "os",
+          "file",
+          "system",
+          "path"
         ],
         correctAnswer: 0
       },
       {
-        question: "Как определить класс тестов в unittest?",
+        question: "Как создать новую директорию?",
         options: [
-          "Класс должен наследоваться от unittest.TestCase",
-          "Класс должен наследоваться от test.UnitTest",
-          "Класс должен начинаться с Test",
-          "Не нужно наследование"
+          "os.mkdir()",
+          "os.create_dir()",
+          "os.new_folder()",
+          "os.make_directory()"
         ],
         correctAnswer: 0
       },
       {
-        question: "Как называется метод для проверки равенства значений в unittest?",
+        question: "Как получить список файлов в директории?",
         options: [
-          "check_equal()",
-          "assertEqual()",
-          "testEqual()",
-          "compare()"
-        ],
-        correctAnswer: 1
-      },
-      {
-        question: "Как запустить тесты из файла?",
-        options: [
-          "python -m unittest test_file.py",
-          "python test_file.py",
-          "unittest run test_file",
-          "pytest test_file.py"
+          "os.listdir()",
+          "os.files()",
+          "os.get_files()",
+          "os.directory_content()"
         ],
         correctAnswer: 0
       },
       {
-        question: "Какой метод выполняется перед каждым тестовым методом?",
+        question: "Как запланировать выполнение задачи?",
         options: [
-          "setUp()",
-          "prepare()",
-          "beforeTest()",
-          "initTest()"
+          "schedule.every().day.at('10:30')",
+          "cron.daily('10:30')",
+          "task.schedule('10:30')",
+          "timer.daily('10:30')"
+        ],
+        correctAnswer: 0
+      },
+      {
+        question: "Как получить аргументы командной строки?",
+        options: [
+          "sys.argv",
+          "os.args",
+          "command.arguments",
+          "cli.params"
+        ],
+        correctAnswer: 0
+      }
+    ],
+    2: [ // Покрытие тестов
+      {
+        question: "Что такое pytest?",
+        options: [
+          "Фреймворк для тестирования кода в Python",
+          "Библиотека для работы с HTTP-запросами",
+          "Система управления шаблонами",
+          "Анализатор данных"
+        ],
+        correctAnswer: 0
+      },
+      {
+        question: "Как запустить тесты с использованием pytest?",
+        options: [
+          "pytest test_file.py",
+          "python -m pytest test_file.py",
+          "pytest run test_file.py",
+          "a и b"
+        ],
+        correctAnswer: 3
+      },
+      {
+        question: "Как проверить, прошли ли все тесты в pytest?",
+        options: [
+          "Смотреть в логе: PASSED/FAILED",
+          "Проверить вручную",
+          "Использовать команду pytest --results",
+          "pytest автоматически создаёт отчёт в HTML"
+        ],
+        correctAnswer: 0
+      },
+      {
+        question: "Что такое покрытие тестов?",
+        options: [
+          "Процент кода, который выполняется во время тестирования",
+          "Количество написанных тестов",
+          "Скорость выполнения тестов",
+          "Количество проверяемых функций"
+        ],
+        correctAnswer: 0
+      },
+      {
+        question: "Как использовать библиотеку pytest-cov для покрытия тестов?",
+        options: [
+          "pytest --cov",
+          "pytest --coverage",
+          "pytest --cov-report",
+          "pytest --coverage-report"
         ],
         correctAnswer: 0
       }
