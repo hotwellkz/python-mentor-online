@@ -9,6 +9,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { useState } from "react";
 
 interface MobileMenuProps {
   userEmail: string | null;
@@ -16,8 +17,14 @@ interface MobileMenuProps {
 }
 
 export const MobileMenu = ({ userEmail, onLogout }: MobileMenuProps) => {
+  const [isOpen, setIsOpen] = useState(false);
+
+  const handleLinkClick = () => {
+    setIsOpen(false);
+  };
+
   return (
-    <Sheet>
+    <Sheet open={isOpen} onOpenChange={setIsOpen}>
       <SheetTrigger asChild className="md:hidden">
         <Button variant="ghost" size="icon">
           <Menu className="h-6 w-6" />
@@ -41,17 +48,29 @@ export const MobileMenu = ({ userEmail, onLogout }: MobileMenuProps) => {
             </DropdownMenuTrigger>
             <DropdownMenuContent className="animate-scale-in bg-white rounded-lg shadow-lg border border-gray-200 p-1 min-w-[150px]">
               <DropdownMenuItem className="rounded hover:bg-gray-100 transition-colors">
-                <Link to="/" className="w-full px-3 py-2 text-gray-700 hover:text-primary">
+                <Link 
+                  to="/program" 
+                  className="w-full px-3 py-2 text-gray-700 hover:text-primary"
+                  onClick={handleLinkClick}
+                >
                   Python
                 </Link>
               </DropdownMenuItem>
               <DropdownMenuItem className="rounded hover:bg-gray-100 transition-colors">
-                <Link to="/devops" className="w-full px-3 py-2 text-gray-700 hover:text-primary">
+                <Link 
+                  to="/devops" 
+                  className="w-full px-3 py-2 text-gray-700 hover:text-primary"
+                  onClick={handleLinkClick}
+                >
                   DevOps
                 </Link>
               </DropdownMenuItem>
               <DropdownMenuItem className="rounded hover:bg-gray-100 transition-colors">
-                <Link to="/business-analyst" className="w-full px-3 py-2 text-gray-700 hover:text-primary">
+                <Link 
+                  to="/business-analyst" 
+                  className="w-full px-3 py-2 text-gray-700 hover:text-primary"
+                  onClick={handleLinkClick}
+                >
                   Бизнес-аналитик
                 </Link>
               </DropdownMenuItem>
@@ -60,6 +79,7 @@ export const MobileMenu = ({ userEmail, onLogout }: MobileMenuProps) => {
           <Link 
             to="/pricing"
             className="text-foreground hover:text-primary transition-colors"
+            onClick={handleLinkClick}
           >
             Тарифы
           </Link>
@@ -67,6 +87,7 @@ export const MobileMenu = ({ userEmail, onLogout }: MobileMenuProps) => {
             <Link
               to="/settings"
               className="text-foreground hover:text-primary transition-colors flex items-center gap-2"
+              onClick={handleLinkClick}
             >
               <Settings2 className="h-5 w-5" />
               Настройки
@@ -75,6 +96,7 @@ export const MobileMenu = ({ userEmail, onLogout }: MobileMenuProps) => {
           <Link
             to="/admin"
             className="text-foreground hover:text-primary transition-colors flex items-center gap-2"
+            onClick={handleLinkClick}
           >
             <Shield className="h-5 w-5" />
             Администратор
@@ -83,6 +105,7 @@ export const MobileMenu = ({ userEmail, onLogout }: MobileMenuProps) => {
             <Link
               to="/profile"
               className="text-foreground hover:text-primary transition-colors flex items-center gap-2"
+              onClick={handleLinkClick}
             >
               <User className="h-5 w-5" />
               Профиль
@@ -93,12 +116,15 @@ export const MobileMenu = ({ userEmail, onLogout }: MobileMenuProps) => {
             <Button
               variant="ghost"
               className="w-full"
-              onClick={onLogout}
+              onClick={() => {
+                onLogout();
+                handleLinkClick();
+              }}
             >
               Выйти
             </Button>
           ) : (
-            <Link to="/auth" className="w-full">
+            <Link to="/auth" className="w-full" onClick={handleLinkClick}>
               <Button className="w-full">Войти</Button>
             </Link>
           )}
