@@ -80,7 +80,9 @@ export const getDevOpsQuestions = (moduleIndex: number, topicIndex: number): Que
 export const getTestQuestions = (lessonId: string): Question[] => {
   if (lessonId.startsWith('ds-')) {
     const [_, moduleStr, lessonStr] = lessonId.split('-');
-    return getDataScienceQuestions(parseInt(moduleStr), parseInt(lessonStr));
+    const moduleIndex = parseInt(moduleStr);
+    const lessonIndex = parseInt(lessonStr);
+    return getDataScienceQuestions(moduleIndex, lessonIndex);
   }
   
   if (lessonId.startsWith('ba-')) {
