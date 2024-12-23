@@ -5,22 +5,17 @@ import { useToast } from "@/hooks/use-toast";
 
 export const TokenDisplay = () => {
   const [tokens, setTokens] = useState<number | null>(null);
-  const [retryCount, setRetryCount] = useState(0);
   const { toast } = useToast();
 
   useEffect(() => {
     const fetchTokens = async () => {
       try {
-        console.log('Fetching user data...');
         const { data: { user } } = await supabase.auth.getUser();
-        
         if (!user) {
-          console.log('No user found, clearing tokens');
           setTokens(null);
           return;
         }
 
-        console.log('Fetching profile data...');
         const { data, error } = await supabase
           .from('profiles')
           .select('tokens')
@@ -28,46 +23,35 @@ export const TokenDisplay = () => {
           .maybeSingle();
         
         if (error) {
-          console.error('Error fetching tokens:', error);
-          
-          // Network errors with retry mechanism
-          if (error.message.includes('Failed to fetch') && retryCount < 3) {
-            console.log(`Retrying... Attempt ${retryCount + 1}`);
-            setRetryCount(prev => prev + 1);
-            setTimeout(fetchTokens, 1000 * Math.pow(2, retryCount)); // Exponential backoff
+          if (error.message.includes('Failed to fetch')) {
+            // Handle network error silently
+            console.error('Network error while fetching tokens:', error);
             return;
           }
           
-          // Only show toast for non-network errors
-          if (!error.message.includes('Failed to fetch')) {
-            toast({
-              variant: "destructive",
-              title: "Ошибка",
-              description: "Не удалось загрузить токены",
-            });
-          }
+          console.error('Error fetching tokens:', error);
+          toast({
+            variant: "destructive",
+            title: "Ошибка",
+            description: "Не удалось загрузить токены",
+          });
           return;
         }
 
         if (data) {
-          console.log('Profile data received:', data);
           setTokens(data.tokens);
-          setRetryCount(0); // Reset retry count on success
         } else {
-          console.log('No profile found, creating new profile');
+          // Handle case when profile doesn't exist
           try {
             const { error: insertError } = await supabase
               .from('profiles')
-              .insert([{ 
-                id: user.id, 
-                tokens: 100,
-                updated_at: new Date().toISOString()
-              }]);
+              .insert([{ id: user.id, tokens: 100 }]);
             
-            if (insertError) throw insertError;
+            if (insertError) {
+              throw insertError;
+            }
             
             setTokens(100);
-            setRetryCount(0); // Reset retry count on success
           } catch (insertError) {
             console.error('Error creating profile:', insertError);
             toast({
@@ -79,6 +63,7 @@ export const TokenDisplay = () => {
         }
       } catch (error: any) {
         console.error('Unexpected error:', error);
+        // Don't show toast for network errors
         if (!error.message?.includes('Failed to fetch')) {
           toast({
             variant: "destructive",
@@ -93,7 +78,6 @@ export const TokenDisplay = () => {
 
     const { data: authListener } = supabase.auth.onAuthStateChange(async (event, session) => {
       if (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') {
-        setRetryCount(0); // Reset retry count on new session
         fetchTokens();
       } else if (event === 'SIGNED_OUT') {
         setTokens(null);
@@ -103,7 +87,7 @@ export const TokenDisplay = () => {
     return () => {
       authListener?.subscription.unsubscribe();
     };
-  }, [retryCount]);
+  }, []);
 
   if (tokens === null) return null;
 

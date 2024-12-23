@@ -5,7 +5,6 @@ import { getPromptForLesson } from "./prompts/index.ts";
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
-  'Access-Control-Allow-Methods': 'POST, OPTIONS',
 };
 
 serve(async (req) => {
@@ -18,7 +17,7 @@ serve(async (req) => {
   // Handle CORS preflight requests
   if (req.method === 'OPTIONS') {
     console.log('Handling OPTIONS request');
-    return new Response('ok', { 
+    return new Response(null, { 
       headers: corsHeaders 
     });
   }
@@ -59,7 +58,6 @@ serve(async (req) => {
           }
         ],
         temperature: 0.7,
-        max_tokens: 4000,
       }),
     });
 
@@ -80,9 +78,7 @@ serve(async (req) => {
       { 
         headers: { 
           ...corsHeaders,
-          'Content-Type': 'application/json',
-          'Cache-Control': 'no-store, no-cache, must-revalidate',
-          'Pragma': 'no-cache'
+          'Content-Type': 'application/json'
         } 
       }
     );
@@ -92,16 +88,13 @@ serve(async (req) => {
     return new Response(
       JSON.stringify({ 
         error: error.message,
-        details: error.stack,
-        timestamp: new Date().toISOString()
+        details: error.stack
       }),
       { 
         status: 500,
         headers: { 
           ...corsHeaders,
-          'Content-Type': 'application/json',
-          'Cache-Control': 'no-store, no-cache, must-revalidate',
-          'Pragma': 'no-cache'
+          'Content-Type': 'application/json'
         }
       }
     );
