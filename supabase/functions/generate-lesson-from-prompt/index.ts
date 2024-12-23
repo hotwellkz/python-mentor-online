@@ -11,14 +11,27 @@ const corsHeaders = {
 };
 
 serve(async (req) => {
-  // Handle CORS preflight requests
-  if (req.method === 'OPTIONS') {
-    return new Response('ok', { headers: corsHeaders });
-  }
-
   try {
+    // Handle CORS preflight requests
+    if (req.method === 'OPTIONS') {
+      return new Response('ok', { headers: corsHeaders });
+    }
+
+    if (req.method !== 'POST') {
+      throw new Error(`HTTP method ${req.method} is not allowed`);
+    }
+
+    console.log('Request received:', {
+      method: req.method,
+      headers: Object.fromEntries(req.headers.entries()),
+    });
+
     const { lessonId } = await req.json();
     console.log('Getting prompt for lesson:', lessonId);
+
+    if (!lessonId) {
+      throw new Error('lessonId is required');
+    }
 
     // Initialize Supabase client with error handling
     const supabaseUrl = Deno.env.get('SUPABASE_URL');
