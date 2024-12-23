@@ -1,6 +1,7 @@
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { AuthForm } from "./AuthForm";
 import { useState } from "react";
+import { ArrowLeft } from "lucide-react";
 
 interface AuthModalProps {
   isOpen: boolean;
@@ -9,17 +10,37 @@ interface AuthModalProps {
 
 export const AuthModal = ({ isOpen, onClose }: AuthModalProps) => {
   const [showGiftModal, setShowGiftModal] = useState(false);
-  const [isLogin, setIsLogin] = useState(true);
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-[425px] p-0 bg-gradient-to-br from-gray-900 to-gray-800 text-white border-none">
+      <DialogContent 
+        className="sm:max-w-[425px]" 
+        onInteractOutside={(e) => {
+          e.preventDefault();
+          e.stopPropagation();
+        }}
+        onEscapeKeyDown={(e) => {
+          e.preventDefault();
+          onClose();
+        }}
+      >
+        <button
+          onClick={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            onClose();
+          }}
+          className="absolute left-4 top-4 p-2 hover:bg-gray-100 rounded-full transition-colors"
+          aria-label="Назад"
+          type="button"
+        >
+          <ArrowLeft className="h-4 w-4" />
+        </button>
         <AuthForm 
-          isLogin={isLogin}
-          setIsLogin={setIsLogin}
+          isLogin={true}
+          setIsLogin={() => {}}
           setShowGiftModal={setShowGiftModal}
           onSuccess={onClose}
-          onBack={onClose}
         />
       </DialogContent>
     </Dialog>
