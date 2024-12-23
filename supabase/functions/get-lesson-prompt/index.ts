@@ -37,7 +37,7 @@ serve(async (req) => {
       .from('lesson_prompts')
       .select('prompt')
       .eq('lesson_id', lessonId)
-      .single();
+      .maybeSingle();
 
     if (dbError) {
       console.error('Database error:', dbError);
