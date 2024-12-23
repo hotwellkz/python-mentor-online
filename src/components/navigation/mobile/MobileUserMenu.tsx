@@ -6,10 +6,11 @@ import { TokenDisplay } from "@/components/TokenDisplay";
 interface MobileUserMenuProps {
   userEmail: string | null;
   onLogout: () => Promise<void>;
+  onLoginClick: () => void;
   onLinkClick: () => void;
 }
 
-export const MobileUserMenu = ({ userEmail, onLogout, onLinkClick }: MobileUserMenuProps) => {
+export const MobileUserMenu = ({ userEmail, onLogout, onLoginClick, onLinkClick }: MobileUserMenuProps) => {
   return (
     <div className="flex flex-col gap-4">
       {userEmail && (
@@ -53,9 +54,15 @@ export const MobileUserMenu = ({ userEmail, onLogout, onLinkClick }: MobileUserM
           Выйти
         </Button>
       ) : (
-        <Link to="/auth" className="w-full" onClick={onLinkClick}>
-          <Button className="w-full">Войти</Button>
-        </Link>
+        <Button 
+          className="w-full" 
+          onClick={() => {
+            onLoginClick();
+            onLinkClick();
+          }}
+        >
+          Войти
+        </Button>
       )}
     </div>
   );

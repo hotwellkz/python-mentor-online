@@ -1,18 +1,18 @@
 import { useState } from "react";
-import { useNavigate, useLocation } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { validateEmail } from "@/utils/validation";
 
-export const useAuthForm = (setShowGiftModal: (show: boolean) => void) => {
+export const useAuthForm = (
+  setShowGiftModal: (show: boolean) => void,
+  onSuccess?: () => void
+) => {
   const [isLogin, setIsLogin] = useState(true);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const { toast } = useToast();
-  const navigate = useNavigate();
-  const location = useLocation();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -48,8 +48,7 @@ export const useAuthForm = (setShowGiftModal: (show: boolean) => void) => {
           throw new Error("Не удалось получить данные пользователя");
         }
 
-        const from = location.state?.from?.pathname || "/";
-        navigate(from, { replace: true });
+        onSuccess?.();
       } else {
         const { data, error } = await supabase.auth.signUp({
           email: trimmedEmail,
@@ -73,8 +72,7 @@ export const useAuthForm = (setShowGiftModal: (show: boolean) => void) => {
             description: "Пожалуйста, проверьте вашу почту и подтвердите email для доступа к урокам",
           });
           setShowGiftModal(true);
-          const from = location.state?.from?.pathname || "/";
-          navigate(from, { replace: true });
+          onSuccess?.();
         } else {
           throw new Error("Не удалось создать пользователя");
         }

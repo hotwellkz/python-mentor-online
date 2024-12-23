@@ -1,4 +1,4 @@
-import { Link, Outlet, useLocation, useNavigate } from "react-router-dom";
+import { Link, Outlet, useLocation } from "react-router-dom";
 import { Footer } from "./Footer";
 import { Breadcrumbs } from "./Breadcrumbs";
 import { useEffect, useState } from "react";
@@ -7,13 +7,13 @@ import { useToast } from "@/hooks/use-toast";
 import { NavLinks } from "./navigation/NavLinks";
 import { UserMenu } from "./navigation/UserMenu";
 import { MobileMenu } from "./navigation/MobileMenu";
-import { VisitorCounter } from "./VisitorCounter";
+import { AuthModal } from "./auth/AuthModal";
 
 export const Layout = () => {
   const { pathname } = useLocation();
-  const navigate = useNavigate();
   const { toast } = useToast();
   const [userEmail, setUserEmail] = useState<string | null>(null);
+  const [showAuthModal, setShowAuthModal] = useState(false);
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -26,9 +26,6 @@ export const Layout = () => {
           if (error.message.includes('session_not_found') || error.status === 403) {
             await supabase.auth.signOut();
             setUserEmail(null);
-            if (pathname.startsWith('/lesson/')) {
-              navigate('/auth', { state: { from: pathname } });
-            }
             return;
           }
           throw error;
@@ -48,7 +45,6 @@ export const Layout = () => {
         setUserEmail(session?.user?.email || null);
       } else if (event === 'SIGNED_OUT') {
         setUserEmail(null);
-        navigate('/');
       } else if (event === 'TOKEN_REFRESHED') {
         setUserEmail(session?.user?.email || null);
       }
@@ -57,12 +53,11 @@ export const Layout = () => {
     return () => {
       authListener?.subscription.unsubscribe();
     };
-  }, [pathname, navigate, toast]);
+  }, [pathname, toast]);
 
   const handleLogout = async () => {
     try {
       await supabase.auth.signOut();
-      navigate("/");
     } catch (error: any) {
       console.error('Logout error:', error);
       toast({
@@ -88,14 +83,19 @@ export const Layout = () => {
             {/* Desktop Navigation */}
             <div className="hidden md:flex items-center gap-4">
               <NavLinks />
-              <UserMenu userEmail={userEmail} onLogout={handleLogout} />
+              <UserMenu 
+                userEmail={userEmail} 
+                onLogout={handleLogout}
+                onLoginClick={() => setShowAuthModal(true)}
+              />
             </div>
 
             {/* Mobile Navigation */}
-            <MobileMenu userEmail={userEmail} onLogout={handleLogout} />
-          </div>
-          <div className="mt-2 flex justify-end">
-            <VisitorCounter />
+            <MobileMenu 
+              userEmail={userEmail} 
+              onLogout={handleLogout}
+              onLoginClick={() => setShowAuthModal(true)}
+            />
           </div>
         </div>
       </header>
@@ -104,6 +104,10 @@ export const Layout = () => {
         <Outlet />
       </main>
       <Footer />
+      <AuthModal 
+        isOpen={showAuthModal}
+        onClose={() => setShowAuthModal(false)}
+      />
     </div>
   );
 };
