@@ -31,25 +31,25 @@ export const AuthForm = ({
   } = useAuthForm(setShowGiftModal, onSuccess);
 
   return (
-    <div className="w-full max-w-md space-y-8">
+    <div className="w-full space-y-6 p-8">
       <div className="text-center relative">
         <button
           type="button"
           onClick={onBack}
-          className="absolute left-0 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700"
+          className="absolute left-0 top-1/2 -translate-y-1/2 text-gray-300 hover:text-white transition-colors"
           aria-label="Назад"
         >
           <ArrowLeft className="h-5 w-5" />
         </button>
-        <h1 className="text-2xl font-bold">
+        <h1 className="text-2xl font-bold text-white">
           {isLogin ? "Вход в аккаунт" : "Создание аккаунта"}
         </h1>
       </div>
 
-      <form onSubmit={handleSubmit} className="mt-8 space-y-6">
+      <form onSubmit={handleSubmit} className="space-y-6">
         <div className="space-y-4">
           <div>
-            <Label htmlFor="email">Email</Label>
+            <Label htmlFor="email" className="text-gray-300">Email</Label>
             <Input
               id="email"
               name="email"
@@ -58,13 +58,13 @@ export const AuthForm = ({
               required
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="mt-1"
+              className="mt-1 bg-gray-800 border-gray-700 text-white placeholder-gray-400 focus:ring-primary focus:border-primary"
               placeholder="your@email.com"
             />
           </div>
 
           <div className="relative">
-            <Label htmlFor="password">Пароль</Label>
+            <Label htmlFor="password" className="text-gray-300">Пароль</Label>
             <div className="relative mt-1">
               <Input
                 id="password"
@@ -74,25 +74,29 @@ export const AuthForm = ({
                 required
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="pr-10"
+                className="pr-10 bg-gray-800 border-gray-700 text-white placeholder-gray-400 focus:ring-primary focus:border-primary"
                 placeholder="••••••••"
               />
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
-                className="absolute inset-y-0 right-0 flex items-center pr-3"
+                className="absolute inset-y-0 right-0 flex items-center pr-3 text-gray-400 hover:text-gray-300"
               >
                 {showPassword ? (
-                  <EyeOff className="h-4 w-4 text-gray-400" />
+                  <EyeOff className="h-4 w-4" />
                 ) : (
-                  <Eye className="h-4 w-4 text-gray-400" />
+                  <Eye className="h-4 w-4" />
                 )}
               </button>
             </div>
           </div>
         </div>
 
-        <Button type="submit" className="w-full" disabled={loading}>
+        <Button 
+          type="submit" 
+          className="w-full bg-primary hover:bg-primary/90 text-white" 
+          disabled={loading}
+        >
           {loading ? (
             "Загрузка..."
           ) : isLogin ? (
@@ -106,10 +110,9 @@ export const AuthForm = ({
           <button
             type="button"
             onClick={() => {
-              setIsLogin(!isLogin);
               parentSetIsLogin(!isLogin);
             }}
-            className="text-sm text-primary hover:underline"
+            className="text-sm text-gray-300 hover:text-white transition-colors"
           >
             {isLogin
               ? "Нет аккаунта? Зарегистрируйтесь"

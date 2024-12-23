@@ -13,7 +13,7 @@ export const AuthModal = ({ isOpen, onClose }: AuthModalProps) => {
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-[425px]">
+      <DialogContent className="sm:max-w-[425px] p-0 bg-gradient-to-br from-gray-900 to-gray-800 text-white border-none">
         <AuthForm 
           isLogin={isLogin}
           setIsLogin={setIsLogin}
