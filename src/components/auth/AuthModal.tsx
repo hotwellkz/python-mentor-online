@@ -13,9 +13,23 @@ export const AuthModal = ({ isOpen, onClose }: AuthModalProps) => {
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-[425px]" onInteractOutside={(e) => e.preventDefault()}>
+      <DialogContent 
+        className="sm:max-w-[425px]" 
+        onInteractOutside={(e) => {
+          e.preventDefault();
+          e.stopPropagation();
+        }}
+        onEscapeKeyDown={(e) => {
+          e.preventDefault();
+          onClose();
+        }}
+      >
         <button
-          onClick={onClose}
+          onClick={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            onClose();
+          }}
           className="absolute left-4 top-4 p-2 hover:bg-gray-100 rounded-full transition-colors"
           aria-label="Назад"
           type="button"
