@@ -30,18 +30,46 @@ serve(async (req) => {
       .from('lesson_prompts')
       .select('prompt')
       .eq('lesson_id', lessonId)
-      .maybeSingle();  // Changed from .single() to .maybeSingle()
+      .maybeSingle();
 
     if (dbError) {
       console.error('Database error:', dbError);
       throw dbError;
     }
 
-    if (!savedPrompt) {
-      throw new Error('No prompt found for this lesson');
+    let prompt;
+    if (savedPrompt?.prompt) {
+      console.log('Using saved prompt from database');
+      prompt = savedPrompt.prompt;
+    } else {
+      console.log('No saved prompt found, generating default prompt');
+      // Generate default prompt for product management lessons
+      if (lessonId.startsWith('pm-')) {
+        const [, moduleIndex, lessonIndex] = lessonId.split('-').map(Number);
+        
+        // Get module data from database
+        const { data: moduleData, error: moduleError } = await supabaseClient
+          .from('lesson_prompts')
+          .select('prompt')
+          .eq('lesson_id', `pm-module-${moduleIndex}`)
+          .maybeSingle();
+
+        if (moduleError) {
+          console.error('Error fetching module data:', moduleError);
+          throw moduleError;
+        }
+
+        if (!moduleData) {
+          console.log('Generating default product management prompt');
+          prompt = `Расскажи подробно с примерами, как будто ты преподаватель и преподаешь курс под названием "Продукт-менеджмент" урок ${moduleIndex}-${lessonIndex}`;
+        } else {
+          prompt = moduleData.prompt;
+        }
+      } else {
+        throw new Error('No prompt found for this lesson');
+      }
     }
 
-    const prompt = savedPrompt.prompt;
     console.log('Using prompt:', prompt);
 
     try {
