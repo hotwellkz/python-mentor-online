@@ -13,13 +13,11 @@ interface AuthFormProps {
 }
 
 export const AuthForm = ({
-  isLogin: initialIsLogin,
-  setIsLogin: parentSetIsLogin,
+  isLogin,
+  setIsLogin,
   setShowGiftModal,
   onSuccess
 }: AuthFormProps) => {
-  const [isLogin, setIsLogin] = useState(initialIsLogin);
-  
   const {
     email,
     setEmail,
@@ -92,10 +90,7 @@ export const AuthForm = ({
       <div className="text-center">
         <button
           type="button"
-          onClick={() => {
-            setIsLogin(!isLogin);
-            parentSetIsLogin(!isLogin);
-          }}
+          onClick={() => setIsLogin(!isLogin)}
           className="text-sm text-primary hover:underline"
         >
           {isLogin

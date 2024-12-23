@@ -10,26 +10,13 @@ interface AuthModalProps {
 
 export const AuthModal = ({ isOpen, onClose }: AuthModalProps) => {
   const [showGiftModal, setShowGiftModal] = useState(false);
+  const [isLogin, setIsLogin] = useState(true);
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent 
-        className="sm:max-w-[425px]" 
-        onInteractOutside={(e) => {
-          e.preventDefault();
-          e.stopPropagation();
-        }}
-        onEscapeKeyDown={(e) => {
-          e.preventDefault();
-          onClose();
-        }}
-      >
+      <DialogContent className="sm:max-w-[425px]">
         <button
-          onClick={(e) => {
-            e.preventDefault();
-            e.stopPropagation();
-            onClose();
-          }}
+          onClick={onClose}
           className="absolute left-4 top-4 p-2 hover:bg-gray-100 rounded-full transition-colors"
           aria-label="Назад"
           type="button"
@@ -37,8 +24,8 @@ export const AuthModal = ({ isOpen, onClose }: AuthModalProps) => {
           <ArrowLeft className="h-4 w-4" />
         </button>
         <AuthForm 
-          isLogin={true}
-          setIsLogin={() => {}}
+          isLogin={isLogin}
+          setIsLogin={setIsLogin}
           setShowGiftModal={setShowGiftModal}
           onSuccess={onClose}
         />
