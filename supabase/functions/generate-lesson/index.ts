@@ -18,7 +18,7 @@ serve(async (req) => {
   // Handle CORS preflight requests
   if (req.method === 'OPTIONS') {
     console.log('Handling OPTIONS request');
-    return new Response(null, { 
+    return new Response('ok', { 
       headers: corsHeaders 
     });
   }
@@ -59,7 +59,7 @@ serve(async (req) => {
           }
         ],
         temperature: 0.7,
-        max_tokens: 2000,
+        max_tokens: 4000,
       }),
     });
 
@@ -80,7 +80,9 @@ serve(async (req) => {
       { 
         headers: { 
           ...corsHeaders,
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
+          'Cache-Control': 'no-store, no-cache, must-revalidate',
+          'Pragma': 'no-cache'
         } 
       }
     );
@@ -97,7 +99,9 @@ serve(async (req) => {
         status: 500,
         headers: { 
           ...corsHeaders,
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
+          'Cache-Control': 'no-store, no-cache, must-revalidate',
+          'Pragma': 'no-cache'
         }
       }
     );
