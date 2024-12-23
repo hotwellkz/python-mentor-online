@@ -13,11 +13,12 @@ export const AuthModal = ({ isOpen, onClose }: AuthModalProps) => {
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-[425px]">
+      <DialogContent className="sm:max-w-[425px]" onInteractOutside={(e) => e.preventDefault()}>
         <button
           onClick={onClose}
           className="absolute left-4 top-4 p-2 hover:bg-gray-100 rounded-full transition-colors"
           aria-label="Назад"
+          type="button"
         >
           <ArrowLeft className="h-4 w-4" />
         </button>
