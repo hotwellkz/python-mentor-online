@@ -53,7 +53,11 @@ export const useLessonGeneration = () => {
         const { data: openAiResponse, error: openAiError } = await supabase.functions.invoke(
           'generate-lesson',
           {
-            body: { prompt }
+            body: { prompt },
+            headers: {
+              'Content-Type': 'application/json',
+              'Cache-Control': 'no-cache'
+            }
           }
         );
 
@@ -72,6 +76,10 @@ export const useLessonGeneration = () => {
           body: { 
             lessonId,
             prompt 
+          },
+          headers: {
+            'Content-Type': 'application/json',
+            'Cache-Control': 'no-cache'
           }
         }
       );
