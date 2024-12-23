@@ -3,18 +3,12 @@ import { Button } from "@/components/ui/button";
 import { Link, useNavigate } from "react-router-dom";
 import { ArrowRight, Brain, Star, Users, Clock, CheckCircle } from "lucide-react";
 import { motion } from "framer-motion";
-import { supabase } from "@/integrations/supabase/client";
 
 const DataScience = () => {
   const navigate = useNavigate();
 
-  const handleStartLearning = async () => {
-    const { data: { user } } = await supabase.auth.getUser();
-    if (user) {
-      navigate('/data-science-program');
-    } else {
-      navigate('/auth', { state: { from: '/data-science-program' } });
-    }
+  const handleStartLearning = () => {
+    navigate('/data-science-program');
   };
 
   return (
@@ -133,7 +127,7 @@ const DataScience = () => {
                   ].map((item, index) => (
                     <div key={index} className="flex items-center space-x-2">
                       <CheckCircle className="h-5 w-5 text-green-500" />
-                      <span className="text-gray-200">{item}</span>
+                      <span>{item}</span>
                     </div>
                   ))}
                 </div>

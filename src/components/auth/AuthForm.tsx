@@ -2,7 +2,7 @@ import { Eye, EyeOff } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Dispatch, SetStateAction } from "react";
+import { Dispatch, SetStateAction, useState } from "react";
 import { useAuthForm } from "@/hooks/useAuthForm";
 
 interface AuthFormProps {
@@ -13,14 +13,12 @@ interface AuthFormProps {
 }
 
 export const AuthForm = ({
-  isLogin: initialIsLogin,
-  setIsLogin: parentSetIsLogin,
+  isLogin,
+  setIsLogin,
   setShowGiftModal,
   onSuccess
 }: AuthFormProps) => {
   const {
-    isLogin,
-    setIsLogin,
     email,
     setEmail,
     password,
@@ -92,10 +90,7 @@ export const AuthForm = ({
       <div className="text-center">
         <button
           type="button"
-          onClick={() => {
-            setIsLogin(!isLogin);
-            parentSetIsLogin(!isLogin);
-          }}
+          onClick={() => setIsLogin(!isLogin)}
           className="text-sm text-primary hover:underline"
         >
           {isLogin
