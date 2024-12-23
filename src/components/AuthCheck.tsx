@@ -1,14 +1,15 @@
 import { useEffect, useState } from "react";
-import { Link, useLocation } from "react-router-dom";
-import { Button } from "@/components/ui/button";
-import { supabase } from "@/integrations/supabase/client";
+import { useLocation } from "react-router-dom";
 import { Mail } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import { AuthModal } from "./auth/AuthModal";
 
 export const AuthCheck = () => {
   const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
   const [isEmailVerified, setIsEmailVerified] = useState<boolean | null>(null);
   const [userEmail, setUserEmail] = useState<string | null>(null);
+  const [showAuthModal, setShowAuthModal] = useState(false);
   const { toast } = useToast();
   const location = useLocation();
 
@@ -21,6 +22,10 @@ export const AuthCheck = () => {
     setIsAuthenticated(!!user);
     setIsEmailVerified(user?.email_confirmed_at !== null);
     setUserEmail(user?.email || null);
+    
+    if (!user) {
+      setShowAuthModal(true);
+    }
   };
 
   const resendVerificationEmail = async () => {
@@ -49,24 +54,12 @@ export const AuthCheck = () => {
 
   if (!isAuthenticated) {
     return (
-      <div className="container mx-auto px-4 py-8">
-        <div className="max-w-2xl mx-auto text-center space-y-6">
-          <h1 className="text-3xl font-bold">Доступ к уроку</h1>
-          <p className="text-lg text-gray-600">
-            Для доступа к урокам необходимо войти в систему или зарегистрироваться
-          </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Link 
-              to="/auth" 
-              state={{ from: location }}
-            >
-              <Button size="lg">
-                Войти в систему
-              </Button>
-            </Link>
-          </div>
-        </div>
-      </div>
+      <>
+        <AuthModal 
+          isOpen={showAuthModal} 
+          onClose={() => setShowAuthModal(false)} 
+        />
+      </>
     );
   }
 
@@ -80,13 +73,12 @@ export const AuthCheck = () => {
             Для доступа к урокам необходимо подтвердить ваш email адрес. 
             Проверьте вашу почту и перейдите по ссылке в письме.
           </p>
-          <Button 
+          <button 
             onClick={resendVerificationEmail}
-            variant="outline"
-            className="mx-auto"
+            className="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-10 px-4 py-2"
           >
             Отправить письмо повторно
-          </Button>
+          </button>
         </div>
       </div>
     );
