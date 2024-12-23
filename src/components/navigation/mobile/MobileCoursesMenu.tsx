@@ -29,11 +29,20 @@ export const MobileCoursesMenu = ({ onLinkClick }: MobileCoursesMenuProps) => {
       <DropdownMenuContent className="animate-scale-in bg-white rounded-lg shadow-lg border border-gray-200 p-1 min-w-[150px]">
         <DropdownMenuItem className="rounded hover:bg-gray-100 transition-colors">
           <Link 
-            to="/program" 
+            to="/python-course" 
             className="w-full px-3 py-2 text-gray-700 hover:text-primary"
             onClick={onLinkClick}
           >
             Python
+          </Link>
+        </DropdownMenuItem>
+        <DropdownMenuItem className="rounded hover:bg-gray-100 transition-colors">
+          <Link 
+            to="/data-science" 
+            className="w-full px-3 py-2 text-gray-700 hover:text-primary"
+            onClick={onLinkClick}
+          >
+            Data Science
           </Link>
         </DropdownMenuItem>
         <DropdownMenuItem className="rounded hover:bg-gray-100 transition-colors">
@@ -52,6 +61,15 @@ export const MobileCoursesMenu = ({ onLinkClick }: MobileCoursesMenuProps) => {
             onClick={onLinkClick}
           >
             Бизнес-аналитик
+          </Link>
+        </DropdownMenuItem>
+        <DropdownMenuItem className="rounded hover:bg-gray-100 transition-colors">
+          <Link 
+            to="/product-management" 
+            className="w-full px-3 py-2 text-gray-700 hover:text-primary"
+            onClick={onLinkClick}
+          >
+            Продукт-менеджмент
           </Link>
         </DropdownMenuItem>
       </DropdownMenuContent>
