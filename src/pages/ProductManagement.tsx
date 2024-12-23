@@ -1,21 +1,14 @@
 import { Helmet } from "react-helmet";
 import { Button } from "@/components/ui/button";
-import { Link, useNavigate, useLocation } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { ArrowRight, Lightbulb, Target, Users, Clock, CheckCircle, BarChart2 } from "lucide-react";
 import { motion } from "framer-motion";
-import { supabase } from "@/integrations/supabase/client";
 
 const ProductManagement = () => {
   const navigate = useNavigate();
-  const location = useLocation();
 
-  const handleStartLearning = async () => {
-    const { data: { user } } = await supabase.auth.getUser();
-    if (user) {
-      navigate('/product-management-program');
-    } else {
-      navigate('/auth', { state: { from: '/product-management-program' } });
-    }
+  const handleStartLearning = () => {
+    navigate('/product-management-program');
   };
 
   return (
@@ -81,69 +74,41 @@ const ProductManagement = () => {
                   </motion.div>
                 </div>
 
-                <motion.div
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.3, duration: 0.6 }}
-                  className="grid grid-cols-2 md:grid-cols-4 gap-8 pt-12"
-                >
-                  {[
-                    { number: "6 мес", label: "Длительность" },
-                    { number: "24/7", label: "Поддержка" },
-                    { number: "100%", label: "Практики" },
-                    { number: "500+", label: "Выпускников" }
-                  ].map((stat, index) => (
-                    <div key={index} className="text-center">
-                      <div className="text-3xl md:text-4xl font-bold text-[#81ECEC]">{stat.number}</div>
-                      <div className="text-gray-200 mt-2">{stat.label}</div>
+                <div className="flex flex-wrap justify-center gap-4 pt-8">
+                  <div className="flex items-start space-x-4">
+                    <Lightbulb className="h-6 w-6 text-[#00B894] mt-1" />
+                    <div>
+                      <h3 className="text-xl font-semibold mb-2">Для кого</h3>
+                      <p className="text-gray-600">Начинающие специалисты без опыта в управлении продуктом</p>
                     </div>
-                  ))}
-                </motion.div>
+                  </div>
+                  <div className="flex items-start space-x-4">
+                    <Clock className="h-6 w-6 text-[#00B894] mt-1" />
+                    <div>
+                      <h3 className="text-xl font-semibold mb-2">Длительность</h3>
+                      <p className="text-gray-600">6 месяцев при занятиях 2-3 часа в день</p>
+                    </div>
+                  </div>
+                </div>
+                <div className="bg-gradient-to-br from-[#F8FFFE] to-[#F0FFFC] rounded-xl p-8 shadow-lg">
+                  <h3 className="text-2xl font-semibold mb-4">Чему вы научитесь:</h3>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {[
+                      "Управлению продуктом",
+                      "Проведению исследований",
+                      "Построению метрик",
+                      "Работе с командой",
+                      "Развитию продукта",
+                      "Анализу рынка"
+                    ].map((item, index) => (
+                      <div key={index} className="flex items-center space-x-2">
+                        <CheckCircle className="h-5 w-5 text-[#00B894]" />
+                        <span className="text-gray-700">{item}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
               </motion.div>
-            </div>
-          </div>
-        </section>
-
-        <section className="py-20">
-          <div className="container mx-auto px-4">
-            <div className="max-w-4xl mx-auto">
-              <h2 className="text-3xl md:text-4xl font-bold text-center mb-12">
-                О курсе Продукт-менеджмента
-              </h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
-                <div className="flex items-start space-x-4">
-                  <Users className="h-6 w-6 text-[#00B894] mt-1" />
-                  <div>
-                    <h3 className="text-xl font-semibold mb-2">Для кого</h3>
-                    <p className="text-gray-600">Начинающие специалисты без опыта в управлении продуктом</p>
-                  </div>
-                </div>
-                <div className="flex items-start space-x-4">
-                  <Clock className="h-6 w-6 text-[#00B894] mt-1" />
-                  <div>
-                    <h3 className="text-xl font-semibold mb-2">Длительность</h3>
-                    <p className="text-gray-600">6 месяцев при занятиях 2-3 часа в день</p>
-                  </div>
-                </div>
-              </div>
-              <div className="bg-gradient-to-br from-[#F8FFFE] to-[#F0FFFC] rounded-xl p-8 shadow-lg">
-                <h3 className="text-2xl font-semibold mb-4">Чему вы научитесь:</h3>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  {[
-                    "Управлению продуктом",
-                    "Проведению исследований",
-                    "Построению метрик",
-                    "Работе с командой",
-                    "Развитию продукта",
-                    "Анализу рынка"
-                  ].map((item, index) => (
-                    <div key={index} className="flex items-center space-x-2">
-                      <CheckCircle className="h-5 w-5 text-[#00B894]" />
-                      <span className="text-gray-700">{item}</span>
-                    </div>
-                  ))}
-                </div>
-              </div>
             </div>
           </div>
         </section>
