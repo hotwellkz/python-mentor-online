@@ -30,14 +30,15 @@ export const TokenDisplay = () => {
         if (error) {
           console.error('Error fetching tokens:', error);
           
-          // Если ошибка сети и есть еще попытки, пробуем снова
+          // Network errors with retry mechanism
           if (error.message.includes('Failed to fetch') && retryCount < 3) {
             console.log(`Retrying... Attempt ${retryCount + 1}`);
             setRetryCount(prev => prev + 1);
-            setTimeout(fetchTokens, 1000 * (retryCount + 1)); // Увеличиваем время ожидания с каждой попыткой
+            setTimeout(fetchTokens, 1000 * Math.pow(2, retryCount)); // Exponential backoff
             return;
           }
           
+          // Only show toast for non-network errors
           if (!error.message.includes('Failed to fetch')) {
             toast({
               variant: "destructive",
@@ -51,16 +52,22 @@ export const TokenDisplay = () => {
         if (data) {
           console.log('Profile data received:', data);
           setTokens(data.tokens);
+          setRetryCount(0); // Reset retry count on success
         } else {
           console.log('No profile found, creating new profile');
           try {
             const { error: insertError } = await supabase
               .from('profiles')
-              .insert([{ id: user.id, tokens: 100 }]);
+              .insert([{ 
+                id: user.id, 
+                tokens: 100,
+                updated_at: new Date().toISOString()
+              }]);
             
             if (insertError) throw insertError;
             
             setTokens(100);
+            setRetryCount(0); // Reset retry count on success
           } catch (insertError) {
             console.error('Error creating profile:', insertError);
             toast({
@@ -86,7 +93,7 @@ export const TokenDisplay = () => {
 
     const { data: authListener } = supabase.auth.onAuthStateChange(async (event, session) => {
       if (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') {
-        setRetryCount(0); // Сбрасываем счетчик попыток при новой сессии
+        setRetryCount(0); // Reset retry count on new session
         fetchTokens();
       } else if (event === 'SIGNED_OUT') {
         setTokens(null);
