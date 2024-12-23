@@ -10,49 +10,88 @@ export const useLessonGeneration = () => {
       
       // Step 1: Get the prompt
       console.log('Fetching prompt...');
-      const promptResponse = await supabase.functions.invoke('get-lesson-prompt', {
-        body: { lessonId }
-      });
+      const { data: promptData, error: promptError } = await supabase
+        .from('lesson_prompts')
+        .select('prompt')
+        .eq('lesson_id', lessonId)
+        .maybeSingle();
 
-      if (promptResponse.error) {
-        console.error('Error getting prompt:', promptResponse.error);
-        throw new Error(`Failed to get lesson prompt: ${promptResponse.error.message}`);
+      if (promptError) {
+        console.error('Error getting prompt from database:', promptError);
+        throw new Error(`Failed to get lesson prompt: ${promptError.message}`);
       }
 
-      if (!promptResponse.data?.prompt) {
-        console.error('No prompt received:', promptResponse.data);
-        throw new Error('No prompt received from server');
-      }
+      // If no saved prompt found, get default prompt
+      let prompt;
+      if (promptData?.prompt) {
+        prompt = promptData.prompt;
+        console.log('Using saved prompt:', prompt);
+      } else {
+        console.log('No saved prompt found, getting default prompt...');
+        const response = await supabase.functions.invoke('get-lesson-prompt', {
+          body: { lessonId }
+        });
 
-      const prompt = promptResponse.data.prompt;
-      console.log('Successfully received prompt:', prompt);
+        if (response.error) {
+          console.error('Error getting default prompt:', response.error);
+          throw new Error(`Failed to get default prompt: ${response.error.message}`);
+        }
+
+        prompt = response.data?.prompt;
+        if (!prompt) {
+          console.error('No prompt received:', response.data);
+          throw new Error('No prompt received from server');
+        }
+        console.log('Using default prompt:', prompt);
+      }
 
       // Step 2: Generate lesson content
       console.log('Generating lesson content...');
-      const response = await supabase.functions.invoke('generate-lesson-from-prompt', {
-        body: { 
-          lessonId, 
-          prompt 
-        }
-      });
+      
+      // First try with direct database call to OpenAI
+      try {
+        const { data: openAiResponse, error: openAiError } = await supabase.functions.invoke(
+          'generate-lesson',
+          {
+            body: { prompt }
+          }
+        );
 
-      if (response.error) {
-        console.error('Error generating lesson:', response.error);
-        throw new Error(`Failed to generate lesson: ${response.error.message}`);
+        if (!openAiError && openAiResponse?.text) {
+          console.log('Successfully generated lesson content using OpenAI');
+          return openAiResponse.text;
+        }
+      } catch (openAiError) {
+        console.log('OpenAI generation failed, trying Claude...', openAiError);
       }
 
-      if (!response.data?.text) {
-        console.error('No lesson text received:', response.data);
+      // Fallback to Claude
+      const claudeResponse = await supabase.functions.invoke(
+        'generate-lesson-from-prompt',
+        {
+          body: { 
+            lessonId,
+            prompt 
+          }
+        }
+      );
+
+      if (claudeResponse.error) {
+        console.error('Error generating lesson with Claude:', claudeResponse.error);
+        throw new Error(`Failed to generate lesson: ${claudeResponse.error.message}`);
+      }
+
+      if (!claudeResponse.data?.text) {
+        console.error('No lesson text received:', claudeResponse.data);
         throw new Error('No lesson content received from server');
       }
 
-      console.log('Successfully generated lesson content');
-      return response.data.text;
+      console.log('Successfully generated lesson content using Claude');
+      return claudeResponse.data.text;
 
     } catch (error: any) {
       console.error('Error in generateLesson:', error);
       
-      // Show a more user-friendly error message
       toast({
         variant: "destructive",
         title: "Ошибка при генерации урока",
