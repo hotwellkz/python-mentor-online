@@ -5,7 +5,6 @@ import { getPromptForLesson } from "./prompts/index.ts";
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
-  'Access-Control-Allow-Methods': 'POST, OPTIONS',
 };
 
 serve(async (req) => {
@@ -59,7 +58,6 @@ serve(async (req) => {
           }
         ],
         temperature: 0.7,
-        max_tokens: 2000,
       }),
     });
 
@@ -90,8 +88,7 @@ serve(async (req) => {
     return new Response(
       JSON.stringify({ 
         error: error.message,
-        details: error.stack,
-        timestamp: new Date().toISOString()
+        details: error.stack
       }),
       { 
         status: 500,

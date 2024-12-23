@@ -38,22 +38,6 @@ export const useLesson = (lessonId: string | undefined) => {
     }
   };
 
-  const retryOperation = async (operation: () => Promise<any>, maxRetries = 3, delay = 1000) => {
-    for (let i = 0; i < maxRetries; i++) {
-      try {
-        return await operation();
-      } catch (error: any) {
-        console.error(`Attempt ${i + 1} failed:`, error);
-        if (i === maxRetries - 1) throw error;
-        if (error.message?.includes('Failed to fetch')) {
-          await new Promise(resolve => setTimeout(resolve, delay * Math.pow(2, i)));
-          continue;
-        }
-        throw error;
-      }
-    }
-  };
-
   const startLesson = async () => {
     if (!lessonId) {
       toast({
@@ -65,9 +49,7 @@ export const useLesson = (lessonId: string | undefined) => {
     }
 
     try {
-      setLoading(true);
       const { data: { user } } = await supabase.auth.getUser();
-      
       if (!user) {
         toast({
           variant: "destructive",
@@ -92,13 +74,8 @@ export const useLesson = (lessonId: string | undefined) => {
         return;
       }
 
-      // Use retry mechanism for lesson generation
-      const generatedText = await retryOperation(
-        () => generateLesson(lessonId),
-        3,
-        1000
-      );
-
+      setLoading(true);
+      const generatedText = await generateLesson(lessonId);
       setGeneratedText(generatedText);
       await saveLessonProgress(generatedText);
 
@@ -111,10 +88,8 @@ export const useLesson = (lessonId: string | undefined) => {
       console.error('Error in startLesson:', error);
       toast({
         variant: "destructive",
-        title: "Ошибка генерации урока",
-        description: error.message?.includes('Failed to fetch') 
-          ? "Проблема с подключением к серверу. Пожалуйста, попробуйте еще раз."
-          : error.message,
+        title: "Ошибка",
+        description: error.message,
       });
     } finally {
       setLoading(false);
