@@ -60,7 +60,11 @@ serve(async (req) => {
 
       console.log('Successfully received response from Claude');
       return new Response(
-        JSON.stringify({ text: completion.content[0].text }),
+        JSON.stringify({ 
+          text: completion.content[0].text,
+          provider: 'claude',
+          timestamp: new Date().toISOString()
+        }),
         {
           headers: { ...corsHeaders, 'Content-Type': 'application/json' },
           status: 200,
@@ -85,11 +89,16 @@ serve(async (req) => {
         model: 'gpt-4o',
         messages: [{ role: 'user', content: prompt }],
         temperature: 0.7,
+        max_tokens: 4000,
       });
 
       console.log('Successfully received response from OpenAI');
       return new Response(
-        JSON.stringify({ text: completion.data.choices[0].message?.content }),
+        JSON.stringify({ 
+          text: completion.data.choices[0].message?.content,
+          provider: 'openai',
+          timestamp: new Date().toISOString()
+        }),
         {
           headers: { ...corsHeaders, 'Content-Type': 'application/json' },
           status: 200,
@@ -102,7 +111,8 @@ serve(async (req) => {
       JSON.stringify({ 
         error: error.message,
         details: error.toString(),
-        stack: error.stack 
+        stack: error.stack,
+        timestamp: new Date().toISOString()
       }),
       {
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
