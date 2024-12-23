@@ -1,3 +1,4 @@
+import "https://deno.land/x/xhr@0.1.0/mod.ts";
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { Configuration, OpenAIApi } from 'https://esm.sh/openai@3.2.1';
 import { Anthropic } from 'https://esm.sh/@anthropic-ai/sdk@0.4.3';
@@ -49,6 +50,10 @@ serve(async (req) => {
         model: 'claude-3-opus-20240229',
         max_tokens: 4000,
         messages: [{ role: 'user', content: prompt }],
+        temperature: 0.7,
+      }).catch(error => {
+        console.error('Ошибка при вызове Claude API:', error);
+        throw error;
       });
 
       console.log('Получен ответ от Claude');
@@ -77,6 +82,10 @@ serve(async (req) => {
       const completion = await openai.createChatCompletion({
         model: 'gpt-4',
         messages: [{ role: 'user', content: prompt }],
+        temperature: 0.7,
+      }).catch(error => {
+        console.error('Ошибка при вызове OpenAI API:', error);
+        throw error;
       });
 
       console.log('Получен ответ от OpenAI');
@@ -98,7 +107,7 @@ serve(async (req) => {
       }),
       {
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-        status: 500,
+        status: error.status || 500,
       },
     );
   }
