@@ -9,6 +9,9 @@ import { UserMenu } from "./navigation/UserMenu";
 import { MobileMenu } from "./navigation/MobileMenu";
 import { AuthModal } from "./auth/AuthModal";
 
+const MAX_AUTH_RETRIES = 3;
+const AUTH_RETRY_DELAY = 1000;
+
 export const Layout = () => {
   const { pathname } = useLocation();
   const { toast } = useToast();
@@ -19,14 +22,27 @@ export const Layout = () => {
   useEffect(() => {
     window.scrollTo(0, 0);
     
-    const initializeAuth = async () => {
+    const initializeAuth = async (retryCount = 0) => {
       try {
         const { data: { session }, error: sessionError } = await supabase.auth.getSession();
         
         if (sessionError) {
+          if (sessionError.message.includes('Failed to fetch')) {
+            if (retryCount < MAX_AUTH_RETRIES) {
+              console.log(`Retry attempt ${retryCount + 1} for auth initialization`);
+              await new Promise(resolve => setTimeout(resolve, AUTH_RETRY_DELAY));
+              return initializeAuth(retryCount + 1);
+            }
+            console.error('Network error during auth initialization:', sessionError);
+            setUserEmail(null);
+            setIsInitialized(true);
+            return;
+          }
+
           if (sessionError.message.includes('session_not_found') || sessionError.status === 403) {
             await supabase.auth.signOut();
             setUserEmail(null);
+            setIsInitialized(true);
             return;
           }
           throw sessionError;
@@ -74,7 +90,7 @@ export const Layout = () => {
   };
 
   if (!isInitialized) {
-    return null; // или показать загрузку
+    return null;
   }
 
   return (
