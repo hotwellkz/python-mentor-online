@@ -1,4 +1,4 @@
-import { Eye, EyeOff } from "lucide-react";
+import { Eye, EyeOff, ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -31,9 +31,22 @@ export const AuthForm = ({
     handleSubmit,
   } = useAuthForm(setShowGiftModal, onSuccess);
 
+  const handleBack = () => {
+    setIsLogin(!isLogin);
+    parentSetIsLogin(!isLogin);
+  };
+
   return (
     <div className="w-full max-w-md space-y-8">
-      <div className="text-center">
+      <div className="text-center relative">
+        <button
+          type="button"
+          onClick={handleBack}
+          className="absolute left-0 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700"
+          aria-label="Назад"
+        >
+          <ArrowLeft className="h-5 w-5" />
+        </button>
         <h1 className="text-2xl font-bold">
           {isLogin ? "Вход в аккаунт" : "Создание аккаунта"}
         </h1>
@@ -92,10 +105,7 @@ export const AuthForm = ({
       <div className="text-center">
         <button
           type="button"
-          onClick={() => {
-            setIsLogin(!isLogin);
-            parentSetIsLogin(!isLogin);
-          }}
+          onClick={handleBack}
           className="text-sm text-primary hover:underline"
         >
           {isLogin

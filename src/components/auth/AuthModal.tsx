@@ -9,13 +9,14 @@ interface AuthModalProps {
 
 export const AuthModal = ({ isOpen, onClose }: AuthModalProps) => {
   const [showGiftModal, setShowGiftModal] = useState(false);
+  const [isLogin, setIsLogin] = useState(true);
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="sm:max-w-[425px]">
         <AuthForm 
-          isLogin={true}
-          setIsLogin={() => {}}
+          isLogin={isLogin}
+          setIsLogin={setIsLogin}
           setShowGiftModal={setShowGiftModal}
           onSuccess={onClose}
         />
