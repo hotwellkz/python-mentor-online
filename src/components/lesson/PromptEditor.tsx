@@ -37,12 +37,31 @@ export const PromptEditor = ({ lessonId }: PromptEditorProps) => {
 
       if (data) {
         setIsAuthenticated(true);
-        // Здесь нужно загрузить текущий промпт
-        const response = await supabase.functions.invoke("get-lesson-prompt", {
-          body: { lessonId },
-        });
-        if (response.data?.prompt) {
-          setPrompt(response.data.prompt);
+        // Загружаем текущий промпт
+        const { data: promptData, error: promptError } = await supabase
+          .from('lesson_prompts')
+          .select('prompt')
+          .eq('lesson_id', lessonId)
+          .maybeSingle();
+
+        if (promptError) {
+          console.error('Error loading prompt:', promptError);
+          return;
+        }
+
+        if (promptData?.prompt) {
+          console.log('Loaded prompt:', promptData.prompt);
+          setPrompt(promptData.prompt);
+        } else {
+          // Если промпт не найден в базе данных, загружаем дефолтный
+          const response = await supabase.functions.invoke("get-lesson-prompt", {
+            body: { lessonId },
+          });
+          
+          if (response.data?.prompt) {
+            console.log('Loaded default prompt:', response.data.prompt);
+            setPrompt(response.data.prompt);
+          }
         }
       } else {
         toast({
@@ -52,6 +71,7 @@ export const PromptEditor = ({ lessonId }: PromptEditorProps) => {
         });
       }
     } catch (error: any) {
+      console.error('Auth error:', error);
       toast({
         variant: "destructive",
         title: "Ошибка",
@@ -62,11 +82,17 @@ export const PromptEditor = ({ lessonId }: PromptEditorProps) => {
 
   const handleSave = async () => {
     try {
-      const response = await supabase.functions.invoke("update-lesson-prompt", {
-        body: { lessonId, prompt },
-      });
+      const { error } = await supabase
+        .from('lesson_prompts')
+        .upsert({
+          lesson_id: lessonId,
+          prompt: prompt,
+          updated_at: new Date().toISOString()
+        }, {
+          onConflict: 'lesson_id'
+        });
 
-      if (response.error) throw response.error;
+      if (error) throw error;
 
       toast({
         title: "Успешно",
@@ -76,6 +102,7 @@ export const PromptEditor = ({ lessonId }: PromptEditorProps) => {
       setIsAuthenticated(false);
       setPassword("");
     } catch (error: any) {
+      console.error('Save error:', error);
       toast({
         variant: "destructive",
         title: "Ошибка",
