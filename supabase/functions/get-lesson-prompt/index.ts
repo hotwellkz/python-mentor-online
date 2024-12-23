@@ -54,6 +54,40 @@ serve(async (req) => {
     } else if (lessonId.startsWith('devops-')) {
       const [, moduleIndex, topicIndex] = lessonId.split("-").map(Number);
       defaultPrompt = `Расскажи подробно как будто ты преподаватель и преподаеш курс DevOps-инженер PRO, урок ${moduleIndex}-${topicIndex}`;
+    } else if (lessonId.startsWith('ds-')) {
+      const [, blockIndex, lessonIndex] = lessonId.split("-").map(Number);
+      defaultPrompt = `Расскажи подробно как будто ты преподаватель и преподаеш курс Data Science урок ${blockIndex}-${lessonIndex}`;
+    } else if (lessonId.startsWith('pm-')) {
+      const [, blockIndex, lessonIndex] = lessonId.split("-").map(Number);
+      
+      // Get lesson title and topics from productManagementBlocks
+      const blocks = [
+        {
+          title: "Модуль 1. Введение в продукт-менеджмент",
+          lessons: [
+            {
+              title: "Кто такой продукт-менеджер?",
+              topics: [
+                "Роль и обязанности продукт-менеджера",
+                "Разница между продукт-менеджером и проект-менеджером",
+                "Навыки, необходимые для работы"
+              ]
+            },
+            // ... other lessons
+          ]
+        },
+        // ... other blocks
+      ];
+      
+      const block = blocks[blockIndex - 1];
+      const lesson = block?.lessons[lessonIndex - 1];
+      
+      if (lesson) {
+        const topics = lesson.topics.join(", ");
+        defaultPrompt = `Расскажи подробно с примерами, как будто ты преподаватель и преподаеш курс по названием "Продукт-менеджмент" урок на тему: "${lesson.title}", подтемы: "${topics}"`;
+      } else {
+        defaultPrompt = `Расскажи подробно с примерами, как будто ты преподаватель и преподаеш курс по названием "Продукт-менеджмент" урок ${blockIndex}-${lessonIndex}`;
+      }
     } else {
       const [blockIndex, lessonIndex] = lessonId.split("-").map(Number);
       defaultPrompt = `Расскажи подробно как будто ты преподаватель и преподаеш Курс Python урок ${blockIndex}-${lessonIndex}`;
