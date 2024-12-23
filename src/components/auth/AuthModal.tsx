@@ -19,6 +19,7 @@ export const AuthModal = ({ isOpen, onClose }: AuthModalProps) => {
           setIsLogin={setIsLogin}
           setShowGiftModal={setShowGiftModal}
           onSuccess={onClose}
+          onBack={onClose}
         />
       </DialogContent>
     </Dialog>
