@@ -11,6 +11,9 @@ export const useLessonGeneration = () => {
       // Сначала получаем промпт
       const promptResponse = await supabase.functions.invoke('get-lesson-prompt', {
         body: { lessonId }
+      }).catch(error => {
+        console.error('Error in get-lesson-prompt:', error);
+        throw new Error(`Ошибка при получении промпта: ${error.message}`);
       });
 
       if (promptResponse.error) {
@@ -23,12 +26,25 @@ export const useLessonGeneration = () => {
 
       // Затем генерируем урок с полученным промптом
       const response = await supabase.functions.invoke('generate-lesson-from-prompt', {
-        body: { lessonId, prompt }
+        body: { 
+          lessonId, 
+          prompt 
+        },
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      }).catch(error => {
+        console.error('Error in generate-lesson-from-prompt:', error);
+        throw new Error(`Ошибка при генерации урока: ${error.message}`);
       });
 
       if (response.error) {
         console.error('Error from generate-lesson-from-prompt:', response.error);
         throw new Error(response.error.message);
+      }
+
+      if (!response.data?.text) {
+        throw new Error('Не получен текст урока от API');
       }
 
       return response.data.text;
