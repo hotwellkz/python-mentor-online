@@ -8,10 +8,16 @@ const anthropicApiKey = Deno.env.get('ANTHROPIC_API_KEY');
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+  'Access-Control-Allow-Methods': 'POST, OPTIONS',
+  'Access-Control-Max-Age': '86400',
+  'Cache-Control': 'no-store, no-cache, must-revalidate',
 };
 
 serve(async (req) => {
+  console.log('Function called with method:', req.method);
+  
   if (req.method === 'OPTIONS') {
+    console.log('Handling OPTIONS request');
     return new Response('ok', { headers: corsHeaders });
   }
 
@@ -53,7 +59,7 @@ serve(async (req) => {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          model: 'gpt-4',
+          model: 'gpt-4o-mini',
           messages: [
             {
               role: 'system',
@@ -62,7 +68,7 @@ serve(async (req) => {
             { role: 'user', content: prompt }
           ],
           temperature: 0.7,
-          max_tokens: 2500,
+          max_tokens: 4000,
         }),
       });
 
@@ -74,8 +80,17 @@ serve(async (req) => {
       console.log('OpenAI response received successfully');
       
       return new Response(
-        JSON.stringify({ text: data.choices[0].message.content }),
-        { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        JSON.stringify({ 
+          text: data.choices[0].message.content,
+          provider: 'openai',
+          timestamp: new Date().toISOString()
+        }),
+        { 
+          headers: { 
+            ...corsHeaders, 
+            'Content-Type': 'application/json' 
+          } 
+        }
       );
 
     } catch (openAIError) {
@@ -107,8 +122,17 @@ serve(async (req) => {
       console.log('Anthropic response received successfully');
       
       return new Response(
-        JSON.stringify({ text: data.content[0].text }),
-        { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        JSON.stringify({ 
+          text: data.content[0].text,
+          provider: 'anthropic',
+          timestamp: new Date().toISOString()
+        }),
+        { 
+          headers: { 
+            ...corsHeaders, 
+            'Content-Type': 'application/json' 
+          } 
+        }
       );
     }
   } catch (error) {
@@ -116,7 +140,8 @@ serve(async (req) => {
     return new Response(
       JSON.stringify({ 
         error: error.message,
-        details: error.stack 
+        details: error.stack,
+        timestamp: new Date().toISOString()
       }),
       {
         status: 500,
