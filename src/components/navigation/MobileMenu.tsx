@@ -9,9 +9,10 @@ import { MobileUserMenu } from "./mobile/MobileUserMenu";
 interface MobileMenuProps {
   userEmail: string | null;
   onLogout: () => Promise<void>;
+  onLoginClick: () => void;
 }
 
-export const MobileMenu = ({ userEmail, onLogout }: MobileMenuProps) => {
+export const MobileMenu = ({ userEmail, onLogout, onLoginClick }: MobileMenuProps) => {
   const [isOpen, setIsOpen] = useState(false);
 
   const handleLinkClick = () => {
@@ -38,6 +39,7 @@ export const MobileMenu = ({ userEmail, onLogout }: MobileMenuProps) => {
           <MobileUserMenu 
             userEmail={userEmail}
             onLogout={onLogout}
+            onLoginClick={onLoginClick}
             onLinkClick={handleLinkClick}
           />
         </div>
