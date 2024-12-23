@@ -74,8 +74,31 @@ export const Layout = () => {
   };
 
   if (!isInitialized) {
-    return null; // или показать загрузку
+    return null;
   }
+
+  // Список страниц, доступных без авторизации
+  const publicPages = [
+    '/',
+    '/program',
+    '/python-course',
+    '/data-science',
+    '/data-science-program',
+    '/devops',
+    '/devops-program',
+    '/business-analyst',
+    '/business-analyst-program',
+    '/product-management',
+    '/product-management-program',
+    '/auth',
+    '/privacy',
+    '/terms',
+    '/pricing',
+    '/faq'
+  ];
+
+  // Проверяем, является ли текущая страница публичной
+  const isPublicPage = publicPages.includes(pathname);
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -110,7 +133,14 @@ export const Layout = () => {
       </header>
       <Breadcrumbs />
       <main className="flex-grow">
-        <Outlet />
+        {isPublicPage || userEmail ? (
+          <Outlet />
+        ) : (
+          <AuthModal 
+            isOpen={true}
+            onClose={() => setShowAuthModal(false)}
+          />
+        )}
       </main>
       <Footer />
       <AuthModal 
