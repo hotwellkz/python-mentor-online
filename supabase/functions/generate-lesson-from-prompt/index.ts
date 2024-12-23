@@ -12,51 +12,44 @@ const corsHeaders = {
 
 serve(async (req) => {
   try {
-    // Обработка CORS preflight запросов
+    // Handle CORS preflight
     if (req.method === 'OPTIONS') {
       return new Response('ok', { headers: corsHeaders });
     }
 
     if (req.method !== 'POST') {
-      throw new Error(`HTTP метод ${req.method} не разрешен`);
+      throw new Error(`HTTP method ${req.method} not allowed`);
     }
-
-    console.log('Получен запрос:', {
-      method: req.method,
-      headers: Object.fromEntries(req.headers.entries()),
-    });
 
     const { lessonId, prompt } = await req.json();
-    console.log('Генерация урока для:', lessonId);
-    console.log('Используется промпт:', prompt);
-
+    
     if (!lessonId || !prompt) {
-      throw new Error('lessonId и prompt обязательны');
+      throw new Error('lessonId and prompt are required');
     }
 
+    console.log('Generating lesson for:', lessonId);
+    console.log('Using prompt:', prompt);
+
     try {
-      // Сначала пробуем Claude
+      // Try Claude first
       const anthropicApiKey = Deno.env.get('ANTHROPIC_API_KEY');
       if (!anthropicApiKey) {
-        throw new Error('Отсутствует Anthropic API ключ');
+        throw new Error('Missing Anthropic API key');
       }
 
       const anthropic = new Anthropic({
         apiKey: anthropicApiKey,
       });
 
-      console.log('Пробуем Claude...');
+      console.log('Attempting to use Claude...');
       const completion = await anthropic.messages.create({
         model: 'claude-3-opus-20240229',
         max_tokens: 4000,
         messages: [{ role: 'user', content: prompt }],
         temperature: 0.7,
-      }).catch(error => {
-        console.error('Ошибка при вызове Claude API:', error);
-        throw error;
       });
 
-      console.log('Получен ответ от Claude');
+      console.log('Successfully received response from Claude');
       return new Response(
         JSON.stringify({ text: completion.content[0].text }),
         {
@@ -64,14 +57,14 @@ serve(async (req) => {
           status: 200,
         },
       );
-    } catch (error) {
-      console.error('Ошибка Claude:', error);
-      console.log('Переключаемся на OpenAI...');
+    } catch (claudeError) {
+      console.error('Claude error:', claudeError);
+      console.log('Falling back to OpenAI...');
 
-      // Fallback на OpenAI
+      // Fallback to OpenAI
       const openaiApiKey = Deno.env.get('OPENAI_API_KEY');
       if (!openaiApiKey) {
-        throw new Error('Отсутствует OpenAI API ключ');
+        throw new Error('Missing OpenAI API key');
       }
 
       const configuration = new Configuration({
@@ -80,15 +73,12 @@ serve(async (req) => {
       const openai = new OpenAIApi(configuration);
 
       const completion = await openai.createChatCompletion({
-        model: 'gpt-4',
+        model: 'gpt-4o',
         messages: [{ role: 'user', content: prompt }],
         temperature: 0.7,
-      }).catch(error => {
-        console.error('Ошибка при вызове OpenAI API:', error);
-        throw error;
       });
 
-      console.log('Получен ответ от OpenAI');
+      console.log('Successfully received response from OpenAI');
       return new Response(
         JSON.stringify({ text: completion.data.choices[0].message?.content }),
         {
@@ -98,10 +88,10 @@ serve(async (req) => {
       );
     }
   } catch (error) {
-    console.error('Ошибка в generate-lesson-from-prompt:', error);
+    console.error('Error in generate-lesson-from-prompt:', error);
     return new Response(
       JSON.stringify({ 
-        error: error.message, 
+        error: error.message,
         details: error.toString(),
         stack: error.stack 
       }),

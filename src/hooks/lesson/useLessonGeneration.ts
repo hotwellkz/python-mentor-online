@@ -6,55 +6,59 @@ export const useLessonGeneration = () => {
 
   const generateLesson = async (lessonId: string) => {
     try {
-      console.log('Getting prompt for lesson:', lessonId);
+      console.log('Starting lesson generation for:', lessonId);
       
-      // Сначала получаем промпт
+      // Step 1: Get the prompt
+      console.log('Fetching prompt...');
       const promptResponse = await supabase.functions.invoke('get-lesson-prompt', {
         body: { lessonId }
-      }).catch(error => {
-        console.error('Error in get-lesson-prompt:', error);
-        throw new Error(`Ошибка при получении промпта: ${error.message}`);
       });
 
       if (promptResponse.error) {
         console.error('Error getting prompt:', promptResponse.error);
-        throw new Error(promptResponse.error.message);
+        throw new Error(`Failed to get lesson prompt: ${promptResponse.error.message}`);
+      }
+
+      if (!promptResponse.data?.prompt) {
+        console.error('No prompt received:', promptResponse.data);
+        throw new Error('No prompt received from server');
       }
 
       const prompt = promptResponse.data.prompt;
-      console.log('Using prompt:', prompt);
+      console.log('Successfully received prompt:', prompt);
 
-      // Затем генерируем урок с полученным промптом
+      // Step 2: Generate lesson content
+      console.log('Generating lesson content...');
       const response = await supabase.functions.invoke('generate-lesson-from-prompt', {
         body: { 
           lessonId, 
           prompt 
-        },
-        headers: {
-          'Content-Type': 'application/json'
         }
-      }).catch(error => {
-        console.error('Error in generate-lesson-from-prompt:', error);
-        throw new Error(`Ошибка при генерации урока: ${error.message}`);
       });
 
       if (response.error) {
-        console.error('Error from generate-lesson-from-prompt:', response.error);
-        throw new Error(response.error.message);
+        console.error('Error generating lesson:', response.error);
+        throw new Error(`Failed to generate lesson: ${response.error.message}`);
       }
 
       if (!response.data?.text) {
-        throw new Error('Не получен текст урока от API');
+        console.error('No lesson text received:', response.data);
+        throw new Error('No lesson content received from server');
       }
 
+      console.log('Successfully generated lesson content');
       return response.data.text;
+
     } catch (error: any) {
       console.error('Error in generateLesson:', error);
+      
+      // Show a more user-friendly error message
       toast({
         variant: "destructive",
-        title: "Ошибка",
-        description: error.message,
+        title: "Ошибка при генерации урока",
+        description: "Пожалуйста, попробуйте еще раз через несколько секунд",
       });
+      
       throw error;
     }
   };
