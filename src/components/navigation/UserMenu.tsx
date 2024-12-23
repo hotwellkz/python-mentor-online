@@ -1,14 +1,15 @@
-import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Settings2, Shield, User } from "lucide-react";
+import { Link } from "react-router-dom";
 import { TokenDisplay } from "@/components/TokenDisplay";
 
 interface UserMenuProps {
   userEmail: string | null;
   onLogout: () => Promise<void>;
+  onLoginClick: () => void;
 }
 
-export const UserMenu = ({ userEmail, onLogout }: UserMenuProps) => {
+export const UserMenu = ({ userEmail, onLogout, onLoginClick }: UserMenuProps) => {
   return (
     <div className="flex items-center gap-4">
       {userEmail && (
@@ -45,9 +46,7 @@ export const UserMenu = ({ userEmail, onLogout }: UserMenuProps) => {
           </Button>
         </div>
       ) : (
-        <Link to="/auth">
-          <Button>Войти</Button>
-        </Link>
+        <Button onClick={onLoginClick}>Войти</Button>
       )}
     </div>
   );

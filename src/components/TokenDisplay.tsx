@@ -9,8 +9,13 @@ export const TokenDisplay = () => {
 
   useEffect(() => {
     const fetchTokens = async () => {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (user) {
+      try {
+        const { data: { user } } = await supabase.auth.getUser();
+        if (!user) {
+          setTokens(null);
+          return;
+        }
+
         const { data, error } = await supabase
           .from('profiles')
           .select('tokens')
@@ -18,6 +23,12 @@ export const TokenDisplay = () => {
           .maybeSingle();
         
         if (error) {
+          if (error.message.includes('Failed to fetch')) {
+            // Handle network error silently
+            console.error('Network error while fetching tokens:', error);
+            return;
+          }
+          
           console.error('Error fetching tokens:', error);
           toast({
             variant: "destructive",
@@ -31,21 +42,34 @@ export const TokenDisplay = () => {
           setTokens(data.tokens);
         } else {
           // Handle case when profile doesn't exist
-          const { error: insertError } = await supabase
-            .from('profiles')
-            .insert([{ id: user.id, tokens: 100 }]);
-          
-          if (insertError) {
+          try {
+            const { error: insertError } = await supabase
+              .from('profiles')
+              .insert([{ id: user.id, tokens: 100 }]);
+            
+            if (insertError) {
+              throw insertError;
+            }
+            
+            setTokens(100);
+          } catch (insertError) {
             console.error('Error creating profile:', insertError);
             toast({
               variant: "destructive",
               title: "Ошибка",
               description: "Не удалось создать профиль",
             });
-            return;
           }
-          
-          setTokens(100);
+        }
+      } catch (error: any) {
+        console.error('Unexpected error:', error);
+        // Don't show toast for network errors
+        if (!error.message?.includes('Failed to fetch')) {
+          toast({
+            variant: "destructive",
+            title: "Ошибка",
+            description: error.message || "Произошла неожиданная ошибка",
+          });
         }
       }
     };

@@ -3,8 +3,8 @@ import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { Menu } from "lucide-react";
 import { useState } from "react";
-import { MobileCoursesMenu } from "./mobile/MobileCoursesMenu";
-import { MobileUserMenu } from "./mobile/MobileUserMenu";
+import { MobileCoursesMenu } from "./MobileCoursesMenu";
+import { MobileUserMenu } from "./MobileUserMenu";
 
 interface MobileMenuProps {
   userEmail: string | null;

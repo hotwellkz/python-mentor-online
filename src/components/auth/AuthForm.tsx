@@ -3,34 +3,34 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Dispatch, SetStateAction } from "react";
+import { useAuthForm } from "@/hooks/useAuthForm";
 
 interface AuthFormProps {
   isLogin: boolean;
-  email: string;
-  setEmail: (email: string) => void;
-  password: string;
-  setPassword: (password: string) => void;
-  showPassword: boolean;
-  setShowPassword: (show: boolean) => void;
-  loading: boolean;
-  handleSubmit: (e: React.FormEvent) => Promise<void>;
   setIsLogin: (isLogin: boolean) => void;
   setShowGiftModal: Dispatch<SetStateAction<boolean>>;
+  onSuccess?: () => void;
 }
 
 export const AuthForm = ({
-  isLogin,
-  email,
-  setEmail,
-  password,
-  setPassword,
-  showPassword,
-  setShowPassword,
-  loading,
-  handleSubmit,
-  setIsLogin,
+  isLogin: initialIsLogin,
+  setIsLogin: parentSetIsLogin,
   setShowGiftModal,
+  onSuccess
 }: AuthFormProps) => {
+  const {
+    isLogin,
+    setIsLogin,
+    email,
+    setEmail,
+    password,
+    setPassword,
+    showPassword,
+    setShowPassword,
+    loading,
+    handleSubmit,
+  } = useAuthForm(setShowGiftModal, onSuccess);
+
   return (
     <div className="w-full max-w-md space-y-8">
       <div className="text-center">
@@ -92,7 +92,10 @@ export const AuthForm = ({
       <div className="text-center">
         <button
           type="button"
-          onClick={() => setIsLogin(!isLogin)}
+          onClick={() => {
+            setIsLogin(!isLogin);
+            parentSetIsLogin(!isLogin);
+          }}
           className="text-sm text-primary hover:underline"
         >
           {isLogin

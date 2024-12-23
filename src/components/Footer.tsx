@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import { VisitorCounter } from "./VisitorCounter";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -11,8 +12,9 @@ export const Footer = () => {
     <footer className="bg-gray-900 text-gray-300 py-8 mt-auto">
       <div className="container mx-auto px-4">
         <div className="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
-          <div className="text-sm">
-            © {new Date().getFullYear()} Курсы с ИИ-учителем. Все права защищены.
+          <div className="text-sm flex flex-col items-center md:items-start gap-2">
+            <div>© {new Date().getFullYear()} Курсы с ИИ-учителем. Все права защищены.</div>
+            <VisitorCounter />
           </div>
           <nav className="flex flex-col md:flex-row items-center space-y-2 md:space-y-0 md:space-x-6">
             <DropdownMenu>
