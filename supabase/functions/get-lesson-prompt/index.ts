@@ -1,5 +1,6 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
+import { productManagementBlocks } from './productManagementData.ts';
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -17,25 +18,34 @@ serve(async (req) => {
     const { lessonId } = await req.json();
     console.log('Getting prompt for lesson:', lessonId);
 
+    if (!lessonId) {
+      throw new Error('lessonId is required');
+    }
+
     // Initialize Supabase client
-    const supabaseClient = createClient(
-      Deno.env.get('SUPABASE_URL') ?? '',
-      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
-    );
+    const supabaseUrl = Deno.env.get('SUPABASE_URL');
+    const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY');
+
+    if (!supabaseUrl || !supabaseKey) {
+      throw new Error('Missing Supabase configuration');
+    }
+
+    const supabaseClient = createClient(supabaseUrl, supabaseKey);
 
     // Try to get saved prompt from database
     const { data: savedPrompt, error: dbError } = await supabaseClient
       .from('lesson_prompts')
       .select('prompt')
       .eq('lesson_id', lessonId)
-      .single();
+      .maybeSingle();
 
     if (dbError) {
       console.error('Database error:', dbError);
+      throw dbError;
     }
 
     // If we have a saved prompt, return it
-    if (savedPrompt) {
+    if (savedPrompt?.prompt) {
       console.log('Found saved prompt');
       return new Response(
         JSON.stringify({ prompt: savedPrompt.prompt }),
@@ -54,6 +64,20 @@ serve(async (req) => {
     } else if (lessonId.startsWith('devops-')) {
       const [, moduleIndex, topicIndex] = lessonId.split("-").map(Number);
       defaultPrompt = `Расскажи подробно как будто ты преподаватель и преподаеш курс DevOps-инженер PRO, урок ${moduleIndex}-${topicIndex}`;
+    } else if (lessonId.startsWith('ds-')) {
+      const [, blockIndex, lessonIndex] = lessonId.split("-").map(Number);
+      defaultPrompt = `Расскажи подробно как будто ты преподаватель и преподаеш курс Data Science урок ${blockIndex}-${lessonIndex}`;
+    } else if (lessonId.startsWith('pm-')) {
+      const [, blockIndex, lessonIndex] = lessonId.split("-").map(Number);
+      const block = productManagementBlocks[blockIndex - 1];
+      const lesson = block?.lessons[lessonIndex - 1];
+      
+      if (lesson) {
+        const topics = lesson.topics.join(", ");
+        defaultPrompt = `Расскажи подробно с примерами, как будто ты преподаватель и преподаеш курс под названием "Продукт-менеджмент" урок на тему: "${lesson.title}", подтемы: "${topics}"`;
+      } else {
+        defaultPrompt = `Расскажи подробно с примерами, как будто ты преподаватель и преподаеш курс под названием "Продукт-менеджмент" урок ${blockIndex}-${lessonIndex}`;
+      }
     } else {
       const [blockIndex, lessonIndex] = lessonId.split("-").map(Number);
       defaultPrompt = `Расскажи подробно как будто ты преподаватель и преподаеш Курс Python урок ${blockIndex}-${lessonIndex}`;
