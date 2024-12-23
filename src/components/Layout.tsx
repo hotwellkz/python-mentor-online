@@ -9,6 +9,9 @@ import { UserMenu } from "./navigation/UserMenu";
 import { MobileMenu } from "./navigation/MobileMenu";
 import { AuthModal } from "./auth/AuthModal";
 
+const MAX_RETRIES = 3;
+const RETRY_DELAY = 1000;
+
 export const Layout = () => {
   const { pathname } = useLocation();
   const { toast } = useToast();
@@ -16,32 +19,50 @@ export const Layout = () => {
   const [showAuthModal, setShowAuthModal] = useState(false);
   const [isInitialized, setIsInitialized] = useState(false);
 
+  const initializeAuthWithRetry = async (retryCount = 0) => {
+    try {
+      const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+      
+      if (sessionError) {
+        if (sessionError.message.includes('session_not_found') || sessionError.status === 403) {
+          await supabase.auth.signOut();
+          setUserEmail(null);
+          return;
+        }
+        throw sessionError;
+      }
+
+      setUserEmail(session?.user?.email || null);
+      setIsInitialized(true);
+    } catch (error: any) {
+      console.error('Auth initialization error:', error);
+      
+      // Если это сетевая ошибка и есть еще попытки, пробуем снова
+      if (error.message === 'Failed to fetch' && retryCount < MAX_RETRIES) {
+        console.log(`Retrying auth initialization (attempt ${retryCount + 1}/${MAX_RETRIES})...`);
+        setTimeout(() => {
+          initializeAuthWithRetry(retryCount + 1);
+        }, RETRY_DELAY * Math.pow(2, retryCount)); // Экспоненциальная задержка
+        return;
+      }
+
+      setUserEmail(null);
+      setIsInitialized(true);
+      
+      // Показываем toast только для не сетевых ошибок
+      if (error.message !== 'Failed to fetch') {
+        toast({
+          variant: "destructive",
+          title: "Ошибка инициализации",
+          description: "Пожалуйста, попробуйте перезагрузить страницу",
+        });
+      }
+    }
+  };
+
   useEffect(() => {
     window.scrollTo(0, 0);
-    
-    const initializeAuth = async () => {
-      try {
-        const { data: { session }, error: sessionError } = await supabase.auth.getSession();
-        
-        if (sessionError) {
-          if (sessionError.message.includes('session_not_found') || sessionError.status === 403) {
-            await supabase.auth.signOut();
-            setUserEmail(null);
-            return;
-          }
-          throw sessionError;
-        }
-
-        setUserEmail(session?.user?.email || null);
-        setIsInitialized(true);
-      } catch (error: any) {
-        console.error('Auth initialization error:', error);
-        setUserEmail(null);
-        setIsInitialized(true);
-      }
-    };
-
-    initializeAuth();
+    initializeAuthWithRetry();
 
     const { data: authListener } = supabase.auth.onAuthStateChange(async (event, session) => {
       if (event === 'SIGNED_IN') {
