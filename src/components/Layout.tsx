@@ -14,31 +14,34 @@ export const Layout = () => {
   const { toast } = useToast();
   const [userEmail, setUserEmail] = useState<string | null>(null);
   const [showAuthModal, setShowAuthModal] = useState(false);
+  const [isInitialized, setIsInitialized] = useState(false);
 
   useEffect(() => {
     window.scrollTo(0, 0);
     
-    const getUser = async () => {
+    const initializeAuth = async () => {
       try {
-        const { data: { user }, error } = await supabase.auth.getUser();
+        const { data: { session }, error: sessionError } = await supabase.auth.getSession();
         
-        if (error) {
-          if (error.message.includes('session_not_found') || error.status === 403) {
+        if (sessionError) {
+          if (sessionError.message.includes('session_not_found') || sessionError.status === 403) {
             await supabase.auth.signOut();
             setUserEmail(null);
             return;
           }
-          throw error;
+          throw sessionError;
         }
-        
-        setUserEmail(user?.email || null);
+
+        setUserEmail(session?.user?.email || null);
+        setIsInitialized(true);
       } catch (error: any) {
-        console.error('Auth error:', error);
+        console.error('Auth initialization error:', error);
         setUserEmail(null);
+        setIsInitialized(true);
       }
     };
 
-    getUser();
+    initializeAuth();
 
     const { data: authListener } = supabase.auth.onAuthStateChange(async (event, session) => {
       if (event === 'SIGNED_IN') {
@@ -53,15 +56,13 @@ export const Layout = () => {
     return () => {
       authListener?.subscription.unsubscribe();
     };
-  }, [pathname, toast]);
+  }, [pathname]);
 
   const handleLogout = async () => {
     try {
       await supabase.auth.signOut();
-      // Add a small delay before refreshing to ensure the signout is complete
-      setTimeout(() => {
-        window.location.reload();
-      }, 100);
+      setUserEmail(null);
+      window.location.href = '/';
     } catch (error: any) {
       console.error('Logout error:', error);
       toast({
@@ -71,6 +72,10 @@ export const Layout = () => {
       });
     }
   };
+
+  if (!isInitialized) {
+    return null; // или показать загрузку
+  }
 
   return (
     <div className="min-h-screen flex flex-col">
