@@ -6,9 +6,12 @@ import { Anthropic } from 'https://esm.sh/@anthropic-ai/sdk@0.4.3';
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+  'Access-Control-Allow-Methods': 'POST, OPTIONS',
+  'Access-Control-Max-Age': '86400',
 };
 
 serve(async (req) => {
+  // Handle CORS preflight requests
   if (req.method === 'OPTIONS') {
     return new Response('ok', { headers: corsHeaders });
   }
@@ -17,13 +20,17 @@ serve(async (req) => {
     const { lessonId } = await req.json();
     console.log('Getting prompt for lesson:', lessonId);
 
-    // Initialize Supabase client
-    const supabaseClient = createClient(
-      Deno.env.get('SUPABASE_URL') ?? '',
-      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
-    );
+    // Initialize Supabase client with error handling
+    const supabaseUrl = Deno.env.get('SUPABASE_URL');
+    const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY');
+    
+    if (!supabaseUrl || !supabaseKey) {
+      throw new Error('Missing Supabase configuration');
+    }
 
-    // Try to get saved prompt from database
+    const supabaseClient = createClient(supabaseUrl, supabaseKey);
+
+    // Try to get saved prompt from database with better error handling
     const { data: savedPrompt, error: dbError } = await supabaseClient
       .from('lesson_prompts')
       .select('prompt')
@@ -59,9 +66,14 @@ serve(async (req) => {
     console.log('Using prompt:', prompt);
 
     try {
-      // Try Claude first
+      // Try Claude first with better error handling
+      const anthropicApiKey = Deno.env.get('ANTHROPIC_API_KEY');
+      if (!anthropicApiKey) {
+        throw new Error('Missing Anthropic API key');
+      }
+
       const anthropic = new Anthropic({
-        apiKey: Deno.env.get('ANTHROPIC_API_KEY'),
+        apiKey: anthropicApiKey,
       });
 
       console.log('Trying Claude...');
@@ -83,9 +95,14 @@ serve(async (req) => {
       console.error('Claude error:', error);
       console.log('Falling back to OpenAI...');
 
-      // Fallback to OpenAI
+      // Fallback to OpenAI with better error handling
+      const openaiApiKey = Deno.env.get('OPENAI_API_KEY');
+      if (!openaiApiKey) {
+        throw new Error('Missing OpenAI API key');
+      }
+
       const configuration = new Configuration({
-        apiKey: Deno.env.get('OPENAI_API_KEY'),
+        apiKey: openaiApiKey,
       });
       const openai = new OpenAIApi(configuration);
 
@@ -106,7 +123,11 @@ serve(async (req) => {
   } catch (error) {
     console.error('Error in generate-lesson-from-prompt:', error);
     return new Response(
-      JSON.stringify({ error: error.message, details: error.toString() }),
+      JSON.stringify({ 
+        error: error.message, 
+        details: error.toString(),
+        stack: error.stack 
+      }),
       {
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
         status: 500,
