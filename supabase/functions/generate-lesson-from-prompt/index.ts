@@ -11,12 +11,12 @@ const corsHeaders = {
 };
 
 serve(async (req) => {
-  try {
-    // Handle CORS preflight
-    if (req.method === 'OPTIONS') {
-      return new Response('ok', { headers: corsHeaders });
-    }
+  // Handle CORS preflight requests
+  if (req.method === 'OPTIONS') {
+    return new Response('ok', { headers: corsHeaders });
+  }
 
+  try {
     if (req.method !== 'POST') {
       throw new Error(`HTTP method ${req.method} not allowed`);
     }
