@@ -5,6 +5,9 @@ import { getPromptForLesson } from "./prompts/index.ts";
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+  'Access-Control-Allow-Methods': 'POST, OPTIONS',
+  'Access-Control-Max-Age': '86400',
+  'Cache-Control': 'no-store, no-cache, must-revalidate',
 };
 
 serve(async (req) => {
@@ -46,7 +49,7 @@ serve(async (req) => {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        model: 'gpt-4o',
+        model: 'gpt-4',
         messages: [
           {
             role: 'system',
@@ -58,6 +61,7 @@ serve(async (req) => {
           }
         ],
         temperature: 0.7,
+        max_tokens: 4000,
       }),
     });
 
@@ -74,7 +78,11 @@ serve(async (req) => {
     console.log('Generated text length:', generatedText.length);
 
     return new Response(
-      JSON.stringify({ text: generatedText }),
+      JSON.stringify({ 
+        text: generatedText,
+        provider: 'openai',
+        timestamp: new Date().toISOString(),
+      }),
       { 
         headers: { 
           ...corsHeaders,
@@ -88,7 +96,8 @@ serve(async (req) => {
     return new Response(
       JSON.stringify({ 
         error: error.message,
-        details: error.stack
+        details: error.stack,
+        timestamp: new Date().toISOString(),
       }),
       { 
         status: 500,
