@@ -58,6 +58,10 @@ export const Layout = () => {
   const handleLogout = async () => {
     try {
       await supabase.auth.signOut();
+      // Add a small delay before refreshing to ensure the signout is complete
+      setTimeout(() => {
+        window.location.reload();
+      }, 100);
     } catch (error: any) {
       console.error('Logout error:', error);
       toast({
