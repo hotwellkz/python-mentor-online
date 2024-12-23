@@ -18,11 +18,19 @@ serve(async (req) => {
     const { lessonId } = await req.json();
     console.log('Getting prompt for lesson:', lessonId);
 
+    if (!lessonId) {
+      throw new Error('lessonId is required');
+    }
+
     // Initialize Supabase client
-    const supabaseClient = createClient(
-      Deno.env.get('SUPABASE_URL') ?? '',
-      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
-    );
+    const supabaseUrl = Deno.env.get('SUPABASE_URL');
+    const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY');
+
+    if (!supabaseUrl || !supabaseKey) {
+      throw new Error('Missing Supabase configuration');
+    }
+
+    const supabaseClient = createClient(supabaseUrl, supabaseKey);
 
     // Try to get saved prompt from database
     const { data: savedPrompt, error: dbError } = await supabaseClient
@@ -33,10 +41,11 @@ serve(async (req) => {
 
     if (dbError) {
       console.error('Database error:', dbError);
+      throw dbError;
     }
 
     // If we have a saved prompt, return it
-    if (savedPrompt) {
+    if (savedPrompt?.prompt) {
       console.log('Found saved prompt');
       return new Response(
         JSON.stringify({ prompt: savedPrompt.prompt }),

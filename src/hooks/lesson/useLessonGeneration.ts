@@ -6,10 +6,24 @@ export const useLessonGeneration = () => {
 
   const generateLesson = async (lessonId: string) => {
     try {
-      console.log('Calling generate-lesson-from-prompt with lessonId:', lessonId);
+      console.log('Getting prompt for lesson:', lessonId);
       
-      const response = await supabase.functions.invoke('generate-lesson-from-prompt', {
+      // Сначала получаем промпт
+      const promptResponse = await supabase.functions.invoke('get-lesson-prompt', {
         body: { lessonId }
+      });
+
+      if (promptResponse.error) {
+        console.error('Error getting prompt:', promptResponse.error);
+        throw new Error(promptResponse.error.message);
+      }
+
+      const prompt = promptResponse.data.prompt;
+      console.log('Using prompt:', prompt);
+
+      // Затем генерируем урок с полученным промптом
+      const response = await supabase.functions.invoke('generate-lesson-from-prompt', {
+        body: { lessonId, prompt }
       });
 
       if (response.error) {

@@ -1,5 +1,4 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
-import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 import { Configuration, OpenAIApi } from 'https://esm.sh/openai@3.2.1';
 import { Anthropic } from 'https://esm.sh/@anthropic-ai/sdk@0.4.3';
 
@@ -26,60 +25,16 @@ serve(async (req) => {
       headers: Object.fromEntries(req.headers.entries()),
     });
 
-    const { lessonId } = await req.json();
-    console.log('Getting prompt for lesson:', lessonId);
-
-    if (!lessonId) {
-      throw new Error('lessonId is required');
-    }
-
-    // Initialize Supabase client with error handling
-    const supabaseUrl = Deno.env.get('SUPABASE_URL');
-    const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY');
-    
-    if (!supabaseUrl || !supabaseKey) {
-      throw new Error('Missing Supabase configuration');
-    }
-
-    const supabaseClient = createClient(supabaseUrl, supabaseKey);
-
-    // Try to get saved prompt from database with better error handling
-    const { data: savedPrompt, error: dbError } = await supabaseClient
-      .from('lesson_prompts')
-      .select('prompt')
-      .eq('lesson_id', lessonId)
-      .maybeSingle();
-
-    if (dbError) {
-      console.error('Database error:', dbError);
-      throw dbError;
-    }
-
-    let prompt;
-    if (savedPrompt?.prompt) {
-      console.log('Using saved prompt from database');
-      prompt = savedPrompt.prompt;
-    } else {
-      console.log('No saved prompt found, generating default prompt');
-      if (lessonId.startsWith('pm-')) {
-        const [, moduleIndex, lessonIndex] = lessonId.split('-').map(Number);
-        prompt = `Расскажи подробно с примерами, как будто ты преподаватель и преподаешь курс под названием "Продукт-менеджмент" урок ${moduleIndex}-${lessonIndex}`;
-      } else if (lessonId.startsWith('ba-')) {
-        const [, blockIndex, lessonIndex] = lessonId.split('-').map(Number);
-        prompt = `Расскажи подробно как будто ты преподаватель и преподаешь Курс Бизнес Аналитик урок ${blockIndex}-${lessonIndex}`;
-      } else if (lessonId.startsWith('ds-')) {
-        const [, blockIndex, lessonIndex] = lessonId.split('-').map(Number);
-        prompt = `Расскажи подробно как будто ты преподаватель и преподаешь курс Data Science урок ${blockIndex}-${lessonIndex}`;
-      } else {
-        const [blockIndex, lessonIndex] = lessonId.split('-').map(Number);
-        prompt = `Расскажи подробно как будто ты преподаватель и преподаешь Курс Python урок ${blockIndex}-${lessonIndex}`;
-      }
-    }
-
+    const { lessonId, prompt } = await req.json();
+    console.log('Generating lesson for:', lessonId);
     console.log('Using prompt:', prompt);
 
+    if (!lessonId || !prompt) {
+      throw new Error('lessonId and prompt are required');
+    }
+
     try {
-      // Try Claude first with better error handling
+      // Try Claude first
       const anthropicApiKey = Deno.env.get('ANTHROPIC_API_KEY');
       if (!anthropicApiKey) {
         throw new Error('Missing Anthropic API key');
@@ -108,7 +63,7 @@ serve(async (req) => {
       console.error('Claude error:', error);
       console.log('Falling back to OpenAI...');
 
-      // Fallback to OpenAI with better error handling
+      // Fallback to OpenAI
       const openaiApiKey = Deno.env.get('OPENAI_API_KEY');
       if (!openaiApiKey) {
         throw new Error('Missing OpenAI API key');
